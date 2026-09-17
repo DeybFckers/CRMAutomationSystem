@@ -69,5 +69,6 @@ namespace CRMSystem.Repositories.Implementation
         {
             _context.Customers.Add(customer);
         }
+
     }
 }

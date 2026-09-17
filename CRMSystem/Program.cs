@@ -108,6 +108,8 @@ builder.Services.AddScoped<IPipelineStageServices, PipelineStageServices>();
 builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 builder.Services.AddScoped<ILeadServices, LeadServices>();
 builder.Services.AddScoped<ICustomerCodeServices, CustomerCodeServices>();
+builder.Services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
+builder.Services.AddScoped<ICustomerAddressServices, CustomerAddressServices>();
 
 builder.Services.AddControllers();
 

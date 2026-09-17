@@ -28,3 +28,14 @@ SalesRep ID:
 StatusID: f246a4f0-3bbe-433d-8bb6-71d57f3f87f4 - Qualified Status
 ceead36e-44b1-4fa4-b482-5bed4a2215d6 - Converted Status
 lead id: f16472d6-b720-4921-8405-12028aba306f
+customer id: a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92
+
+{
+  "type": "Home",
+  "addressLine": "Toril",
+  "city": "Davao",
+  "province": "Davao Del Sur",
+  "postalCode": "8000",
+  "country": "Philippines",
+  "isPrimary": true
+}
