@@ -1,0 +1,30 @@
+﻿SuperAdmin
+superadmin
+Admin@123456
+
+Admin
+admin
+Admin@123
+
+SalesManager
+salesmanager
+SalesM@123
+
+SalesRep
+salesrep
+SalesR@123
+
+Support
+support
+Support@123
+
+Viewer
+viewer
+Viewer@123
+
+User Admin ID: 01a08a8f-5570-7cfe-9553-88d4ccf459b1
+Org ID: 
+SalesRep ID: 
+StatusID: f246a4f0-3bbe-433d-8bb6-71d57f3f87f4 - Qualified Status
+ceead36e-44b1-4fa4-b482-5bed4a2215d6 - Converted Status
+lead id: f16472d6-b720-4921-8405-12028aba306f

@@ -1,0 +1,39 @@
+﻿using CRMSystem.Data;
+
+namespace CRMSystem.Models.Entities
+{
+    public class Activity
+    {
+        public Guid Id { get; set; }
+
+        public Guid OrganizationId { get; set; }
+
+        public Guid UserId { get; set; }
+
+        public Guid? CustomerId { get; set; }
+
+        public Guid? LeadId { get; set; }
+
+        public Guid? OpportunityId { get; set; }
+
+        public string Type { get; set; } = null!;
+
+        public string Subject { get; set; } = null!;
+
+        public string? Description { get; set; }
+
+        public DateTime ActivityDate { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public Organization Organization { get; set; } = null!;
+
+        public ApplicationUser User { get; set; } = null!;
+
+        public Customer? Customer { get; set; }
+
+        public Lead? Lead { get; set; }
+
+        public Opportunity? Opportunity { get; set; }
+    }
+}
