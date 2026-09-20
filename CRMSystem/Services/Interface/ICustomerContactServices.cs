@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task<CustomerContactResponseDto> GetCustomerContactByCustomerId(Guid customerId);
         Task CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto);
-        Task UpdateCustomerContact(Guid customerId, UpdateCustomerContactDto dto);
-        Task DeleteCustomerContact(Guid customerId);
+        Task UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto);
+        Task DeleteCustomerContact(Guid customerId, Guid contactId);
     }
 }

@@ -9,15 +9,19 @@ namespace CRMSystem.Services.Implementation
     public class CustomerContactServices : ICustomerContactServices
     {
         private readonly ICustomerContactRepository _customerContactRepository;
+        private readonly ICurrentUserServices _currentUserServices;
 
-        public CustomerContactServices(ICustomerContactRepository customerContactRepository)
+        public CustomerContactServices(ICustomerContactRepository customerContactRepository, ICurrentUserServices currentUserServices)
         {
             _customerContactRepository = customerContactRepository;
+            _currentUserServices = currentUserServices;
         }
 
         public async Task<CustomerContactResponseDto> GetCustomerContactByCustomerId(Guid customerId)
         {
-            var contact = await _customerContactRepository.GetCustomerContactByCustomerId(customerId);
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var contact = await _customerContactRepository.GetCustomerContactByCustomerId(customerId, organizationId);
 
             if (contact == null)
                 throw new KeyNotFoundException("Customer contact not found.");
@@ -27,12 +31,14 @@ namespace CRMSystem.Services.Implementation
 
         public async Task CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto)
         {
-            var customer = await _customerContactRepository.GetCustomerForCreateContact(customerId);
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var customer = await _customerContactRepository.GetCustomerById(customerId, organizationId);
 
             if (customer == null)
                 throw new KeyNotFoundException("Customer not found.");
 
-            var existingContact = await _customerContactRepository.GetCustomerContactByCustomerId(customerId);
+            var existingContact = await _customerContactRepository.GetCustomerContactByCustomerId(customerId, organizationId);
 
             if (existingContact != null)
                 throw new InvalidOperationException("Customer already has a contact.");
@@ -45,9 +51,11 @@ namespace CRMSystem.Services.Implementation
             await _customerContactRepository.CreateContact(customerContact);
         }
 
-        public async Task UpdateCustomerContact(Guid contactId, UpdateCustomerContactDto dto)
+        public async Task UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto)
         {
-            var contact = await _customerContactRepository.GetContactById(contactId);
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var contact = await _customerContactRepository.GetContactById(contactId, customerId, organizationId);
 
             if (contact == null)
                 throw new KeyNotFoundException("Customer contact not found.");
@@ -57,14 +65,16 @@ namespace CRMSystem.Services.Implementation
             await _customerContactRepository.UpdateContact(contact);
         }
 
-        public async Task DeleteCustomerContact(Guid contactId)
+        public async Task DeleteCustomerContact(Guid customerId, Guid contactId)
         {
-            var contact = await _customerContactRepository.GetContactById(contactId);
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var contact = await _customerContactRepository.GetContactById(contactId, customerId, organizationId);
 
             if (contact == null)
                 throw new KeyNotFoundException("Customer contact not found.");
 
-            await _customerContactRepository.DeleteContact(contact.Id);
+            await _customerContactRepository.DeleteContact(contact);
         }
     }
 }

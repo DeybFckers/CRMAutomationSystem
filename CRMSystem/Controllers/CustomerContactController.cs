@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CRMSystem.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/customers/{customerId:guid}/contact")]
     public class CustomerContactController : ControllerBase
     {
         private readonly ICustomerContactServices _customerContactServices;
@@ -15,7 +15,7 @@ namespace CRMSystem.Controllers
             _customerContactServices = customerContactServices;
         }
 
-        [HttpGet("{customerId:guid}")]
+        [HttpGet]
         public async Task<ActionResult<CustomerContactResponseDto>> GetCustomerContact(Guid customerId)
         {
             try
@@ -30,7 +30,7 @@ namespace CRMSystem.Controllers
             }
         }
 
-        [HttpPost("{customerId:guid}")]
+        [HttpPost]
         public async Task<IActionResult> CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto)
         {
             try
@@ -53,11 +53,11 @@ namespace CRMSystem.Controllers
         }
 
         [HttpPut("{contactId:guid}")]
-        public async Task<IActionResult> UpdateCustomerContact(Guid contactId, UpdateCustomerContactDto dto)
+        public async Task<IActionResult> UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto)
         {
             try
             {
-                await _customerContactServices.UpdateCustomerContact(contactId, dto);
+                await _customerContactServices.UpdateCustomerContact(customerId, contactId, dto);
 
                 return Ok(new
                 {
@@ -71,11 +71,11 @@ namespace CRMSystem.Controllers
         }
 
         [HttpDelete("{contactId:guid}")]
-        public async Task<IActionResult> DeleteCustomerContact(Guid contactId)
+        public async Task<IActionResult> DeleteCustomerContact(Guid customerId, Guid contactId)
         {
             try
             {
-                await _customerContactServices.DeleteCustomerContact(contactId);
+                await _customerContactServices.DeleteCustomerContact(customerId, contactId);
 
                 return Ok(new
                 {

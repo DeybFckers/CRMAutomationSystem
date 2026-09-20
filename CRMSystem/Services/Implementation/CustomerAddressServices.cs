@@ -9,25 +9,33 @@ namespace CRMSystem.Services.Implementation
     public class CustomerAddressServices : ICustomerAddressServices
     {
         private readonly ICustomerAddressRepository _customerAddressRepository;
-        
+        private readonly ICurrentUserServices _currentUserServices;
 
-        public CustomerAddressServices(ICustomerAddressRepository customerAddressRepository)
+        public CustomerAddressServices(ICustomerAddressRepository customerAddressRepository, ICurrentUserServices currentUserServices)
         {
             _customerAddressRepository = customerAddressRepository;
-            
+            _currentUserServices = currentUserServices;
         }
-        public async Task<IEnumerable<CustomerAddressResponseDto>> GetCustomerAddressByCustomerId(Guid id)
-        {
-            var customerAddresses = await _customerAddressRepository.GetCustomerAddressByCustomerId(id);
 
-            if (customerAddresses == null)
-                throw new KeyNotFoundException("Customer addresses not found.");
+        public async Task<IEnumerable<CustomerAddressResponseDto>> GetCustomerAddressByCustomerId(Guid customerId)
+        {
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var customer = await _customerAddressRepository.GetCustomerById(customerId, organizationId);
+
+            if (customer == null)
+                throw new KeyNotFoundException("Customer not found.");
+
+            var customerAddresses = await _customerAddressRepository.GetCustomerAddressByCustomerId(customerId, organizationId);
 
             return customerAddresses.Select(ca => ca.Adapt<CustomerAddressResponseDto>());
         }
-        public async Task CreateAddress(Guid id, CreateCustomerAddressDto customerAddressDto)
+
+        public async Task CreateAddress(Guid customerId, CreateCustomerAddressDto customerAddressDto)
         {
-            var customer = await _customerAddressRepository.GetCustomerIdForCreateAddress(id);
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var customer = await _customerAddressRepository.GetCustomerById(customerId, organizationId);
 
             if (customer == null)
                 throw new KeyNotFoundException("Customer not found.");
@@ -39,11 +47,12 @@ namespace CRMSystem.Services.Implementation
 
             await _customerAddressRepository.CreateAddress(customerAddress);
         }
-       
-        public async Task UpdateAddress(Guid id, UpdateCustomerAddressDto customerAddressDto)
-        {
 
-            var existingAddress = await _customerAddressRepository.GetAddressById(id);
+        public async Task UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto customerAddressDto)
+        {
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var existingAddress = await _customerAddressRepository.GetAddressById(addressId, customerId, organizationId);
 
             if (existingAddress == null)
                 throw new KeyNotFoundException("Customer address not found.");
@@ -52,15 +61,17 @@ namespace CRMSystem.Services.Implementation
 
             await _customerAddressRepository.UpdateAddress(existingAddress);
         }
-        
-        public async Task DeleteAddress(Guid id)
+
+        public async Task DeleteAddress(Guid customerId, Guid addressId)
         {
-            var existingAddress = await _customerAddressRepository.GetAddressById(id);
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var existingAddress = await _customerAddressRepository.GetAddressById(addressId, customerId, organizationId);
 
             if (existingAddress == null)
                 throw new KeyNotFoundException("Customer address not found.");
 
-            await _customerAddressRepository.DeleteAddress(id);
+            await _customerAddressRepository.DeleteAddress(existingAddress);
         }
     }
 }

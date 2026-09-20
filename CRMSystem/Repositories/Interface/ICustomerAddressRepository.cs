@@ -4,13 +4,11 @@ namespace CRMSystem.Repositories.Interface
 {
     public interface ICustomerAddressRepository
     {
-        Task<Customer?> GetCustomerIdForCreateAddress(Guid id);
-        Task<IEnumerable<CustomerAddress>> GetCustomerAddressByCustomerId(Guid id);
+        Task<Customer?> GetCustomerById(Guid customerId, Guid organizationId);
+        Task<IEnumerable<CustomerAddress>> GetCustomerAddressByCustomerId(Guid customerId, Guid organizationId);
+        Task<CustomerAddress?> GetAddressById(Guid addressId, Guid customerId, Guid organizationId);
         Task CreateAddress(CustomerAddress customerAddress);
-
         Task UpdateAddress(CustomerAddress customerAddress);
-
-        Task DeleteAddress(Guid addressId);
-        Task<CustomerAddress?> GetAddressById(Guid addressId);
+        Task DeleteAddress(CustomerAddress customerAddress);
     }
 }

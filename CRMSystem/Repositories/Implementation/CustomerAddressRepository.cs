@@ -14,9 +14,10 @@ namespace CRMSystem.Repositories.Implementation
             _context = context;
         }
 
-        public async Task<Customer?> GetCustomerIdForCreateAddress(Guid id)
+        public async Task<Customer?> GetCustomerById(Guid customerId, Guid organizationId)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);   
+            return await _context.Customers
+                .FirstOrDefaultAsync(c => c.Id == customerId && c.OrganizationId == organizationId);
         }
 
         public async Task CreateAddress(CustomerAddress customerAddress)
@@ -31,30 +32,24 @@ namespace CRMSystem.Repositories.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAddress(Guid addressId)
+        public async Task DeleteAddress(CustomerAddress customerAddress)
         {
-            var address = await _context.CustomerAddresses
-                .FirstOrDefaultAsync(x => x.Id == addressId);
-
-            if (address == null)
-                return;
-
-            _context.CustomerAddresses.Remove(address);
+            _context.CustomerAddresses.Remove(customerAddress);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<CustomerAddress>> GetCustomerAddressByCustomerId(Guid id)
+        public async Task<IEnumerable<CustomerAddress>> GetCustomerAddressByCustomerId(Guid customerId, Guid organizationId)
         {
-            //this query will return the address by using customer id
             return await _context.CustomerAddresses
-                .Where(x => x.CustomerId == id)
+                .Where(x => x.CustomerId == customerId && x.Customer.OrganizationId == organizationId)
                 .ToListAsync();
         }
 
-        public async Task<CustomerAddress?> GetAddressById(Guid addressId)
+        public async Task<CustomerAddress?> GetAddressById(Guid addressId, Guid customerId, Guid organizationId)
         {
             return await _context.CustomerAddresses
-                .FirstOrDefaultAsync(x => x.Id == addressId);
+                .Include(x => x.Customer)
+                .FirstOrDefaultAsync(x => x.Id == addressId && x.CustomerId == customerId && x.Customer.OrganizationId == organizationId);
         }
     }
 }

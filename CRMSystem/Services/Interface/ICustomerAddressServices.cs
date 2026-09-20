@@ -4,13 +4,10 @@ namespace CRMSystem.Services.Interface
 {
     public interface ICustomerAddressServices
     {
-        Task<IEnumerable<CustomerAddressResponseDto>> GetCustomerAddressByCustomerId(Guid id);   
-
-        Task CreateAddress(Guid customerId, CreateCustomerAddressDto dto);
-
-        Task UpdateAddress(Guid addressId, UpdateCustomerAddressDto dto);
-
-        Task DeleteAddress(Guid addressId);
+        Task<IEnumerable<CustomerAddressResponseDto>> GetCustomerAddressByCustomerId(Guid customerId);
+        Task CreateAddress(Guid customerId, CreateCustomerAddressDto customerAddressDto);
+        Task UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto customerAddressDto);
+        Task DeleteAddress(Guid customerId, Guid addressId);
 
     }
 }

@@ -14,14 +14,17 @@ namespace CRMSystem.Repositories.Implementation
             _context = context;
         }
 
-        public async Task<Customer?> GetCustomerForCreateContact(Guid customerId)
+        public async Task<Customer?> GetCustomerById(Guid customerId, Guid organizationId)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Id == customerId);
+            return await _context.Customers
+                .FirstOrDefaultAsync(c => c.Id == customerId && c.OrganizationId == organizationId);
         }
 
-        public async Task<CustomerContact?> GetCustomerContactByCustomerId(Guid customerId)
+        public async Task<CustomerContact?> GetCustomerContactByCustomerId(Guid customerId, Guid organizationId)
         {
-            return await _context.CustomerContacts.FirstOrDefaultAsync(c => c.CustomerId == customerId);
+            return await _context.CustomerContacts
+                .Include(c => c.Customer)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId && c.Customer.OrganizationId == organizationId);
         }
 
         public async Task CreateContact(CustomerContact customerContact)
@@ -36,20 +39,17 @@ namespace CRMSystem.Repositories.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteContact(Guid id)
+        public async Task DeleteContact(CustomerContact customerContact)
         {
-            var contact = await GetContactById(id);
-
-            if (contact == null)
-                return;
-
-            _context.CustomerContacts.Remove(contact);
+            _context.CustomerContacts.Remove(customerContact);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<CustomerContact?> GetContactById(Guid contactId)
+        public async Task<CustomerContact?> GetContactById(Guid contactId, Guid customerId, Guid organizationId)
         {
-            return await _context.CustomerContacts.FirstOrDefaultAsync(c => c.Id == contactId);
+            return await _context.CustomerContacts
+                .Include(c => c.Customer)
+                .FirstOrDefaultAsync(c => c.Id == contactId && c.CustomerId == customerId && c.Customer.OrganizationId == organizationId);
         }
     }
 }
