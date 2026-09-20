@@ -33,8 +33,7 @@ namespace CRMSystem.Controllers
             }
         }
 
-        [HttpPost]
-        [HttpPost("{customerId:guid}/addresses")]
+        [HttpPost("{customerId:guid}")]
         public async Task<IActionResult> CreateAddress(Guid customerId, CreateCustomerAddressDto dto)
         {
             await _customerAddressServices.CreateAddress(customerId, dto);

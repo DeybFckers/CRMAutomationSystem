@@ -110,6 +110,8 @@ builder.Services.AddScoped<ILeadServices, LeadServices>();
 builder.Services.AddScoped<ICustomerCodeServices, CustomerCodeServices>();
 builder.Services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
 builder.Services.AddScoped<ICustomerAddressServices, CustomerAddressServices>();
+builder.Services.AddScoped<ICustomerContactRepository, CustomerContactRepository>();
+builder.Services.AddScoped<ICustomerContactServices, CustomerContactServices>();
 
 builder.Services.AddControllers();
 

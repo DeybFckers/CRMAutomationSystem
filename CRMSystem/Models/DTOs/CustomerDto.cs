@@ -54,7 +54,6 @@
     public class CustomerContactResponseDto
     {
         public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -69,6 +68,18 @@
     }
 
     public class CreateCustomerContactDto
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Position { get; set; }
+
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+
+        public bool IsPrimary { get; set; }
+    }
+
+    public class UpdateCustomerContactDto
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

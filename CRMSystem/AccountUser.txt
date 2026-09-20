@@ -39,3 +39,12 @@ customer id: a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92
   "country": "Philippines",
   "isPrimary": true
 }
+
+{
+  "firstName": "Tom",
+  "lastName": "Shelby",
+  "position": "Father",
+  "email": "Tom",
+  "phone": "12345678",
+  "isPrimary": true
+}
