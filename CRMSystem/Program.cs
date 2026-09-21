@@ -112,6 +112,8 @@ builder.Services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository
 builder.Services.AddScoped<ICustomerAddressServices, CustomerAddressServices>();
 builder.Services.AddScoped<ICustomerContactRepository, CustomerContactRepository>();
 builder.Services.AddScoped<ICustomerContactServices, CustomerContactServices>();
+builder.Services.AddScoped<IOpportunityRepository, OpportunityRepository>();
+builder.Services.AddScoped<IOpportunityServices, OpportunityServices>();
 
 builder.Services.AddControllers();
 

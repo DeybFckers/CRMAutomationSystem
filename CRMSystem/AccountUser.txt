@@ -23,13 +23,17 @@ viewer
 Viewer@123
 
 User Admin ID: 01a08a8f-5570-7cfe-9553-88d4ccf459b1
-Org ID: 
-SalesRep ID: 
+Org ID: d8ff2e64-91ee-46da-b854-a973a6bca633
+SalesRep ID: 01a08a97-2ea5-79a0-9702-f3942aa493df
 StatusID: f246a4f0-3bbe-433d-8bb6-71d57f3f87f4 - Qualified Status
 ceead36e-44b1-4fa4-b482-5bed4a2215d6 - Converted Status
 lead id: f16472d6-b720-4921-8405-12028aba306f
 customer id: a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92
+opportunity id: 4070637e-2f3d-49f2-bcc5-c921af1596a5
+pipelineId: 68d0bd27-4975-42ee-bbed-f614306efbb0
+stageId: c9aabdf5-b6fe-48cc-a58b-dcb59743da7a - Qualified
 
+Address Post
 {
   "type": "Home",
   "addressLine": "Toril",
@@ -39,7 +43,7 @@ customer id: a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92
   "country": "Philippines",
   "isPrimary": true
 }
-
+Contact Post
 {
   "firstName": "Tom",
   "lastName": "Shelby",
@@ -47,4 +51,18 @@ customer id: a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92
   "email": "Tom",
   "phone": "12345678",
   "isPrimary": true
+}
+
+Opportunity Post
+{
+
+  "customerId": "a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92",
+  "pipelineId": "68d0bd27-4975-42ee-bbed-f614306efbb0",
+  "stageId": "75800c5f-9da7-4908-bd3c-15a6975a36cc",
+  "assignedUserId": "01a08a97-2ea5-79a0-9702-f3942aa493df",
+  "name": "Pos System Implementation",
+  "value": 150000,
+  "expectedCloseDate": "2026-09-25T21:17:33.955Z",
+  "description": "Pos System"
+
 }

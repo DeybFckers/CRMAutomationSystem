@@ -26,10 +26,10 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetCustomerById(Guid id)
+        [HttpGet("{customerId:guid}")]
+        public async Task<IActionResult> GetCustomerById(Guid customerId)
         {
-            var customer = await _customerServices.GetCustomerById(id);
+            var customer = await _customerServices.GetCustomerById(customerId);
             return Ok(customer);
         }
 
@@ -42,18 +42,18 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCustomer(Guid id, UpdateCustomerDto customer)
+        [HttpPut("{customerId:guid}")]
+        public async Task<IActionResult> UpdateCustomer(Guid customerId, UpdateCustomerDto customer)
         {
-            var updatedCustomer = await _customerServices.UpdateCustomer(id, customer);
+            var updatedCustomer = await _customerServices.UpdateCustomer(customerId, customer);
             return Ok(updatedCustomer);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteCustomer(Guid id)
+        [HttpDelete("{customerId:guid}")]
+        public async Task<IActionResult> DeleteCustomer(Guid customerId)
         {
-            await _customerServices.DeleteCustomer(id);
+            await _customerServices.DeleteCustomer(customerId);
             return Ok(new { message = "Customer deleted successfully." });
         }
     }

@@ -46,6 +46,7 @@
 
     public class UpdateOpportunityDto
     {
+        public Guid CustomerId { get; set; }
         public Guid StageId { get; set; }
 
         public Guid? AssignedUserId { get; set; }
@@ -59,5 +60,20 @@
         public string Status { get; set; } = "OPEN";
 
         public string? Description { get; set; }
+    }
+
+    public class UpdateOpportunityStageDto
+    {
+        public Guid StageId { get; set; }
+    }
+
+    public class AssignOpportunityDto
+    {
+        public Guid? AssignedUserId { get; set; }
+    }
+
+    public class UpdateOpportunityStatusDto
+    {
+        public string Status { get; set; } = null!;
     }
 }
