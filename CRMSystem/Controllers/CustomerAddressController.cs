@@ -1,5 +1,6 @@
 ﻿using CRMSystem.Models.DTOs;
 using CRMSystem.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRMSystem.Controllers
@@ -14,7 +15,7 @@ namespace CRMSystem.Controllers
         {
             _customerAddressServices = customerAddressServices;
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
         public async Task<IActionResult> GetCustomerAddresses(Guid customerId)
         {
@@ -32,7 +33,7 @@ namespace CRMSystem.Controllers
                 });
             }
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPost]
         public async Task<IActionResult> CreateAddress(Guid customerId, CreateCustomerAddressDto dto)
         {
@@ -53,7 +54,7 @@ namespace CRMSystem.Controllers
                 });
             }
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPut("{addressId:guid}")]
         public async Task<IActionResult> UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto dto)
         {
@@ -74,7 +75,7 @@ namespace CRMSystem.Controllers
                 });
             }
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{addressId:guid}")]
         public async Task<IActionResult> DeleteAddress(Guid customerId, Guid addressId)
         {

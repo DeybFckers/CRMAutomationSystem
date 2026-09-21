@@ -1,5 +1,6 @@
 ﻿using CRMSystem.Models.DTOs;
 using CRMSystem.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRMSystem.Controllers
@@ -14,7 +15,7 @@ namespace CRMSystem.Controllers
         {
             _customerContactServices = customerContactServices;
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
         public async Task<ActionResult<CustomerContactResponseDto>> GetCustomerContact(Guid customerId)
         {
@@ -29,7 +30,8 @@ namespace CRMSystem.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPost]
         public async Task<IActionResult> CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto)
         {
@@ -51,7 +53,8 @@ namespace CRMSystem.Controllers
                 return Conflict(new { message = ex.Message });
             }
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPut("{contactId:guid}")]
         public async Task<IActionResult> UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto)
         {
@@ -69,7 +72,8 @@ namespace CRMSystem.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{contactId:guid}")]
         public async Task<IActionResult> DeleteCustomerContact(Guid customerId, Guid contactId)
         {
