@@ -1,4 +1,5 @@
 ﻿using CRMSystem.Models.DTOs;
+using CRMSystem.Models.Responses;
 using CRMSystem.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace CRMSystem.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserServices _userServices;
 
@@ -16,56 +17,49 @@ namespace CRMSystem.Controllers
         {
             _userServices = userServices;
         }
+
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetAllUsers( [FromQuery] Guid organizationId)
+        public async Task<IActionResult> GetAllUsers([FromQuery] Guid organizationId)
         {
             var users = await _userServices.GetAllUsers(organizationId);
-
-            return Ok(users);
+            return Success("Users retrieved successfully.", users);
         }
+
         [Authorize(Roles = "SuperAdmin, Admin")]
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<UserResponseDto>> GetUserById( Guid id,[FromQuery] Guid organizationId)
+        [HttpGet("{userId:guid}")]
+        public async Task<IActionResult> GetUserById(Guid userId, [FromQuery] Guid organizationId)
         {
-            var user = await _userServices.GetUserById( id,organizationId);
+            var user = await _userServices.GetUserById(userId, organizationId);
 
             if (user == null)
             {
-                return NotFound(new
-                {
-                    message = "User not found."
-                });
+                return NotFound(new ErrorResponse { Success = false, Message = "User not found.", Data = null });
             }
 
-            return Ok(user);
+            return Success("User retrieved successfully.", user);
         }
+
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet("role/{role}")]
-        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUserByRole(string role,[FromQuery] Guid organizationId)
+        public async Task<IActionResult> GetUserByRole(string role, [FromQuery] Guid organizationId)
         {
-            var users = await _userServices.GetUserByRole(role,organizationId);
-
-            return Ok(users);
+            var users = await _userServices.GetUserByRole(role, organizationId);
+            return Success("Users retrieved successfully.", users);
         }
+
         [Authorize(Roles = "SuperAdmin, Admin")]
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteUser(Guid id, [FromQuery] Guid organizationId)
+        [HttpDelete("{userId:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid userId, [FromQuery] Guid organizationId)
         {
-            var deleted = await _userServices.DeleteUser(id,organizationId);
+            var deleted = await _userServices.DeleteUser(userId, organizationId);
 
             if (!deleted)
             {
-                return NotFound(new
-                {
-                    message = "User not found."
-                });
+                return NotFound(new ErrorResponse { Success = false, Message = "User not found.", Data = null });
             }
 
-            return Ok(new
-            {
-                message = "User deleted successfully."
-            });
+            return Success("User deleted successfully.");
         }
     }
 }

@@ -8,7 +8,7 @@ namespace CRMSystem.Controllers
     [ApiController]
     [Route("api/lead-statuses")]
     [Authorize]
-    public class LeadStatusController : ControllerBase
+    public class LeadStatusController : BaseController
     {
         private readonly ILeadStatusServices _leadStatusServices;
 
@@ -19,30 +19,18 @@ namespace CRMSystem.Controllers
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LeadStatusResponseDto>>> GetAllLeadStatus()
+        public async Task<IActionResult> GetAllLeadStatus()
         {
             var leadStatuses = await _leadStatusServices.GetAllLeadStatus();
-
-            return Ok(leadStatuses);
+            return Success("Lead statuses retrieved successfully.", leadStatuses);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<LeadStatusResponseDto>> GetLeadStatusById(Guid id)
+        public async Task<IActionResult> GetLeadStatusById(Guid id)
         {
-            try
-            {
-                var leadStatus = await _leadStatusServices.GetLeadStatusById(id);
-
-                return Ok(leadStatus);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new
-                {
-                    message = "Lead status not found."
-                });
-            }
+            var leadStatus = await _leadStatusServices.GetLeadStatusById(id);
+            return Success("Lead status retrieved successfully.", leadStatus);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -50,30 +38,15 @@ namespace CRMSystem.Controllers
         public async Task<IActionResult> CreateLeadStatus(CreateLeadStatusDto leadstatus)
         {
             await _leadStatusServices.CreateLeadStatus(leadstatus);
-
-            return StatusCode(StatusCodes.Status201Created, new
-            {
-                message = "Lead status created successfully."
-            });
+            return Created("Lead status created successfully.");
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteLeadStatus(Guid id)
         {
-            try
-            {
-                await _leadStatusServices.DeleteLeadStatusById(id);
-
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new
-                {
-                    message = "Lead status not found."
-                });
-            }
+            await _leadStatusServices.DeleteLeadStatusById(id);
+            return Success("Lead status deleted successfully.");
         }
     }
 }

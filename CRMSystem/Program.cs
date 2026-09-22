@@ -1,4 +1,5 @@
 using CRMSystem.Data;
+using CRMSystem.Middleware;
 using CRMSystem.Models.Configuration;
 using CRMSystem.Repositories.Implementation;
 using CRMSystem.Repositories.Interface;
@@ -114,6 +115,8 @@ builder.Services.AddScoped<ICustomerContactRepository, CustomerContactRepository
 builder.Services.AddScoped<ICustomerContactServices, CustomerContactServices>();
 builder.Services.AddScoped<IOpportunityRepository, OpportunityRepository>();
 builder.Services.AddScoped<IOpportunityServices, OpportunityServices>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+builder.Services.AddScoped<ITaskItemServices, TaskItemServices>();
 
 builder.Services.AddControllers();
 
@@ -121,6 +124,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {

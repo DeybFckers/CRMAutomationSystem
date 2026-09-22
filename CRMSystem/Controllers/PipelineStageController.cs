@@ -8,7 +8,7 @@ namespace CRMSystem.Controllers
     [ApiController]
     [Route("api/pipelines/{pipelineId:guid}/stages")]
     [Authorize]
-    public class PipelineStagesController : ControllerBase
+    public class PipelineStagesController : BaseController
     {
         private readonly IPipelineStageServices _pipelineStageServices;
 
@@ -16,60 +16,37 @@ namespace CRMSystem.Controllers
         {
             _pipelineStageServices = pipelineStageServices;
         }
-        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
+
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpPost]
         public async Task<IActionResult> CreatePipelineStage(Guid pipelineId, CreatePipelineStageDto pipelinestage)
         {
             await _pipelineStageServices.CreatePipelineStage(pipelinestage, pipelineId);
-
-            return StatusCode(StatusCodes.Status201Created, new
-            {
-                message = "Pipeline stage created successfully."
-            });
+            return Created("Pipeline stage created successfully.");
         }
+
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PipelineStageResponseDto>>> GetAllPipelineStages(Guid pipelineId)
+        public async Task<IActionResult> GetAllPipelineStages(Guid pipelineId)
         {
             var stages = await _pipelineStageServices.GetAllPipelineStage(pipelineId);
-
-            return Ok(stages);
+            return Success("Pipeline stages retrieved successfully.", stages);
         }
-        [Authorize(Roles = "SuperAdmin, Admin")]
+
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet("{stageId:guid}")]
-        public async Task<ActionResult<PipelineStageResponseDto>> GetPipelineStage(Guid pipelineId, Guid stageId)
+        public async Task<IActionResult> GetPipelineStage(Guid pipelineId, Guid stageId)
         {
-            try
-            {
-                var stage = await _pipelineStageServices.GetPipelineStage(stageId, pipelineId);
-
-                return Ok(stage);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new
-                {
-                    message = "Pipeline stage not found."
-                });
-            }
+            var stage = await _pipelineStageServices.GetPipelineStage(stageId, pipelineId);
+            return Success("Pipeline stage retrieved successfully.", stage);
         }
-        [Authorize(Roles = "SuperAdmin, Admin")]
+
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{stageId:guid}")]
         public async Task<IActionResult> DeletePipelineStage(Guid pipelineId, Guid stageId)
         {
-            try
-            {
-                await _pipelineStageServices.DeletePipelineStage(stageId, pipelineId);
-
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new
-                {
-                    message = "Pipeline stage not found."
-                });
-            }
+            await _pipelineStageServices.DeletePipelineStage(stageId, pipelineId);
+            return Success("Pipeline stage deleted successfully.");
         }
     }
 }

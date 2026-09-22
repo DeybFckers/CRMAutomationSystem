@@ -8,7 +8,7 @@ namespace CRMSystem.Controllers
     [ApiController]
     [Route("api/lead-sources")]
     [Authorize]
-    public class LeadSourcesController : ControllerBase
+    public class LeadSourcesController : BaseController
     {
         private readonly ILeadSourceServices _leadSourceServices;
 
@@ -16,60 +16,37 @@ namespace CRMSystem.Controllers
         {
             _leadSourceServices = leadSourceServices;
         }
+
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LeadSourceResponseDto>>> GetAllLeadSource()
+        public async Task<IActionResult> GetAllLeadSource()
         {
             var leadSources = await _leadSourceServices.GetAllLeadSource();
-
-            return Ok(leadSources);
+            return Success("Lead sources retrieved successfully.", leadSources);
         }
+
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<LeadSourceResponseDto>> GetLeadSourceById(Guid id)
+        public async Task<IActionResult> GetLeadSourceById(Guid id)
         {
-            try
-            {
-                var leadSource = await _leadSourceServices.GetLeadSourceById(id);
-
-                return Ok(leadSource);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new
-                {
-                    message = "Lead source not found."
-                });
-            }
+            var leadSource = await _leadSourceServices.GetLeadSourceById(id);
+            return Success("Lead source retrieved successfully.", leadSource);
         }
+
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateLeadSource(CreateLeadSourceDto leadsource)
         {
             await _leadSourceServices.CreateLeadSource(leadsource);
-
-            return StatusCode(StatusCodes.Status201Created, new
-            {
-                message = "Lead source created successfully."
-            });
+            return Created("Lead source created successfully.");
         }
+
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteLeadSource(Guid id)
         {
-            try
-            {
-                await _leadSourceServices.DeleteLeadSourceById(id);
-
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new
-                {
-                    message = "Lead source not found."
-                });
-            }
+            await _leadSourceServices.DeleteLeadSourceById(id);
+            return Success("Lead source deleted successfully.");
         }
     }
 }

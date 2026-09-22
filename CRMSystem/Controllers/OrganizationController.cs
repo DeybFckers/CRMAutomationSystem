@@ -1,4 +1,5 @@
 ﻿using CRMSystem.Models.DTOs;
+using CRMSystem.Models.Responses;
 using CRMSystem.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,90 +8,72 @@ namespace CRMSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrganizationController : ControllerBase
+    [Authorize]
+    public class OrganizationController : BaseController
     {
         private readonly IOrganizationServices _organizationServices;
 
-        public OrganizationController(
-            IOrganizationServices organizationServices)
+        public OrganizationController(IOrganizationServices organizationServices)
         {
             _organizationServices = organizationServices;
         }
+
         [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var organizations =
-                await _organizationServices.GetAll();
-
-            return Ok(organizations);
+            var organizations = await _organizationServices.GetAll();
+            return Success("Organizations retrieved successfully.", organizations);
         }
+
         [Authorize(Roles = "SuperAdmin")]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetOrganizationById(Guid id)
+        [HttpGet("{organizationId:guid}")]
+        public async Task<IActionResult> GetOrganizationById(Guid organizationId)
         {
-            var organization =
-                await _organizationServices.GetOrganizationById(id);
+            var organization = await _organizationServices.GetOrganizationById(organizationId);
 
             if (organization == null)
             {
-                return NotFound(new
-                {
-                    message = "Organization not found."
-                });
+                return NotFound(new ErrorResponse { Success = false, Message = "Organization not found.", Data = null });
             }
 
-            return Ok(organization);
+            return Success("Organization retrieved successfully.", organization);
         }
+
         [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
-        public async Task<IActionResult> CreateOrganization(
-            [FromBody] CreateOrganizationDto dto)
+        public async Task<IActionResult> CreateOrganization(CreateOrganizationDto dto)
         {
-            var organization =
-                await _organizationServices.CreateOrganization(dto);
-
-            return CreatedAtAction(
-                nameof(GetOrganizationById),
-                new { id = organization.Id },
-                organization);
+            var organization = await _organizationServices.CreateOrganization(dto);
+            return Created("Organization created successfully.", organization);
         }
+
         [Authorize(Roles = "SuperAdmin")]
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateOrganization(
-            Guid id,
-            [FromBody] UpdateOrganizationDto dto)
+        [HttpPut("{organizationId:guid}")]
+        public async Task<IActionResult> UpdateOrganization(Guid organizationId, UpdateOrganizationDto dto)
         {
-            var updated =
-                await _organizationServices
-                    .UpdateOrganization(id, dto);
+            var updated = await _organizationServices.UpdateOrganization(organizationId, dto);
 
             if (!updated)
             {
-                return NotFound(new
-                {
-                    message = "Organization not found."
-                });
+                return NotFound(new ErrorResponse { Success = false, Message = "Organization not found.", Data = null });
             }
 
-            return NoContent();
+            return Success("Organization updated successfully.");
         }
+
         [Authorize(Roles = "SuperAdmin")]
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteOrganization(Guid id)
+        [HttpDelete("{organizationId:guid}")]
+        public async Task<IActionResult> DeleteOrganization(Guid organizationId)
         {
-            var deleted =
-                await _organizationServices.DeleteOrganization(id);
+            var deleted = await _organizationServices.DeleteOrganization(organizationId);
 
             if (!deleted)
             {
-                return NotFound(new
-                {
-                    message = "Organization not found."
-                });
+                return NotFound(new ErrorResponse { Success = false, Message = "Organization not found.", Data = null });
             }
 
-            return NoContent();
+            return Success("Organization deleted successfully.");
         }
     }
 }

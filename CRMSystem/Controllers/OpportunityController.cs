@@ -1,12 +1,14 @@
 ﻿using CRMSystem.Models.DTOs;
 using CRMSystem.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRMSystem.Controllers
 {
     [Route("api/opportunities")]
     [ApiController]
-    public class OpportunityController : ControllerBase
+    [Authorize]
+    public class OpportunityController : BaseController
     {
         private readonly IOpportunityServices _opportunityServices;
 
@@ -15,60 +17,68 @@ namespace CRMSystem.Controllers
             _opportunityServices = opportunityServices;
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPost]
         public async Task<IActionResult> CreateOpportunity(CreateOpportunityDto opportunity)
         {
             await _opportunityServices.CreateOpportunity(opportunity);
-            return Ok(new { message = "Opportunity created successfully." });
+            return Created("Opportunity created successfully.");
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
         public async Task<IActionResult> GetAllOpportunity()
         {
             var opportunities = await _opportunityServices.GetAllOpportunity();
-            return Ok(opportunities);
+            return Success("Opportunities retrieved successfully.", opportunities);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet("{opportunityId:guid}")]
         public async Task<IActionResult> GetOpportunityById(Guid opportunityId)
         {
             var opportunity = await _opportunityServices.GetOpportunityById(opportunityId);
-            return Ok(opportunity);
+            return Success("Opportunity retrieved successfully.", opportunity);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPut("{opportunityId:guid}")]
         public async Task<IActionResult> UpdateOpportunity(Guid opportunityId, UpdateOpportunityDto opportunity)
         {
             await _opportunityServices.UpdateOpportunity(opportunityId, opportunity);
-            return Ok(new { message = "Opportunity updated successfully." });
+            return Success("Opportunity updated successfully.");
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{opportunityId:guid}")]
         public async Task<IActionResult> DeleteOpportunity(Guid opportunityId)
         {
             await _opportunityServices.DeleteOpportunity(opportunityId);
-            return Ok(new { message = "Opportunity deleted successfully." });
+            return Success("Opportunity deleted successfully.");
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPatch("{opportunityId:guid}/stage/{stageId:guid}")]
         public async Task<IActionResult> UpdateOpportunityStage(Guid opportunityId, Guid stageId)
         {
             await _opportunityServices.UpdateOpportunityStage(opportunityId, stageId);
-            return Ok(new { message = "Opportunity stage updated successfully." });
+            return Success("Opportunity stage updated successfully.");
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPatch("{opportunityId:guid}/assign/{assignedUserId:guid}")]
         public async Task<IActionResult> AssignOpportunity(Guid opportunityId, Guid? assignedUserId)
         {
             await _opportunityServices.AssignOpportunity(opportunityId, assignedUserId);
-            return Ok(new { message = "Opportunity assignment updated successfully." });
+            return Success("Opportunity assignment updated successfully.");
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPatch("{opportunityId:guid}/status")]
         public async Task<IActionResult> UpdateOpportunityStatus(Guid opportunityId, string status)
         {
             await _opportunityServices.UpdateOpportunityStatus(opportunityId, status);
-            return Ok(new { message = "Opportunity status updated successfully." });
+            return Success("Opportunity status updated successfully.");
         }
     }
 }

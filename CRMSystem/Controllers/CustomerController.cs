@@ -8,7 +8,7 @@ namespace CRMSystem.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class CustomerController : ControllerBase
+    public class CustomerController : BaseController
     {
         private readonly ICustomerServices _customerServices;
 
@@ -22,7 +22,7 @@ namespace CRMSystem.Controllers
         public async Task<IActionResult> GetAllCustomer()
         {
             var customers = await _customerServices.GetAllCustomer();
-            return Ok(customers);
+            return Success("Customers retrieved successfully.", customers);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
@@ -30,7 +30,7 @@ namespace CRMSystem.Controllers
         public async Task<IActionResult> GetCustomerById(Guid customerId)
         {
             var customer = await _customerServices.GetCustomerById(customerId);
-            return Ok(customer);
+            return Success("Customer retrieved successfully.", customer);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
@@ -38,7 +38,7 @@ namespace CRMSystem.Controllers
         public async Task<IActionResult> CreateCustomer(CreateCustomerDto customer)
         {
             await _customerServices.CreateCustomer(customer);
-            return Ok(new { message = "Customer created successfully." });
+            return Created("Customer created successfully.");
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
@@ -46,7 +46,7 @@ namespace CRMSystem.Controllers
         public async Task<IActionResult> UpdateCustomer(Guid customerId, UpdateCustomerDto customer)
         {
             var updatedCustomer = await _customerServices.UpdateCustomer(customerId, customer);
-            return Ok(updatedCustomer);
+            return Success("Customer updated successfully.", updatedCustomer);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
@@ -54,7 +54,7 @@ namespace CRMSystem.Controllers
         public async Task<IActionResult> DeleteCustomer(Guid customerId)
         {
             await _customerServices.DeleteCustomer(customerId);
-            return Ok(new { message = "Customer deleted successfully." });
+            return Success("Customer deleted successfully.");
         }
     }
 }
