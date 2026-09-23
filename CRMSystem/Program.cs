@@ -117,6 +117,8 @@ builder.Services.AddScoped<IOpportunityRepository, OpportunityRepository>();
 builder.Services.AddScoped<IOpportunityServices, OpportunityServices>();
 builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 builder.Services.AddScoped<ITaskItemServices, TaskItemServices>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IActivityServices, ActivityServices>();
 
 builder.Services.AddControllers();
 
