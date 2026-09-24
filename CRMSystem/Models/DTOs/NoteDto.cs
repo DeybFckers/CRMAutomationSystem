@@ -25,4 +25,13 @@
 
         public string Content { get; set; } = null!;
     }
+
+    public class UpdateNoteDto
+    {
+        public Guid? CustomerId { get; set; }
+        public Guid? LeadId { get; set; }
+        public Guid? OpportunityId { get; set; }
+
+        public string Content { get; set; } = null!;
+    }
 }
