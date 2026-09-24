@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
