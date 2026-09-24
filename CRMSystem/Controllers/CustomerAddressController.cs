@@ -32,7 +32,7 @@ namespace CRMSystem.Controllers
             return Created("Customer address created successfully.");
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
         [HttpPut("{addressId:guid}")]
         public async Task<IActionResult> UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto dto)
         {

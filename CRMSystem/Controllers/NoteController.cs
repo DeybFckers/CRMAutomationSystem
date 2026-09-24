@@ -16,7 +16,7 @@ namespace CRMSystem.Controllers
         {
             _noteServices = noteServices;
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
         [HttpPost]
         public async Task<IActionResult> CreateNote(CreateNoteDto dto)
         {
@@ -24,7 +24,7 @@ namespace CRMSystem.Controllers
 
             return Created("Note created successfully.", note);
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
         public async Task<IActionResult> GetAllNotes()
         {
@@ -32,7 +32,7 @@ namespace CRMSystem.Controllers
 
             return Success("Notes retrieved successfully.", notes);
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet("{noteId:guid}")]
         public async Task<IActionResult> GetNoteById(Guid noteId)
         {
@@ -43,7 +43,8 @@ namespace CRMSystem.Controllers
 
             return Success("Note retrieved successfully.", note);
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
         [HttpPut("{noteId:guid}")]
         public async Task<IActionResult> UpdateNote(Guid noteId, UpdateNoteDto dto)
         {
@@ -51,7 +52,8 @@ namespace CRMSystem.Controllers
 
             return Success("Note updated successfully.", note);
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpDelete("{noteId:guid}")]
         public async Task<IActionResult> DeleteNote(Guid noteId)
         {

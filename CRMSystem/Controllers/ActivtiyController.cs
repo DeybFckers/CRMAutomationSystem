@@ -16,7 +16,7 @@ namespace CRMSystem.Controllers
         {
             _activityServices = activityServices;
         }
-
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPost]
         public async Task<IActionResult> CreateActivity(CreateActivityDto dto)
         {
@@ -25,6 +25,7 @@ namespace CRMSystem.Controllers
             return Created("Activity created successfully.", activity);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
         public async Task<IActionResult> GetAllActivities()
         {
@@ -33,6 +34,7 @@ namespace CRMSystem.Controllers
             return Success("Activities retrieved successfully.", activities);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet("{activityId:guid}")]
         public async Task<IActionResult> GetActivityById(Guid activityId)
         {
@@ -43,7 +45,8 @@ namespace CRMSystem.Controllers
 
             return Success("Activity retrieved successfully.", activity);
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
         [HttpPut("{activityId:guid}")]
         public async Task<IActionResult> UpdateActivity(Guid activityId, UpdateActivityDto dto)
         {
@@ -51,7 +54,8 @@ namespace CRMSystem.Controllers
 
             return Success("Activity updated successfully.", activity);
         }
-
+        
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{activityId:guid}")]
         public async Task<IActionResult> DeleteActivity(Guid activityId)
         {

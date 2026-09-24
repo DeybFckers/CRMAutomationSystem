@@ -26,10 +26,10 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetLeadSourceById(Guid id)
+        [HttpGet("{leadSourceId:guid}")]
+        public async Task<IActionResult> GetLeadSourceById(Guid leadSourceId)
         {
-            var leadSource = await _leadSourceServices.GetLeadSourceById(id);
+            var leadSource = await _leadSourceServices.GetLeadSourceById(leadSourceId);
             return Success("Lead source retrieved successfully.", leadSource);
         }
 
@@ -42,10 +42,10 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteLeadSource(Guid id)
+        [HttpDelete("{leadSourceId:guid}")]
+        public async Task<IActionResult> DeleteLeadSource(Guid leadSourceId)
         {
-            await _leadSourceServices.DeleteLeadSourceById(id);
+            await _leadSourceServices.DeleteLeadSourceById(leadSourceId);
             return Success("Lead source deleted successfully.");
         }
     }

@@ -26,10 +26,10 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetLeadById(Guid id)
+        [HttpGet("{leadId:guid}")]
+        public async Task<IActionResult> GetLeadById(Guid leadId)
         {
-            var lead = await _leadServices.GetLeadById(id);
+            var lead = await _leadServices.GetLeadById(leadId);
             return Success("Lead retrieved successfully.", lead);
         }
 
@@ -42,42 +42,42 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateLead(Guid id, UpdateLeadDto lead)
+        [HttpPut("{leadId:guid}")]
+        public async Task<IActionResult> UpdateLead(Guid leadId, UpdateLeadDto lead)
         {
-            var updatedLead = await _leadServices.UpdateLead(id, lead);
+            var updatedLead = await _leadServices.UpdateLead(leadId, lead);
             return Success("Lead updated successfully.", updatedLead);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
-        [HttpPatch("{id:guid}/assign")]
-        public async Task<IActionResult> AssignLead(Guid id, AssignLeadDto lead)
+        [HttpPatch("{leadId:guid}/assign")]
+        public async Task<IActionResult> AssignLead(Guid leadId, AssignLeadDto lead)
         {
-            var updatedLead = await _leadServices.AssignLead(id, lead);
+            var updatedLead = await _leadServices.AssignLead(leadId, lead);
             return Success("Lead assigned successfully.", updatedLead);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
-        [HttpPatch("{id:guid}/status")]
-        public async Task<IActionResult> UpdateLeadStatus(Guid id, UpdateLeadStatusDto lead)
+        [HttpPatch("{leadId:guid}/status")]
+        public async Task<IActionResult> UpdateLeadStatus(Guid leadId, UpdateLeadStatusDto lead)
         {
-            var updatedLead = await _leadServices.UpdateLeadStatus(id, lead);
+            var updatedLead = await _leadServices.UpdateLeadStatus(leadId, lead);
             return Success("Lead status updated successfully.", updatedLead);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
-        [HttpPost("{id:guid}/convert")]
-        public async Task<IActionResult> ConvertLeadToCustomer(Guid id)
+        [HttpPost("{leadId:guid}/convert")]
+        public async Task<IActionResult> ConvertLeadToCustomer(Guid leadId)
         {
-            await _leadServices.ConvertLeadToCustomer(id);
+            await _leadServices.ConvertLeadToCustomer(leadId);
             return Success("Lead converted to customer successfully.");
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteLead(Guid id)
+        [HttpDelete("{leadId:guid}")]
+        public async Task<IActionResult> DeleteLead(Guid leadId)
         {
-            await _leadServices.DeleteLead(id);
+            await _leadServices.DeleteLead(leadId);
             return Success("Lead deleted successfully.");
         }
     }
