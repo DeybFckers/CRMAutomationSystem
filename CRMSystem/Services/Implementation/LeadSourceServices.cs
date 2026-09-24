@@ -42,6 +42,12 @@ namespace CRMSystem.Services.Implementation
         {
             var organizationId = _currentUserServices.OrganizationId;
 
+            var existingLeadSource = await _leadSourceRepository.GetSourceByName(leadsource.Name, organizationId);
+
+            if (existingLeadSource != null)
+                throw new InvalidOperationException(
+                    "A lead source with this name already exists.");
+
             var leadSource = leadsource.Adapt<LeadSource>();
 
             leadSource.Id = Guid.NewGuid();

@@ -1,4 +1,4 @@
-﻿namespace CRMSystem.Validators.Customer
+﻿namespace CRMSystem.Validators
 {
     public sealed class ValidationAssemblyMarker
     {

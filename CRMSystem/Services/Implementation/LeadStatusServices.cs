@@ -42,6 +42,12 @@ namespace CRMSystem.Services.Implementation
         {
             var organizationId = _currentUserServices.OrganizationId;
 
+            var existingLeadStatus = await _leadStatusRepository.GetStatusByName(leadstatus.Name, organizationId);
+
+            if (existingLeadStatus != null)
+                throw new InvalidOperationException(
+                    "A lead status with this name already exists.");
+
             var leadStatus = leadstatus.Adapt<LeadStatus>();
 
             leadStatus.Id = Guid.NewGuid();

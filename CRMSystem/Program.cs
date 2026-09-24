@@ -6,7 +6,7 @@ using CRMSystem.Repositories.Implementation;
 using CRMSystem.Repositories.Interface;
 using CRMSystem.Services.Implementation;
 using CRMSystem.Services.Interface;
-using CRMSystem.Validators.Customer;
+using CRMSystem.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

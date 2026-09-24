@@ -8,5 +8,6 @@ namespace CRMSystem.Repositories.Interface
         Task<LeadStatus?> GetLeadStatusById(Guid id, Guid organizationId);
         Task CreateLeadStatus(LeadStatus leadstatus);
         Task DeleteLeadStatus(Guid id, Guid organizationId);
+        Task<LeadStatus?> GetStatusByName(string name, Guid organizationId);
     }
 }

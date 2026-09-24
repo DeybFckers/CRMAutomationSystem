@@ -44,5 +44,10 @@ namespace CRMSystem.Repositories.Implementation
             _context.LeadStatuses.Remove(leadStatus);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<LeadStatus?> GetStatusByName(string name, Guid organizationId)
+        {
+            await _context.LeadStatuses.FirstOrDefaultAsync(x => x.Name == name && x.OrganizationId == organizationId);
+        }
     }
 }

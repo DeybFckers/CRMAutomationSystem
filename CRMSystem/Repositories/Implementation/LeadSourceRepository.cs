@@ -44,5 +44,11 @@ namespace CRMSystem.Repositories.Implementation
             _context.LeadSources.Remove(leadSource);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<LeadSource?> GetSourceByName(string name, Guid organizationId)
+        {
+            return await _context.LeadSources
+                .FirstOrDefaultAsync(x => x.Name == name && x.OrganizationId == organizationId);
+        }
     }
 }

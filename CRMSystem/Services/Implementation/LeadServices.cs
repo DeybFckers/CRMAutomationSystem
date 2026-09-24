@@ -18,6 +18,8 @@ namespace CRMSystem.Services.Implementation
         private readonly ICustomerRepository _customerRepository;
         private readonly IOrganizationRepository _organizationRepository;
         private readonly ICustomerCodeServices _customerCodeServices;
+        private readonly ILeadSourceRepository _leadSourceRepository;
+        private readonly ILeadStatusRepository _leadStatusRepository;
 
         public LeadServices(
             ILeadRepository leadRepository,
@@ -26,7 +28,9 @@ namespace CRMSystem.Services.Implementation
             UserManager<ApplicationUser> userManager,
             ICustomerRepository customerRepository,
             IOrganizationRepository organizationRepository,   
-            ICustomerCodeServices customerCodeServices)
+            ICustomerCodeServices customerCodeServices,
+            ILeadSourceRepository leadSourceRepository,
+            ILeadStatusRepository leadStatusRepository)
         {
             _leadRepository = leadRepository;
             _currentUserServices = currentUserServices;
@@ -35,6 +39,8 @@ namespace CRMSystem.Services.Implementation
             _customerRepository = customerRepository;
             _organizationRepository = organizationRepository; 
             _customerCodeServices = customerCodeServices;
+            _leadSourceRepository = leadSourceRepository;
+            _leadStatusRepository = leadStatusRepository;
         }
 
 
@@ -64,6 +70,14 @@ namespace CRMSystem.Services.Implementation
             var organizationId = _currentUserServices.OrganizationId;
             var currentUserId = _currentUserServices.UserId;
             var currentUserRole = _currentUserServices.Role;
+
+            var sourceExists = await _leadSourceRepository.GetLeadSourceById(lead.SourceId, organizationId);
+            if(sourceExists == null)
+                throw new KeyNotFoundException("Lead source not found.");
+
+            var statusExists = await _leadStatusRepository.GetLeadStatusById(lead.StatusId, organizationId);
+            if(statusExists == null)
+                throw new KeyNotFoundException("Lead status not found.");
 
             var newLead = lead.Adapt<Lead>();
 
@@ -105,6 +119,15 @@ namespace CRMSystem.Services.Implementation
 
             if (existingLead == null)
                 throw new KeyNotFoundException("Lead not found.");
+
+            var sourceExists = await _leadSourceRepository.GetLeadSourceById(lead.SourceId, organizationId);
+            if (sourceExists == null)
+                throw new KeyNotFoundException("Lead source not found.");
+
+            var statusExists = await _leadStatusRepository.GetLeadStatusById(lead.StatusId, organizationId);
+            if (statusExists == null)
+                throw new KeyNotFoundException("Lead status not found.");
+
 
             lead.Adapt(existingLead);
 
