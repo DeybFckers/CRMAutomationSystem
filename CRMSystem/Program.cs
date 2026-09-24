@@ -6,6 +6,9 @@ using CRMSystem.Repositories.Implementation;
 using CRMSystem.Repositories.Interface;
 using CRMSystem.Services.Implementation;
 using CRMSystem.Services.Interface;
+using CRMSystem.Validators.Customer;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -134,6 +137,9 @@ builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IAuditLogServices, AuditLogServices>();
 
 builder.Services.AddControllers();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<ValidationAssemblyMarker>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
