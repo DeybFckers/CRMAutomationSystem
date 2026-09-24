@@ -47,7 +47,14 @@ namespace CRMSystem.Repositories.Implementation
 
         public async Task<LeadStatus?> GetStatusByName(string name, Guid organizationId)
         {
-            await _context.LeadStatuses.FirstOrDefaultAsync(x => x.Name == name && x.OrganizationId == organizationId);
+            var status = _context.LeadStatuses.FirstOrDefault(x =>x.Name == name && x.OrganizationId == organizationId);
+
+            if (status != null)
+            {
+                return status;
+            }
+
+            return null;
         }
     }
 }
