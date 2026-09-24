@@ -1,4 +1,5 @@
 using CRMSystem.Data;
+using CRMSystem.Interceptors;
 using CRMSystem.Middleware;
 using CRMSystem.Models.Configuration;
 using CRMSystem.Repositories.Implementation;
@@ -13,10 +14,20 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<ICurrentUserServices, CurrentUserServices>();
+builder.Services.AddScoped<AuditSaveChangesInterceptor>();
+
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    );
+
+    options.AddInterceptors(
+        serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 {
@@ -87,7 +98,6 @@ builder.Services
     });
 
 
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IOrganizationServices, OrganizationServices>();
 builder.Services.AddHttpClient<IAutomationServices, AutomationServices>();
@@ -95,7 +105,6 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
-builder.Services.AddScoped<ICurrentUserServices, CurrentUserServices>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<ILeadSourceRepository, LeadSourceRepository>();
@@ -119,6 +128,10 @@ builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 builder.Services.AddScoped<ITaskItemServices, TaskItemServices>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IActivityServices, ActivityServices>();
+builder.Services.AddScoped<INoteRepository, NoteRepository>();
+builder.Services.AddScoped<INoteServices, NoteServices>();
+builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+builder.Services.AddScoped<IAuditLogServices, AuditLogServices>();
 
 builder.Services.AddControllers();
 

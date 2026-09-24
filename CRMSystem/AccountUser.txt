@@ -62,3 +62,10 @@ Activity Post
   "description": "Discussed the customer's requirements.",
   "activityDate": "2026-09-24T09:00:00Z"
 }
+Note Post
+{
+  "customerId": "a3a1937c-4ddf-4f2a-b25f-fe9dfc1b1a92",
+  "leadId": "71d3ee1a-ed9d-4e5f-b3e1-ba6b79d2b739",
+  "opportunityId": "f63a2c60-ab62-4443-a692-08c0c2407e4a",
+  "content": "Dont Forget to Remind The payment"
+}
