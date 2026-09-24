@@ -76,15 +76,28 @@ namespace CRMSystem.Services.Implementation
                 throw new Exception("Customer not found");
             }
 
-            var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value, organization);
-
-            if(assignedUser == null)
+            if (opportunity.AssignedUserId.HasValue)
             {
-                throw new Exception("Assigned user not found");
+                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value,organization);
+
+                if (assignedUser == null)
+                    throw new KeyNotFoundException("Assigned user not found.");
             }
-            
+
+
             var pipeline = await _pipelinesRepository.GetPipelineById(opportunity.PipelineId, organization.Id);
+            if (pipeline == null)
+                throw new KeyNotFoundException("Pipeline not found.");
+
             var stage = await _pipilineStageRepository.GetPipelineStageById(opportunity.StageId, organization.Id);
+
+            if (stage == null)
+                throw new KeyNotFoundException(
+                    "Pipeline stage not found.");
+
+            if (stage.PipelineId != opportunity.PipelineId)
+                throw new InvalidOperationException(
+                    "Pipeline stage does not belong to the selected pipeline.");
 
             var newOpporunity = opportunity.Adapt<Opportunity>();
 
@@ -140,26 +153,30 @@ namespace CRMSystem.Services.Implementation
             }
                                                                     //you can get the customer id inside of current the organization id
             var customer = await _customerRepository.GetCustomerById(opportunity.CustomerId, _currentUserServices.OrganizationId);
-            if(customer == null)
-            {
-                throw new Exception("Customer not found");
-            }
-                                                                            //you can get the stage id inside of pipeline id not the organization
+
+            if (customer == null)
+                throw new KeyNotFoundException("Customer not found.");
+
+            //you can get the stage id inside of pipeline id not the organization
             var stage = await _pipilineStageRepository.GetPipelineStageById(opportunity.StageId, existingOpportunity.PipelineId);
 
             if (stage == null)
-            {
-                throw new Exception("Pipeline stage not found");
-            }
+                throw new KeyNotFoundException(
+                    "Pipeline stage not found.");
 
             if (opportunity.AssignedUserId.HasValue)
             {
-                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value, await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId));
+                var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
+
+                if (organization == null)
+                    throw new KeyNotFoundException(
+                        "Organization not found.");
+
+                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value, organization);
 
                 if (assignedUser == null)
-                {
-                    throw new Exception("Assigned user not found");
-                }
+                    throw new KeyNotFoundException(
+                        "Assigned user not found.");
             }
 
             opportunity.Adapt(existingOpportunity);

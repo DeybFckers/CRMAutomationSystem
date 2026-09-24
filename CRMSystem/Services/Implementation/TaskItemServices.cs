@@ -39,8 +39,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.LeadId.HasValue)
             {
-                var lead = await _leadRepository
-                    .GetLeadById(task.LeadId.Value, organization.Id);
+                var lead = await _leadRepository.GetLeadById(task.LeadId.Value, organization.Id);
 
                 if (lead == null)
                 {
@@ -49,8 +48,7 @@ namespace CRMSystem.Services.Implementation
             }
             if (task.CustomerId.HasValue)
             {
-                var customer = await _customerRepository
-                    .GetCustomerById(task.CustomerId.Value, organization.Id);
+                var customer = await _customerRepository.GetCustomerById(task.CustomerId.Value, organization.Id);
 
                 if (customer == null)
                 {
@@ -60,8 +58,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.OpportunityId.HasValue)
             {
-                var opportunity = await _opportunityRepository
-                    .GetOpportunityById(task.OpportunityId.Value, organization.Id);
+                var opportunity = await _opportunityRepository.GetOpportunityById(task.OpportunityId.Value, organization.Id);
 
                 if (opportunity == null)
                 {
@@ -70,7 +67,10 @@ namespace CRMSystem.Services.Implementation
             }
 
             var newTaskItem = task.Adapt<TaskItem>();
+            newTaskItem.Id = Guid.NewGuid();
             newTaskItem.OrganizationId = organization.Id;
+            newTaskItem.CreatedAt = DateTime.UtcNow;
+            newTaskItem.Status = "PENDING";
             newTaskItem.CreatedAt = DateTime.UtcNow;
 
             await _taskItemRepository.CreateTask(newTaskItem);
@@ -167,7 +167,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task == null)
             {
-                throw new Exception("Task not found.");
+                throw new KeyNotFoundException("Task not found.");
             }
 
             task.Status = "COMPLETED";
@@ -185,7 +185,7 @@ namespace CRMSystem.Services.Implementation
                 throw new Exception("Task not found.");
             }
 
-            task.Status = status;
+            status = status.ToUpperInvariant();
 
             if (status == "COMPLETED")
             {

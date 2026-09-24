@@ -54,6 +54,11 @@ namespace CRMSystem.Services.Implementation
         {
             var organizationId = _currentUserServices.OrganizationId;
 
+            var pipeline = await _pipelinesRepository.GetPipelineById(id, organizationId);
+
+            if (pipeline == null)
+                throw new KeyNotFoundException("Pipeline not found.");
+
             await _pipelinesRepository.DeletePipeline(id, organizationId);
         }
     }

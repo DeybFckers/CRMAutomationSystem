@@ -10,17 +10,53 @@ namespace CRMSystem.Services.Implementation
     {
         private readonly INoteRepository _noteRepository;
         private readonly ICurrentUserServices _currentUserServices;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly ILeadRepository _leadRepository;
+        private readonly IOpportunityRepository _opportunityRepository;
 
-        public NoteServices(INoteRepository noteRepository, ICurrentUserServices currentUserServices)
+        public NoteServices(INoteRepository noteRepository, ICurrentUserServices currentUserServices, ICustomerRepository customerRepository, ILeadRepository leadRepository, IOpportunityRepository opportunityRepository)
         {
             _noteRepository = noteRepository;
             _currentUserServices = currentUserServices;
+            _customerRepository = customerRepository;
+            _leadRepository = leadRepository;
+            _opportunityRepository = opportunityRepository;
         }
 
         public async Task<NoteResponseDto> CreateNote(CreateNoteDto dto)
         {
             var organizationId = _currentUserServices.OrganizationId;
             var userId = _currentUserServices.UserId;
+
+            if (dto.CustomerId.HasValue)
+            {
+                var customer = await _customerRepository.GetCustomerById(
+                    dto.CustomerId.Value,
+                    organizationId);
+
+                if (customer == null)
+                    throw new KeyNotFoundException("Customer not found.");
+            }
+
+            if (dto.LeadId.HasValue)
+            {
+                var lead = await _leadRepository.GetLeadById(
+                    dto.LeadId.Value,
+                    organizationId);
+
+                if (lead == null)
+                    throw new KeyNotFoundException("Lead not found.");
+            }
+
+            if (dto.OpportunityId.HasValue)
+            {
+                var opportunity = await _opportunityRepository.GetOpportunityById(
+                    dto.OpportunityId.Value,
+                    organizationId);
+
+                if (opportunity == null)
+                    throw new KeyNotFoundException("Opportunity not found.");
+            }
 
             var note = dto.Adapt<Note>();
             note.Id = Guid.NewGuid();
