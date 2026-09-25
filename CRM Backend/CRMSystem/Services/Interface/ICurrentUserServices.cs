@@ -4,7 +4,7 @@
     {
         Guid UserId { get; }
         Guid OrganizationId { get; }
-        string? Role { get; }
+        List<string> Roles { get; }
 
     }
 }

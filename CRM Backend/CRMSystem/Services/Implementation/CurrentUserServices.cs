@@ -43,11 +43,15 @@ namespace CRMSystem.Services.Implementation
             }
         }
 
-        public string? Role
+        public List<string> Roles
         {
             get
             {
-                return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role);
+                return _httpContextAccessor.HttpContext?.User
+                    .FindAll(ClaimTypes.Role)
+                    .Select(x => x.Value)
+                    .ToList()
+                    ?? new List<string>();
             }
         }
     }

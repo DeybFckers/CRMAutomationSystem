@@ -69,7 +69,7 @@ namespace CRMSystem.Services.Implementation
         {
             var organizationId = _currentUserServices.OrganizationId;
             var currentUserId = _currentUserServices.UserId;
-            var currentUserRole = _currentUserServices.Role;
+            var currentUserRoles = _currentUserServices.Roles;
 
             var sourceExists = await _leadSourceRepository.GetLeadSourceById(lead.SourceId, organizationId);
             if(sourceExists == null)
@@ -89,7 +89,7 @@ namespace CRMSystem.Services.Implementation
 
             if (lead.AssignedUserId.HasValue)
             {
-                if (currentUserRole != "Admin" && currentUserRole != "SalesManager")
+                if (!currentUserRoles.Contains("Admin") && !currentUserRoles.Contains("SalesManager"))
                     throw new UnauthorizedAccessException("You are not allowed to assign a lead to another user.");
 
                 await ValidateAssignedUser(lead.AssignedUserId.Value, organizationId);
@@ -98,7 +98,7 @@ namespace CRMSystem.Services.Implementation
             }
             else
             {
-                if (currentUserRole == "Admin")
+                if (currentUserRoles.Contains("Admin"))
                 {
                     newLead.AssignedUserId = null;
                 }
@@ -143,9 +143,9 @@ namespace CRMSystem.Services.Implementation
         public async Task<LeadResponseDto> AssignLead(Guid id, AssignLeadDto lead)
         {
             var organizationId = _currentUserServices.OrganizationId;
-            var currentUserRole = _currentUserServices.Role;
+            var currentUserRoles = _currentUserServices.Roles;
 
-            if (currentUserRole != "Admin" && currentUserRole != "SalesManager")
+            if (!currentUserRoles.Contains("Admin") && !currentUserRoles.Contains("SalesManager"))
                 throw new UnauthorizedAccessException("You are not allowed to assign leads.");
 
             var existingLead = await _leadRepository.GetLeadById(id, organizationId);

@@ -4,6 +4,7 @@ using CRMSystem.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace CRMSystem.Controllers
 {
@@ -13,13 +14,16 @@ namespace CRMSystem.Controllers
     {
         private readonly IAuthServices _authServices;
         private readonly JwtSettings _jwtSettings;
+        private readonly ICurrentUserServices _currentUserServices;
 
         public AuthController(
             IAuthServices authServices,
-            IOptions<JwtSettings> jwtSettings)
+            IOptions<JwtSettings> jwtSettings,
+            ICurrentUserServices currentUserServices)
         {
             _authServices = authServices;
             _jwtSettings = jwtSettings.Value;
+            _currentUserServices = currentUserServices;
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -122,6 +126,21 @@ namespace CRMSystem.Controllers
             return Ok(new
             {
                 message = "Logout successful."
+            });
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult GetCurrentUser()
+        {
+            return Ok(new CurrentUserResponseDto
+            {
+                UserId = _currentUserServices.UserId,
+                OrganizationId = _currentUserServices.OrganizationId,
+                Roles = _currentUserServices.Roles,
+                Email = User.FindFirst(JwtRegisteredClaimNames.Email)?.Value?? string.Empty,
+                FirstName = User.FindFirst("first_name")?.Value ?? string.Empty,
+                LastName = User.FindFirst("last_name")?.Value ?? string.Empty
             });
         }
 
