@@ -2,6 +2,9 @@
 superadmin
 Admin@123456
 
+frontendtest@gmail.com
+Frontend@123
+
 Admin
 admin
 Admin@123
