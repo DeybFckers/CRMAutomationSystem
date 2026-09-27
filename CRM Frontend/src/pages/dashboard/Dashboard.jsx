@@ -1,13 +1,24 @@
-export const Dashboard = () => {
-    return (
-        <div className="min-h-screen bg-background p-8">
-            <h1 className="text-3xl font-bold text-text">
-                Dashboard
-            </h1>
+import { useAuth } from "../../context/AuthContext";
 
-            <p className="mt-2 text-text-muted">
-                Welcome to your CRM dashboard.
-            </p>
+export const Dashboard = () => {
+
+    const { user } = useAuth();
+
+    return (
+        <div className="min-h-screen bg-background flex">
+
+            <main className="flex-1 p-8">
+
+                <h2 className="text-2xl font-bold text-text">
+                    Welcome, {user?.firstName}
+                </h2>
+
+                <p className="mt-1 text-sm text-text-secondary">
+                    Here's what's happening in your CRM today.
+                </p>
+
+            </main>
+
         </div>
     );
 };
