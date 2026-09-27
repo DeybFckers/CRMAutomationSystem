@@ -1,37 +1,39 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import { Login } from "../pages/auth/Login";
 import { Dashboard } from "../pages/dashboard/Dashboard";
+
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
+import { Applayout } from "../components/layout/Applayout";
+import { Leads } from "../pages/leads/Leads";
 
 export const AppRoutes = () => {
     return (
         <Routes>
-
-            {/* =========================
-                Public Routes
-            ========================= */}
 
             <Route
                 path="/login"
                 element={<Login />}
             />
 
-            {/* =========================
-                Protected Routes
-            ========================= */}
-
             <Route element={<ProtectedRoute />}>
 
-                <Route
-                    path="/dashboard"
-                    element={<Dashboard />}
-                />
+                {/* Shared Application Layout */}
+                <Route element={<Applayout />}>
+
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
+
+                    <Route 
+                        path="/leads" 
+                        element={<Leads/>}
+                    />
+
+                </Route>
 
             </Route>
-
-            {/* =========================
-                Unknown Route
-            ========================= */}
 
             <Route
                 path="*"

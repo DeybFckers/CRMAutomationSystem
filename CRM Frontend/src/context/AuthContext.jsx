@@ -23,8 +23,6 @@ export const AuthProvider = ({ children }) => {
         // The backend creates the HttpOnly authentication cookies.
         await loginApi(email, password);
 
-        alert("This is From Auth Context")
-
         // Get the currently authenticated user's information.
         const currentUser = await getCurrentUser();
 
