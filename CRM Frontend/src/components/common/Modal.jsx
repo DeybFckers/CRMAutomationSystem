@@ -7,7 +7,7 @@ export const Modal = ({isOpen, onClose, title, children}) =>{
     return (
         <div className=" fixed inset-0  flex items-center justify-center bg-black/50 p-4">
             <div className="w-full max-w-fit rounded-xl border-border bg-surface shadow-2xl">
-                <div className="flex items-center justify-between  px-6 py-4">
+                <div className="flex items-center justify-between  px-6 py-3">
                     <h2 className="text-xl font-semibold text-text">
                         {title}
                     </h2>
@@ -23,7 +23,7 @@ export const Modal = ({isOpen, onClose, title, children}) =>{
                     </button>
                 </div>
 
-                <div className="p-6">
+                <div className="px-6 py-3">
                     {children}
                 </div>
             </div>
