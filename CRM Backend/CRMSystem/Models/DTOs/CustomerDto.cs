@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public Guid OrganizationId { get; set; }
 
-        public Guid? AssignedUserId { get; set; }
+        public UserMinimalDto? AssignedUser { get; set; }
 
         public string CustomerCode { get; set; } = null!;
 
@@ -49,6 +49,16 @@
         public string? Phone { get; set; }
 
         public string Status { get; set; } = "ACTIVE";
+    }
+
+    public class CustomerMinimalDto
+    {
+        public Guid Id { get; set; }
+
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? CompanyName { get; set; }
+        public string? Email { get; set; }
     }
 
     public class CustomerContactResponseDto

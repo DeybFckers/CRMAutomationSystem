@@ -6,11 +6,10 @@
 
         public Guid OrganizationId { get; set; }
 
-        public Guid AssignedUserId { get; set; }
-
-        public Guid? CustomerId { get; set; }
-        public Guid? LeadId { get; set; }
-        public Guid? OpportunityId { get; set; }
+        public UserMinimalDto AssignedUser { get; set; } = null!;
+        public CustomerMinimalDto? Customer { get; set; }
+        public LeadMinimalDto? Lead { get; set; }
+        public OpportunityMinimalDto? Opportunity { get; set; }
 
         public string Title { get; set; } = null!;
         public string? Description { get; set; }

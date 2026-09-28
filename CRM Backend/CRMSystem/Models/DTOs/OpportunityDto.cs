@@ -5,12 +5,10 @@
         public Guid Id { get; set; }
 
         public Guid OrganizationId { get; set; }
-        public Guid CustomerId { get; set; }
-
-        public Guid PipelineId { get; set; }
-        public Guid StageId { get; set; }
-
-        public Guid? AssignedUserId { get; set; }
+        public CustomerMinimalDto Customer { get; set; } = null!;
+        public PipelineMinimalDto Pipeline { get; set; } = null!;
+        public PipelineStageMinimalDto Stage { get; set; } = null!;
+        public UserMinimalDto? AssignedUser { get; set; }
 
         public string Name { get; set; } = null!;
 
@@ -25,6 +23,15 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
+
+    public class OpportunityMinimalDto
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; } = null!;
+        public decimal Value { get; set; }
+    }
+
 
     public class CreateOpportunityDto
     {
