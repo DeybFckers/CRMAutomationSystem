@@ -5,3 +5,15 @@ export const getAllLeads = async () => {
 
    return response.data.data;
 }
+
+export const getAllLeadStatuses = async () =>{
+    const response = await api.get("/api/lead-statuses")
+
+    return response.data.data;
+}
+
+export const getAllLeadSources = async () =>{
+    const response = await api.get("/api/lead-sources")
+    
+    return response.data.data;
+}

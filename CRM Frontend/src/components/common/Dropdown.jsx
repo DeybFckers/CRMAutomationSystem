@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-export const Dropdown = ({ label }) => {
+export const Dropdown = ({ label, options = [],
+    value,
+    onChange,
+    className }) => {
 
     // Controls whether the dropdown is open or closed.
     //
@@ -9,20 +12,13 @@ export const Dropdown = ({ label }) => {
     // true = open
     const [open, setOpen] = useState(false);
 
-    // Stores the currently selected option.
-    const [selected, setSelected] = useState(null);
+    const selectedOption = options.find(
+        (option) => option.value === value
+    );
 
-    // Temporary option.
-    // Later, this can come from your API.
-    const options = [
-        {
-            value: "new",
-            label: "New"
-        }
-    ];
 
     return (
-        <div className="relative w-40">
+        <div className={`relative ${className}`}>
 
             {/* Dropdown button */}
             <button
@@ -31,7 +27,7 @@ export const Dropdown = ({ label }) => {
                 className="flex items-center justify-between w-full h-10 px-3 rounded-xl border border-border bg-surface text-sm font-medium text-text cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
             >
                 <span>
-                    {selected?.label || label}
+                    {selectedOption?.label || label}
                 </span>
 
                 <ChevronDown
@@ -51,7 +47,7 @@ export const Dropdown = ({ label }) => {
                             key={option.value}
                             type="button"
                             onClick={() => {
-                                setSelected(option);
+                                onChange?.(option.value);
                                 setOpen(false);
                             }}
                             className="w-full text-left px-3 py-2 rounded-lg text-sm text-text hover:bg-surface-secondary cursor-pointer"
