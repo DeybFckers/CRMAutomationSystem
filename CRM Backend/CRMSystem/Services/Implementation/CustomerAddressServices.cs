@@ -31,7 +31,7 @@ namespace CRMSystem.Services.Implementation
             return customerAddresses.Select(ca => ca.Adapt<CustomerAddressResponseDto>());
         }
 
-        public async Task CreateAddress(Guid customerId, CreateCustomerAddressDto customerAddressDto)
+        public async Task<CustomerAddressResponseDto> CreateAddress(Guid customerId, CreateCustomerAddressDto customerAddressDto)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -46,9 +46,13 @@ namespace CRMSystem.Services.Implementation
             customerAddress.CustomerId = customer.Id;
 
             await _customerAddressRepository.CreateAddress(customerAddress);
+
+            return customerAddress.Adapt<CustomerAddressResponseDto>();
+
+
         }
 
-        public async Task UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto customerAddressDto)
+        public async Task<CustomerAddressResponseDto> UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto customerAddressDto)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -60,6 +64,8 @@ namespace CRMSystem.Services.Implementation
             customerAddressDto.Adapt(existingAddress);
 
             await _customerAddressRepository.UpdateAddress(existingAddress);
+
+            return existingAddress.Adapt<CustomerAddressResponseDto>();
         }
 
         public async Task DeleteAddress(Guid customerId, Guid addressId)

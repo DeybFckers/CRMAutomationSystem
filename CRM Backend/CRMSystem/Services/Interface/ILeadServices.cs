@@ -6,8 +6,8 @@ namespace CRMSystem.Services.Interface
     {
         Task<IEnumerable<LeadResponseDto>> GetAllLead();
         Task<LeadResponseDto> GetLeadById(Guid id);
-        Task CreateLead(CreateLeadDto lead);
-        Task ConvertLeadToCustomer(Guid id);
+        Task<LeadResponseDto> CreateLead(CreateLeadDto lead);
+        Task<CustomerResponseDto> ConvertLeadToCustomer(Guid id);
         Task<LeadResponseDto> UpdateLead(Guid id, UpdateLeadDto lead);
         Task<LeadResponseDto> AssignLead(Guid id, AssignLeadDto lead);
         Task<LeadResponseDto> UpdateLeadStatus(Guid id, UpdateLeadStatusDto lead);

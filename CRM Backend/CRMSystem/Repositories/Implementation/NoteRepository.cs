@@ -33,12 +33,22 @@ namespace CRMSystem.Repositories.Implementation
 
         public async Task<Note?> GetNoteById(Guid organizationId, Guid noteId)
         {
-            return await _context.Notes.FirstOrDefaultAsync(n => n.OrganizationId == organizationId && n.Id == noteId);
+            return await _context.Notes
+                .Include(n => n.User)
+                .Include(n => n.Customer)
+                .Include(n => n.Lead)
+                .Include(n => n.Opportunity)
+                .FirstOrDefaultAsync(n => n.OrganizationId == organizationId && n.Id == noteId);
         }
 
         public async Task<IEnumerable<Note>> GetAllNotes(Guid organizationId)
         {
-            return await _context.Notes.Where(n => n.OrganizationId == organizationId).ToListAsync();
+            return await _context.Notes
+                .Include(n => n.User)
+                .Include(n => n.Customer)
+                .Include(n => n.Lead)
+                .Include(n => n.Opportunity)
+                .Where(n => n.OrganizationId == organizationId).ToListAsync();
         }
 
         public async Task UpdateNote(Note note)

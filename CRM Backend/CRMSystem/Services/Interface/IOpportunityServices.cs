@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task <IEnumerable<OpportunityResponseDto>> GetAllOpportunity();
         Task<OpportunityResponseDto> GetOpportunityById(Guid id);
-        Task CreateOpportunity(CreateOpportunityDto opportunity);
+        Task<OpportunityResponseDto> CreateOpportunity(CreateOpportunityDto opportunity);
         Task<OpportunityResponseDto> UpdateOpportunity(Guid id, UpdateOpportunityDto opportunity);
         Task DeleteOpportunity(Guid id);
         Task UpdateOpportunityStage(Guid id, Guid stageId);

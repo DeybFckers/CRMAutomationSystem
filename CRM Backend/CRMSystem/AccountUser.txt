@@ -51,7 +51,7 @@ Contact Post
   "firstName": "Tom",
   "lastName": "Shelby",
   "position": "Father",
-  "email": "Tom",
+  "email": "Tom@gmail.com",
   "phone": "12345678",
   "isPrimary": true
 }

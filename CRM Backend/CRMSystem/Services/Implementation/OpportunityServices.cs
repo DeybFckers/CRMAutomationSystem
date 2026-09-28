@@ -66,7 +66,7 @@ namespace CRMSystem.Services.Implementation
             await _opportunityRepository.UpdateOpportunity(opportunity);
         }
 
-        public async Task CreateOpportunity(CreateOpportunityDto opportunity)
+        public async Task<OpportunityResponseDto> CreateOpportunity(CreateOpportunityDto opportunity)
         {
             var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
             var customer = await _customerRepository.GetCustomerById(opportunity.CustomerId, organization.Id);
@@ -108,6 +108,7 @@ namespace CRMSystem.Services.Implementation
             newOpporunity.UpdatedAt = DateTime.UtcNow;
 
             await _opportunityRepository.CreateOpportunity(newOpporunity);
+            return newOpporunity.Adapt<OpportunityResponseDto>();
         }
 
         public async Task DeleteOpportunity(Guid id)

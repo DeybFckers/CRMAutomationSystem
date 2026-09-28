@@ -17,6 +17,8 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<IEnumerable<Pipeline>> GetAllPipelines(Guid organizationId)
         {
             return await _context.Pipelines
+                .Include(x => x.Stages.OrderBy(s => s.SortOrder))
+                .AsSplitQuery() 
                 .Where(x => x.OrganizationId == organizationId)
                 .ToListAsync();
         }

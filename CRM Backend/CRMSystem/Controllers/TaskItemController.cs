@@ -23,8 +23,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask(CreateTaskItemDto task)
         {
-            await _taskItemServices.CreateTask(task);
-            return Created("Task created successfully.");
+            var createTask = await _taskItemServices.CreateTask(task);
+            return Created("Task created successfully.", createTask);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]

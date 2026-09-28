@@ -38,7 +38,7 @@ namespace CRMSystem.Services.Implementation
             return leadStatus.Adapt<LeadStatusResponseDto>();
         }
 
-        public async Task CreateLeadStatus(CreateLeadStatusDto leadstatus)
+        public async Task<LeadStatusResponseDto> CreateLeadStatus(CreateLeadStatusDto leadstatus)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -54,6 +54,7 @@ namespace CRMSystem.Services.Implementation
             leadStatus.OrganizationId = organizationId;
 
             await _leadStatusRepository.CreateLeadStatus(leadStatus);
+            return leadStatus.Adapt<LeadStatusResponseDto>();
         }
 
         public async Task DeleteLeadStatusById(Guid id)

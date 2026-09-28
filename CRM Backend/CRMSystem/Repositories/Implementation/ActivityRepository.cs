@@ -33,12 +33,22 @@ namespace CRMSystem.Repositories.Implementation
 
         public async Task<Activity?> GetActivityById(Guid organizationId, Guid activityId)
         {
-            return await _context.Activities.FirstOrDefaultAsync(a => a.OrganizationId == organizationId && a.Id == activityId);
+            return await _context.Activities
+                .Include(a => a.User)
+                .Include(a => a.Customer)
+                .Include(a => a.Lead)
+                .Include(a => a.Opportunity)
+                .FirstOrDefaultAsync(a => a.OrganizationId == organizationId && a.Id == activityId);
         }
 
         public async Task<IEnumerable<Activity>> GetAllActivity(Guid organizationId)
         {
-            return await _context.Activities.Where(a => a.OrganizationId == organizationId).ToListAsync();
+            return await _context.Activities
+                .Include(a => a.User)
+                .Include(a => a.Customer)
+                .Include(a => a.Lead)
+                .Include(a => a.Opportunity)
+                .Where(a => a.OrganizationId == organizationId).ToListAsync();
         }
 
         public async Task UpdateActivity(Activity activity)

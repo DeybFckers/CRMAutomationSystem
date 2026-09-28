@@ -37,8 +37,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLeadStatus(CreateLeadStatusDto leadstatus)
         {
-            await _leadStatusServices.CreateLeadStatus(leadstatus);
-            return Created("Lead status created successfully.");
+            var createdStatus = await _leadStatusServices.CreateLeadStatus(leadstatus);
+            return Created("Lead status created successfully.", createdStatus);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]

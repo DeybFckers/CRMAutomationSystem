@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task<IEnumerable<CustomerResponseDto>> GetAllCustomer();
         Task<CustomerResponseDto> GetCustomerById(Guid id);
-        Task CreateCustomer(CreateCustomerDto customer);
+        Task<CustomerResponseDto> CreateCustomer(CreateCustomerDto customer);
         Task<CustomerResponseDto> UpdateCustomer(Guid id, UpdateCustomerDto customer);
         Task DeleteCustomer(Guid id);
     }

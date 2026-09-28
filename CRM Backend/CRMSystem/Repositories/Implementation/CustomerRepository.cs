@@ -23,6 +23,7 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<IEnumerable<Customer>> GetAllCustomer(Guid organizationId)
         {
             return await _context.Customers
+                .Include(x => x.AssignedUser)
                 .Include(x => x.Contacts)
                 .Include(x => x.Addresses)
                 .AsSplitQuery()
@@ -34,6 +35,7 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<Customer?> GetCustomerById(Guid id, Guid organizationId)
         {
             return await _context.Customers
+                .Include(x => x.AssignedUser)
                 .Include(x => x.Contacts)
                 .Include(x => x.Addresses)
                 .AsSplitQuery()

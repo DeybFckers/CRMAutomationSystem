@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task<IEnumerable<LeadSourceResponseDto>> GetAllLeadSource();
         Task<LeadSourceResponseDto> GetLeadSourceById(Guid id);
-        Task CreateLeadSource(CreateLeadSourceDto leadsource);
+        Task<LeadSourceResponseDto> CreateLeadSource(CreateLeadSourceDto leadsource);
         Task DeleteLeadSourceById(Guid id);
     }
 }

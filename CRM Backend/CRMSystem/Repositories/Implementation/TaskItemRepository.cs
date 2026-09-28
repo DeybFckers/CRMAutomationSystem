@@ -38,6 +38,10 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<IEnumerable<TaskItem>> GetAllTask(Guid organizationId)
         {
             return await _context.Tasks
+                .Include(x => x.AssignedUser)
+                .Include(x => x.Customer)
+                .Include(x => x.Lead)
+                .Include(x => x.Opportunity)
                 .Where(x => x.OrganizationId == organizationId)
                 .ToListAsync();
         }
@@ -45,6 +49,10 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<TaskItem?> GetTaskById(Guid id, Guid organizationId)
         {
             return await _context.Tasks
+                .Include(x => x.AssignedUser)
+                .Include(x => x.Customer)
+                .Include(x => x.Lead)
+                .Include(x => x.Opportunity)
                 .FirstOrDefaultAsync(x => x.Id == id && x.OrganizationId == organizationId);
         }
         

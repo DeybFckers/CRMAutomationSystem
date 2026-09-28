@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task<IEnumerable<PipelineStageResponseDto>> GetAllPipelineStage(Guid pipelineId);
         Task<PipelineStageResponseDto> GetPipelineStage(Guid id, Guid pipelineId);
-        Task CreatePipelineStage(CreatePipelineStageDto pipelinestage, Guid pipelineId);
+        Task<PipelineStageResponseDto> CreatePipelineStage(CreatePipelineStageDto pipelinestage, Guid pipelineId);
         Task DeletePipelineStage(Guid id, Guid pipelineId);
     }
 }

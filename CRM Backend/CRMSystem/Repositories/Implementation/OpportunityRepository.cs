@@ -34,12 +34,22 @@ namespace CRMSystem.Repositories.Implementation
 
         public async Task<IEnumerable<Opportunity>> GetAllOpportunity(Guid organizationId)
         {
-            return await _context.Opportunities.Where(o => o.OrganizationId == organizationId).ToListAsync();
+            return await _context.Opportunities
+                .Include(o => o.Customer)
+                .Include(o => o.Pipeline)
+                .Include(o => o.Stage)
+                .Include(o => o.AssignedUser)
+                .Where(o => o.OrganizationId == organizationId).ToListAsync();
         }
 
         public async Task<Opportunity?> GetOpportunityById(Guid id, Guid organizationId)
         {
-            return await _context.Opportunities.FirstOrDefaultAsync(o => o.Id == id && o.OrganizationId == organizationId);
+            return await _context.Opportunities
+                .Include(o => o.Customer)
+                .Include(o => o.Pipeline)
+                .Include(o => o.Stage)
+                .Include(o => o.AssignedUser)
+                .FirstOrDefaultAsync(o => o.Id == id && o.OrganizationId == organizationId);
         }
 
         public async Task UpdateOpportunity(Opportunity opportunity)

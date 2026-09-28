@@ -38,7 +38,7 @@ namespace CRMSystem.Services.Implementation
             return pipeline.Adapt<PipelineResponseDto>();
         }
 
-        public async Task CreatePipeline(CreatePipelineDto pipeline)
+        public async Task<PipelineResponseDto> CreatePipeline(CreatePipelineDto pipeline)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -48,6 +48,7 @@ namespace CRMSystem.Services.Implementation
             newPipeline.OrganizationId = organizationId;
 
             await _pipelinesRepository.CreatePipeline(newPipeline);
+            return newPipeline.Adapt<PipelineResponseDto>();
         }
 
         public async Task DeletePipeline(Guid id)

@@ -29,7 +29,7 @@ namespace CRMSystem.Services.Implementation
             return contact.Adapt<CustomerContactResponseDto>();
         }
 
-        public async Task CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto)
+        public async Task<CustomerContactResponseDto> CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -49,9 +49,11 @@ namespace CRMSystem.Services.Implementation
             customerContact.CustomerId = customerId;
 
             await _customerContactRepository.CreateContact(customerContact);
+
+            return customerContact.Adapt<CustomerContactResponseDto>();
         }
 
-        public async Task UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto)
+        public async Task<CustomerContactResponseDto> UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -63,6 +65,8 @@ namespace CRMSystem.Services.Implementation
             dto.Adapt(contact);
 
             await _customerContactRepository.UpdateContact(contact);
+
+            return contact.Adapt<CustomerContactResponseDto>();
         }
 
         public async Task DeleteCustomerContact(Guid customerId, Guid contactId)

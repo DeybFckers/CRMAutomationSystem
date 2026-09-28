@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task<IEnumerable<TaskItemResponseDto>> GetAllTask(Guid organizationId);
         Task<TaskItemResponseDto?> GetTaskById(Guid id, Guid organizationId);
-        Task CreateTask(CreateTaskItemDto task);
+        Task<TaskItemResponseDto> CreateTask(CreateTaskItemDto task);
         Task UpdateTask(Guid id, UpdateTaskItemDto task);
         Task DeleteTask(Guid id, Guid organizationId);
         Task CompleteTask(Guid id, Guid organizationId);

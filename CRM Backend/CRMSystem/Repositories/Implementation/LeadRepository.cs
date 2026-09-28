@@ -17,6 +17,9 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<IEnumerable<Lead>> GetAllLeads(Guid organizationId)
         {
             return await _context.Leads
+                .Include(x => x.AssignedUser)
+                .Include(x => x.Source)
+                .Include(x => x.Status)
                 .Where(x => x.OrganizationId == organizationId)
                 .ToListAsync();
         }
@@ -24,6 +27,9 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<Lead?> GetLeadById(Guid id, Guid organizationId)
         {
             return await _context.Leads
+                .Include(x => x.AssignedUser)
+                .Include(x => x.Source)
+                .Include(x => x.Status)
                 .FirstOrDefaultAsync(x => x.Id == id && x.OrganizationId == organizationId);
         }
 

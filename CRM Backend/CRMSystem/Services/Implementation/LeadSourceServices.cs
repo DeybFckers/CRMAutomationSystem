@@ -38,7 +38,7 @@ namespace CRMSystem.Services.Implementation
             return leadSource.Adapt<LeadSourceResponseDto>();
         }
 
-        public async Task CreateLeadSource(CreateLeadSourceDto leadsource)
+        public async Task<LeadSourceResponseDto> CreateLeadSource(CreateLeadSourceDto leadsource)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -54,6 +54,7 @@ namespace CRMSystem.Services.Implementation
             leadSource.OrganizationId = organizationId;
 
             await _leadSourceRepository.CreateLeadSource(leadSource);
+            return leadSource.Adapt<LeadSourceResponseDto>();
         }
 
         public async Task DeleteLeadSourceById(Guid id)

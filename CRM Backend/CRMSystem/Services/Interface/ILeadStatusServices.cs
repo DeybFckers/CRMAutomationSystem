@@ -6,7 +6,7 @@ namespace CRMSystem.Services.Interface
     {
         Task<IEnumerable<LeadStatusResponseDto>> GetAllLeadStatus();
         Task<LeadStatusResponseDto> GetLeadStatusById(Guid id);
-        Task CreateLeadStatus(CreateLeadStatusDto leadstatus);
+        Task<LeadStatusResponseDto> CreateLeadStatus(CreateLeadStatusDto leadstatus);
         Task DeleteLeadStatusById(Guid id);
     }
 }

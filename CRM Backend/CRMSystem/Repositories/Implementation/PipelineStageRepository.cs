@@ -17,6 +17,7 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<IEnumerable<PipelineStage>> GetAllPipelineStages(Guid pipelineId)
         {
             return await _context.PipelineStages
+                .Include(x => x.Pipeline)
                 .Where(x => x.PipelineId == pipelineId)
                 .OrderBy(x => x.SortOrder)
                 .ToListAsync();
@@ -25,6 +26,7 @@ namespace CRMSystem.Repositories.Implementation
         public async Task<PipelineStage?> GetPipelineStageById(Guid id, Guid pipelineId)
         {
             return await _context.PipelineStages
+                .Include(x => x.Pipeline)
                 .FirstOrDefaultAsync(x => x.Id == id && x.PipelineId == pipelineId);
         }
 

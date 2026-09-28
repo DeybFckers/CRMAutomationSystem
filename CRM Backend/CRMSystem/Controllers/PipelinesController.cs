@@ -37,8 +37,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePipeline(CreatePipelineDto pipeline)
         {
-            await _pipelinesServices.CreatePipeline(pipeline);
-            return Created("Pipeline created successfully.");
+            var createdPipeline = await _pipelinesServices.CreatePipeline(pipeline);
+            return Created("Pipeline created successfully.", createdPipeline);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]

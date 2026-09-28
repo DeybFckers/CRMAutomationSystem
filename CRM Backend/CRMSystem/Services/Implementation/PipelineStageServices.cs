@@ -32,7 +32,7 @@ namespace CRMSystem.Services.Implementation
             return stage.Adapt<PipelineStageResponseDto>();
         }
 
-        public async Task CreatePipelineStage(CreatePipelineStageDto pipelinestage, Guid pipelineId)
+        public async Task<PipelineStageResponseDto> CreatePipelineStage(CreatePipelineStageDto pipelinestage, Guid pipelineId)
         {
             var stage = pipelinestage.Adapt<PipelineStage>();
 
@@ -40,6 +40,8 @@ namespace CRMSystem.Services.Implementation
             stage.PipelineId = pipelineId;
 
             await _pipelineStageRepository.CreatePipelineStage(stage);
+
+            return stage.Adapt<PipelineStageResponseDto>();
         }
 
         public async Task DeletePipelineStage(Guid id, Guid pipelineId)

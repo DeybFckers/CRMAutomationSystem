@@ -21,8 +21,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOpportunity(CreateOpportunityDto opportunity)
         {
-            await _opportunityServices.CreateOpportunity(opportunity);
-            return Created("Opportunity created successfully.");
+            var createdOpportunity = await _opportunityServices.CreateOpportunity(opportunity);
+            return Created("Opportunity created successfully.", createdOpportunity);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]

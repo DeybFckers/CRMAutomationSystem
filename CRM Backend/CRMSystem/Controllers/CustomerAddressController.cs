@@ -28,16 +28,16 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAddress(Guid customerId, CreateCustomerAddressDto dto)
         {
-            await _customerAddressServices.CreateAddress(customerId, dto);
-            return Created("Customer address created successfully.");
+            var address = await _customerAddressServices.CreateAddress(customerId, dto);
+            return Created("Customer address created successfully.", address);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
         [HttpPut("{addressId:guid}")]
         public async Task<IActionResult> UpdateAddress(Guid customerId, Guid addressId, UpdateCustomerAddressDto dto)
         {
-            await _customerAddressServices.UpdateAddress(customerId, addressId, dto);
-            return Success("Customer address updated successfully.");
+            var address = await _customerAddressServices.UpdateAddress(customerId, addressId, dto);
+            return Success("Customer address updated successfully.", address);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]

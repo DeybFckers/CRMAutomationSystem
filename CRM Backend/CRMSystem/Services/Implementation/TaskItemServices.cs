@@ -27,7 +27,7 @@ namespace CRMSystem.Services.Implementation
             _opportunityRepository = opportunityRepository;
         }
 
-        public async Task CreateTask(CreateTaskItemDto task)
+        public async Task<TaskItemResponseDto> CreateTask(CreateTaskItemDto task)
         {
             var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
             var assignedUser = await _userRepository.GetUserById(task.AssignedUserId, organization);
@@ -74,6 +74,8 @@ namespace CRMSystem.Services.Implementation
             newTaskItem.CreatedAt = DateTime.UtcNow;
 
             await _taskItemRepository.CreateTask(newTaskItem);
+
+            return newTaskItem.Adapt<TaskItemResponseDto>();
         }
 
 

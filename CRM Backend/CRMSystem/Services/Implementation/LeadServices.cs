@@ -65,7 +65,7 @@ namespace CRMSystem.Services.Implementation
             return lead.Adapt<LeadResponseDto>();
         }
 
-        public async Task CreateLead(CreateLeadDto lead)
+        public async Task<LeadResponseDto> CreateLead(CreateLeadDto lead)
         {
             var organizationId = _currentUserServices.OrganizationId;
             var currentUserId = _currentUserServices.UserId;
@@ -109,6 +109,8 @@ namespace CRMSystem.Services.Implementation
             }
 
             await _leadRepository.CreateLead(newLead);
+
+            return newLead.Adapt<LeadResponseDto>();
         }
 
         public async Task<LeadResponseDto> UpdateLead(Guid id, UpdateLeadDto lead)
@@ -200,7 +202,7 @@ namespace CRMSystem.Services.Implementation
                 throw new KeyNotFoundException("Assigned user not found.");
         }
 
-        public async Task ConvertLeadToCustomer(Guid id)
+        public async Task<CustomerResponseDto> ConvertLeadToCustomer(Guid id)
         {
             var organizationId = _currentUserServices.OrganizationId; 
             var lead = await _leadRepository.GetLeadById(id, organizationId); 
@@ -242,6 +244,8 @@ namespace CRMSystem.Services.Implementation
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+
+            return customer.Adapt<CustomerResponseDto>();
         }
     }
 }

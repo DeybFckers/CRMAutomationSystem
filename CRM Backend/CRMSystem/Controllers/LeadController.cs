@@ -37,8 +37,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLead(CreateLeadDto lead)
         {
-            await _leadServices.CreateLead(lead);
-            return Created("Lead created successfully.");
+            var createdLead = await _leadServices.CreateLead(lead);
+            return Created("Lead created successfully.", createdLead);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep")]
@@ -69,8 +69,8 @@ namespace CRMSystem.Controllers
         [HttpPost("{leadId:guid}/convert")]
         public async Task<IActionResult> ConvertLeadToCustomer(Guid leadId)
         {
-            await _leadServices.ConvertLeadToCustomer(leadId);
-            return Success("Lead converted to customer successfully.");
+            var convertedLead = await _leadServices.ConvertLeadToCustomer(leadId);
+            return Success("Lead converted to customer successfully.", convertedLead);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]

@@ -37,8 +37,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCustomer(CreateCustomerDto customer)
         {
-            await _customerServices.CreateCustomer(customer);
-            return Created("Customer created successfully.");
+            var createdCustomer = await _customerServices.CreateCustomer(customer);
+            return Created("Customer created successfully.", createdCustomer);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]

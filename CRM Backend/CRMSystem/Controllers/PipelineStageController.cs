@@ -21,8 +21,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePipelineStage(Guid pipelineId, CreatePipelineStageDto pipelinestage)
         {
-            await _pipelineStageServices.CreatePipelineStage(pipelinestage, pipelineId);
-            return Created("Pipeline stage created successfully.");
+            var createdStage = await _pipelineStageServices.CreatePipelineStage(pipelinestage, pipelineId);
+            return Created("Pipeline stage created successfully.",createdStage);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]

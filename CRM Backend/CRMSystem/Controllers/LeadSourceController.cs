@@ -37,8 +37,8 @@ namespace CRMSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLeadSource(CreateLeadSourceDto leadsource)
         {
-            await _leadSourceServices.CreateLeadSource(leadsource);
-            return Created("Lead source created successfully.");
+            var createdLeadSource = await _leadSourceServices.CreateLeadSource(leadsource);
+            return Created("Lead source created successfully.", createdLeadSource);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]

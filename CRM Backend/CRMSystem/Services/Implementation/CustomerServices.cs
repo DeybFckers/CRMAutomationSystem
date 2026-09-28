@@ -22,7 +22,7 @@ namespace CRMSystem.Services.Implementation
             _customerCodeServices = customerCodeServices;
         }
 
-        public async Task CreateCustomer(CreateCustomerDto customer)
+        public async Task<CustomerResponseDto> CreateCustomer(CreateCustomerDto customer)
         {
             var organization = await _organizationRepository.GetOrganizationById(_currentUser.OrganizationId);
             var newCustomer = customer.Adapt<Customer>();
@@ -35,6 +35,8 @@ namespace CRMSystem.Services.Implementation
             newCustomer.UpdatedAt = DateTime.UtcNow;
 
             await _customerRepository.CreateCustomer(newCustomer);
+
+            return newCustomer.Adapt<CustomerResponseDto>();
         }
 
         public async Task<IEnumerable<CustomerResponseDto>> GetAllCustomer()
