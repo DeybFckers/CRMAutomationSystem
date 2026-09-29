@@ -26,6 +26,7 @@ namespace CRMSystem.Services.Implementation
         public async Task<IEnumerable<UserResponseDto>> GetAllUsers()
         {
             var organizationId = _currentUserServices.OrganizationId;
+            var currentUserRoles = _currentUserServices.Roles;
 
             var users = await _userRepository.GetAllUsers(organizationId);
 
@@ -34,6 +35,11 @@ namespace CRMSystem.Services.Implementation
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
+
+                if (currentUserRoles.Contains("SalesManager") && !roles.Contains("SalesRep"))
+                {
+                    continue;
+                }
 
                 var userDto = user.Adapt<UserResponseDto>();
 
