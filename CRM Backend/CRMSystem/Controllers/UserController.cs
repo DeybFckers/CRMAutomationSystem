@@ -16,7 +16,7 @@ namespace CRMSystem.Controllers
             _userServices = userServices;
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -25,7 +25,7 @@ namespace CRMSystem.Controllers
             return Success("Users retrieved successfully.", users);
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpGet("{userId:guid}")]
         public async Task<IActionResult> GetUserById(Guid userId)
         {
@@ -34,7 +34,7 @@ namespace CRMSystem.Controllers
             return Success("User retrieved successfully.", user);
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpGet("role/{role}")]
         public async Task<IActionResult> GetUserByRole(string role)
         {
@@ -43,7 +43,7 @@ namespace CRMSystem.Controllers
             return Success("Users retrieved successfully.", users);
         }
 
-        [Authorize(Roles = "SuperAdmin, Admin")]
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{userId:guid}")]
         public async Task<IActionResult> DeleteUser(Guid userId)
         {
