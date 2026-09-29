@@ -7,7 +7,7 @@ namespace CRMSystem.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/notes")]
     public class NoteController : BaseController
     {
         private readonly INoteServices _noteServices;

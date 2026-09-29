@@ -6,7 +6,7 @@ namespace CRMSystem.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/auditlog")]
     public class AuditLogController : BaseController
     {
         private readonly IAuditLogServices _auditLogServices;

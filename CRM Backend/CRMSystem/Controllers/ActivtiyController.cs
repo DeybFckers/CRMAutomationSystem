@@ -7,7 +7,7 @@ namespace CRMSystem.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/activity")]
     public class ActivityController : BaseController
     {
         private readonly IActivityServices _activityServices;

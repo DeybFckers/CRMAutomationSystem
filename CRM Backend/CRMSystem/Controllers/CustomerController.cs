@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CRMSystem.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/customer")]
     [Authorize]
     public class CustomerController : BaseController
     {

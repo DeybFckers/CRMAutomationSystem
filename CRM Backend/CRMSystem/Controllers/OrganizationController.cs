@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CRMSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/organization")]
     [ApiController]
     [Authorize]
     public class OrganizationController : BaseController
