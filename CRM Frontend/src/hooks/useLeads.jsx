@@ -16,34 +16,38 @@ export const useLeads = () => {
 
     const [error, setError] = useState("");
 
+    const fetchLeads = async () =>{
+        const data = await getAllLeads();
+
+        setLeads(data);
+    }
+
+    const fetchLeadOptions = async() =>{
+        const status = await getAllLeadStatuses();
+        const source = await getAllLeadSources();
+
+        setLeadStatuses(status);
+        setLeadSources(source);
+    }
+    
+    const fetchData = async () =>{
+        setLoading(true);
+        setError("");
+
+        try{
+            await Promise.all([
+                fetchLeads(),
+                fetchLeadOptions(),
+            ]);
+        }catch(error){
+            setError("Failed to load leads.")
+        }finally{
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () =>{
-            setLoading(true);
-            setError("");
-
-            try{
-                const [
-                    leadsData,
-                    statusesData,
-                    sourcesData
-                ] = await Promise.all([
-                    getAllLeads(),
-                    getAllLeadStatuses(),
-                    getAllLeadSources()
-                ]);
-
-                setLeads(leadsData);
-                setLeadStatuses(statusesData);
-                setLeadSources(sourcesData);
-            }catch(error){
-                setError("Failed to load Leads.")
-            }finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
-
     }, []);
 
     return{
@@ -51,6 +55,7 @@ export const useLeads = () => {
         leadStatuses,
         leadSources,
         loading,
-        error
+        error,
+        refetch: fetchLeads
     };
 };

@@ -17,3 +17,9 @@ export const getAllLeadSources = async () =>{
     
     return response.data.data;
 }
+
+export const createLead = async (leadData) =>{
+    const response = await api.post("/api/leads", leadData);
+
+    return response.data;
+}

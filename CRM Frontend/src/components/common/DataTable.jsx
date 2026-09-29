@@ -39,8 +39,8 @@ export const DataTable = ({ data = [], columns }) => {
     });
 
     return (
-        <div className="rounded-lg border border-border  bg-surface shadow-lg p-4">
-            <table className="w-full text-left text-text">
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
+            <table className="w-full text-left text-sm">
 
             {/* 
                 THEAD = table header.
@@ -48,7 +48,7 @@ export const DataTable = ({ data = [], columns }) => {
                 getHeaderGroups() gives us the column headers
                 that we defined inside our "columns" configuration.
             */}
-            <thead className="border-b border-gray-200 bg-gray-100">
+            <thead className="bg-primary text-table-header-text">
 
                 {table.getHeaderGroups().map((headerGroup) => (
 
@@ -58,7 +58,7 @@ export const DataTable = ({ data = [], columns }) => {
                         {headerGroup.headers.map((header) => (
 
                             // Each <th> represents one column header.
-                            <th key={header.id} className="px-6 py-3 font-medium text-text text-nowrap">
+                            <th key={header.id} className="px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
 
                                 {/*
                                     flexRender() renders the header.
@@ -106,7 +106,7 @@ export const DataTable = ({ data = [], columns }) => {
                 {table.getRowModel().rows.map((row) => (
 
                     // Each row needs a unique key.
-                    <tr key={row.id} className="hover:bg-gray-50 ">
+                    <tr key={row.id} className="odd:bg-surface even:bg-table-row-alt hover:bg-table-row-hover/50 transition-colors ">
 
                         {/*
                             getVisibleCells() gives us the cells that
@@ -119,7 +119,7 @@ export const DataTable = ({ data = [], columns }) => {
                         {row.getVisibleCells().map((cell) => (
 
                             // Each cell needs a unique key.
-                            <td key={cell.id} className="px-6 py-4 max-w-xs truncate text-secondary text-wrap">
+                            <td key={cell.id} className="px-4 py-3 text-text-secondary">
 
                                 {/*
                                     Render the actual cell value.

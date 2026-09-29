@@ -39,4 +39,10 @@
 
     /* Font */
     --font-body: "Inter", sans-serif;
+
+    /* Table */
+    --color-table-header: #1E293B;        /* slate-800, fixed header */
+    --color-table-header-text: #F8FAFC;
+    --color-table-row-alt: #F1F5F9;       /* same as surface-secondary */
+    --color-table-row-hover: #DBEAFE;     /* same as primary-light */
 }
