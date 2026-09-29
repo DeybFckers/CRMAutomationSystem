@@ -4,14 +4,14 @@ namespace CRMSystem.Services.Interface
 {
     public interface ITaskItemServices
     {
-        Task<IEnumerable<TaskItemResponseDto>> GetAllTask(Guid organizationId);
-        Task<TaskItemResponseDto?> GetTaskById(Guid id, Guid organizationId);
+        Task<IEnumerable<TaskItemResponseDto>> GetAllTask();
+        Task<TaskItemResponseDto?> GetTaskById(Guid id);
         Task<TaskItemResponseDto> CreateTask(CreateTaskItemDto task);
         Task UpdateTask(Guid id, UpdateTaskItemDto task);
-        Task DeleteTask(Guid id, Guid organizationId);
-        Task CompleteTask(Guid id, Guid organizationId);
-        Task UpdateTaskStatus(Guid id, Guid organizationId, string status);
-        Task AssignTask(Guid id, Guid organizationId, Guid assignedUserId);
+        Task DeleteTask(Guid id);
+        Task CompleteTask(Guid id);
+        Task UpdateTaskStatus(Guid id, string status);
+        Task AssignTask(Guid id, Guid assignedUserId);
 
     }
 }

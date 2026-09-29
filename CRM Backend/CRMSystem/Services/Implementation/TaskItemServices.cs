@@ -29,8 +29,8 @@ namespace CRMSystem.Services.Implementation
 
         public async Task<TaskItemResponseDto> CreateTask(CreateTaskItemDto task)
         {
-            var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
-            var assignedUser = await _userRepository.GetUserById(task.AssignedUserId, organization);
+            var organizationId = _currentUserServices.OrganizationId;
+            var assignedUser = await _userRepository.GetUserById(task.AssignedUserId, organizationId);
 
             if (assignedUser == null)
             {
@@ -39,7 +39,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.LeadId.HasValue)
             {
-                var lead = await _leadRepository.GetLeadById(task.LeadId.Value, organization.Id);
+                var lead = await _leadRepository.GetLeadById(task.LeadId.Value, organizationId);
 
                 if (lead == null)
                 {
@@ -48,7 +48,7 @@ namespace CRMSystem.Services.Implementation
             }
             if (task.CustomerId.HasValue)
             {
-                var customer = await _customerRepository.GetCustomerById(task.CustomerId.Value, organization.Id);
+                var customer = await _customerRepository.GetCustomerById(task.CustomerId.Value, organizationId);
 
                 if (customer == null)
                 {
@@ -58,7 +58,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.OpportunityId.HasValue)
             {
-                var opportunity = await _opportunityRepository.GetOpportunityById(task.OpportunityId.Value, organization.Id);
+                var opportunity = await _opportunityRepository.GetOpportunityById(task.OpportunityId.Value, organizationId);
 
                 if (opportunity == null)
                 {
@@ -68,7 +68,7 @@ namespace CRMSystem.Services.Implementation
 
             var newTaskItem = task.Adapt<TaskItem>();
             newTaskItem.Id = Guid.NewGuid();
-            newTaskItem.OrganizationId = organization.Id;
+            newTaskItem.OrganizationId = organizationId;
             newTaskItem.CreatedAt = DateTime.UtcNow;
             newTaskItem.Status = "PENDING";
             newTaskItem.CreatedAt = DateTime.UtcNow;
@@ -79,20 +79,24 @@ namespace CRMSystem.Services.Implementation
         }
 
 
-        public async Task DeleteTask(Guid id, Guid organizationId)
+        public async Task DeleteTask(Guid id)
         {
+            var organizationId = _currentUserServices.OrganizationId;
             await _taskItemRepository.DeleteTask(id, organizationId);
         }
 
-        public async Task<IEnumerable<TaskItemResponseDto>> GetAllTask(Guid organizationId)
+        public async Task<IEnumerable<TaskItemResponseDto>> GetAllTask()
         {
+            var organizationId = _currentUserServices.OrganizationId;
+
             var tasks = await _taskItemRepository.GetAllTask(organizationId);
 
             return tasks.Adapt<IEnumerable<TaskItemResponseDto>>();
         }
 
-        public async Task<TaskItemResponseDto?> GetTaskById(Guid id, Guid organizationId)
+        public async Task<TaskItemResponseDto?> GetTaskById(Guid id)
         {
+            var organizationId = _currentUserServices.OrganizationId;
             var task = await _taskItemRepository.GetTaskById(id, organizationId);
 
             if (task == null)
@@ -105,21 +109,17 @@ namespace CRMSystem.Services.Implementation
 
         public async Task UpdateTask(Guid id, UpdateTaskItemDto task)
         {
-            var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
+            var organizationId = _currentUserServices.OrganizationId;
 
-            if (organization == null)
-            {
-                throw new Exception("Organization not found.");
-            }
 
-            var existingTask = await _taskItemRepository.GetTaskById(id, organization.Id);
+            var existingTask = await _taskItemRepository.GetTaskById(id, organizationId);
 
             if (existingTask == null)
             {
                 throw new Exception("Task not found.");
             }
 
-            var assignedUser = await _userRepository.GetUserById(task.AssignedUserId, organization);
+            var assignedUser = await _userRepository.GetUserById(task.AssignedUserId, organizationId);
 
             if (assignedUser == null)
             {
@@ -128,7 +128,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.LeadId.HasValue)
             {
-                var lead = await _leadRepository.GetLeadById(task.LeadId.Value, organization.Id);
+                var lead = await _leadRepository.GetLeadById(task.LeadId.Value, organizationId);
 
                 if (lead == null)
                 {
@@ -138,7 +138,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.CustomerId.HasValue)
             {
-                var customer = await _customerRepository.GetCustomerById(task.CustomerId.Value, organization.Id);
+                var customer = await _customerRepository.GetCustomerById(task.CustomerId.Value, organizationId);
 
                 if (customer == null)
                 {
@@ -148,7 +148,7 @@ namespace CRMSystem.Services.Implementation
 
             if (task.OpportunityId.HasValue)
             {
-                var opportunity = await _opportunityRepository.GetOpportunityById(task.OpportunityId.Value, organization.Id);
+                var opportunity = await _opportunityRepository.GetOpportunityById(task.OpportunityId.Value, organizationId);
 
                 if (opportunity == null)
                 {
@@ -158,13 +158,14 @@ namespace CRMSystem.Services.Implementation
 
             task.Adapt(existingTask);
 
-            existingTask.OrganizationId = organization.Id;
+            existingTask.OrganizationId = organizationId;
 
             await _taskItemRepository.UpdateTask(existingTask);
         }
 
-        public async Task CompleteTask(Guid id, Guid organizationId)
+        public async Task CompleteTask(Guid id)
         {
+            var organizationId = _currentUserServices.OrganizationId;
             var task = await _taskItemRepository.GetTaskById(id, organizationId);
 
             if (task == null)
@@ -178,8 +179,9 @@ namespace CRMSystem.Services.Implementation
             await _taskItemRepository.UpdateTask(task);
         }
 
-        public async Task UpdateTaskStatus(Guid id, Guid organizationId, string status)
+        public async Task UpdateTaskStatus(Guid id, string status)
         {
+            var organizationId = _currentUserServices.OrganizationId;
             var task = await _taskItemRepository.GetTaskById(id, organizationId);
 
             if (task == null)
@@ -201,14 +203,9 @@ namespace CRMSystem.Services.Implementation
             await _taskItemRepository.UpdateTask(task);
         }
 
-        public async Task AssignTask(Guid id, Guid organizationId, Guid assignedUserId)
+        public async Task AssignTask(Guid id, Guid assignedUserId)
         {
-            var organization = await _organizationRepository.GetOrganizationById(organizationId);
-
-            if (organization == null)
-            {
-                throw new Exception("Organization not found.");
-            }
+            var organizationId = _currentUserServices.OrganizationId;
 
             var task = await _taskItemRepository.GetTaskById(id, organizationId);
 
@@ -217,7 +214,7 @@ namespace CRMSystem.Services.Implementation
                 throw new Exception("Task not found.");
             }
 
-            var assignedUser = await _userRepository.GetUserById(assignedUserId, organization);
+            var assignedUser = await _userRepository.GetUserById(assignedUserId, organizationId);
 
             if (assignedUser == null)
             {

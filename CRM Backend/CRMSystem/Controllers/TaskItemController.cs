@@ -31,7 +31,7 @@ namespace CRMSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllTask()
         {
-            var tasks = await _taskItemServices.GetAllTask(_currentUserServices.OrganizationId);
+            var tasks = await _taskItemServices.GetAllTask();
             return Success("Tasks retrieved successfully.", tasks);
         }
 
@@ -39,7 +39,7 @@ namespace CRMSystem.Controllers
         [HttpGet("{taskItemId:guid}")]
         public async Task<IActionResult> GetTaskById(Guid taskItemId)
         {
-            var task = await _taskItemServices.GetTaskById(taskItemId, _currentUserServices.OrganizationId);
+            var task = await _taskItemServices.GetTaskById(taskItemId);
             return Success("Task retrieved successfully.", task);
         }
 
@@ -55,7 +55,7 @@ namespace CRMSystem.Controllers
         [HttpDelete("{taskItemId:guid}")]
         public async Task<IActionResult> DeleteTask(Guid taskItemId)
         {
-            await _taskItemServices.DeleteTask(taskItemId, _currentUserServices.OrganizationId);
+            await _taskItemServices.DeleteTask(taskItemId);
             return Success("Task deleted successfully.");
         }
 
@@ -63,7 +63,7 @@ namespace CRMSystem.Controllers
         [HttpPatch("{taskItemId:guid}/complete")]
         public async Task<IActionResult> CompleteTask(Guid taskItemId)
         {
-            await _taskItemServices.CompleteTask(taskItemId, _currentUserServices.OrganizationId);
+            await _taskItemServices.CompleteTask(taskItemId);
             return Success("Task completed successfully.");
         }
 
@@ -71,7 +71,7 @@ namespace CRMSystem.Controllers
         [HttpPatch("{taskItemId:guid}/status")]
         public async Task<IActionResult> UpdateTaskStatus(Guid taskItemId, UpdateTaskStatusDto dto)
         {
-            await _taskItemServices.UpdateTaskStatus(taskItemId, _currentUserServices.OrganizationId, dto.Status);
+            await _taskItemServices.UpdateTaskStatus(taskItemId, dto.Status);
             return Success("Task status updated successfully.");
         }
 
@@ -79,7 +79,7 @@ namespace CRMSystem.Controllers
         [HttpPatch("{taskItemId:guid}/assign")]
         public async Task<IActionResult> AssignTask(Guid taskItemId, AssignTaskDto dto)
         {
-            await _taskItemServices.AssignTask(taskItemId, _currentUserServices.OrganizationId, dto.AssignedUserId);
+            await _taskItemServices.AssignTask(taskItemId, dto.AssignedUserId);
             return Success("Task assigned successfully.");
         }
     }

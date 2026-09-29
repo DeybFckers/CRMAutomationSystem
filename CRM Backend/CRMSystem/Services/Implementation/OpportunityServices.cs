@@ -45,14 +45,9 @@ namespace CRMSystem.Services.Implementation
 
             if (assignedUserId.HasValue)
             {
-                var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
-
-                if (organization == null)
-                {
-                    throw new Exception("Organization not found");
-                }
-
-                var assignedUser = await _userRepository.GetUserById(assignedUserId.Value, organization);
+                var assignedUser = await _userRepository.GetUserById(
+                    assignedUserId.Value,
+                    _currentUserServices.OrganizationId);
 
                 if (assignedUser == null)
                 {
@@ -68,8 +63,8 @@ namespace CRMSystem.Services.Implementation
 
         public async Task<OpportunityResponseDto> CreateOpportunity(CreateOpportunityDto opportunity)
         {
-            var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
-            var customer = await _customerRepository.GetCustomerById(opportunity.CustomerId, organization.Id);
+            var organizationId = _currentUserServices.OrganizationId;
+            var customer = await _customerRepository.GetCustomerById(opportunity.CustomerId,organizationId);
 
             if (customer == null)
             {
@@ -78,18 +73,18 @@ namespace CRMSystem.Services.Implementation
 
             if (opportunity.AssignedUserId.HasValue)
             {
-                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value,organization);
+                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value, organizationId);
 
                 if (assignedUser == null)
                     throw new KeyNotFoundException("Assigned user not found.");
             }
 
 
-            var pipeline = await _pipelinesRepository.GetPipelineById(opportunity.PipelineId, organization.Id);
+            var pipeline = await _pipelinesRepository.GetPipelineById(opportunity.PipelineId, organizationId);
             if (pipeline == null)
                 throw new KeyNotFoundException("Pipeline not found.");
 
-            var stage = await _pipilineStageRepository.GetPipelineStageById(opportunity.StageId, organization.Id);
+            var stage = await _pipilineStageRepository.GetPipelineStageById(opportunity.StageId, organizationId);
 
             if (stage == null)
                 throw new KeyNotFoundException(
@@ -167,13 +162,7 @@ namespace CRMSystem.Services.Implementation
 
             if (opportunity.AssignedUserId.HasValue)
             {
-                var organization = await _organizationRepository.GetOrganizationById(_currentUserServices.OrganizationId);
-
-                if (organization == null)
-                    throw new KeyNotFoundException(
-                        "Organization not found.");
-
-                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value, organization);
+                var assignedUser = await _userRepository.GetUserById(opportunity.AssignedUserId.Value,_currentUserServices.OrganizationId);
 
                 if (assignedUser == null)
                     throw new KeyNotFoundException(

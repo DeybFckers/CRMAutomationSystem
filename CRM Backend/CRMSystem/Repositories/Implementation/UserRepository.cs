@@ -15,40 +15,47 @@ namespace CRMSystem.Repositories.Implementation
             _userManager = userManager;
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetAllUsers(
-            Organization organization)
+        public async Task<IEnumerable<ApplicationUser>> GetAllUsers(Guid organizationId)
         {
             return await _userManager.Users
-                .Where(u => u.OrganizationId == organization.Id)
+                .Where(u => u.OrganizationId == organizationId)
                 .ToListAsync();
         }
 
-        public async Task<ApplicationUser?> GetUserById(Guid id, Organization organization)
+        public async Task<ApplicationUser?> GetUserById(
+            Guid userId,
+            Guid organizationId)
         {
             return await _userManager.Users
                 .FirstOrDefaultAsync(u =>
-                    u.Id == id &&
-                    u.OrganizationId == organization.Id);
+                    u.Id == userId &&
+                    u.OrganizationId == organizationId);
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersByRole( string role, Organization organization)
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByRole(
+            string role,
+            Guid organizationId)
         {
             var usersInRole = await _userManager.GetUsersInRoleAsync(role);
 
             return usersInRole
-                .Where(u => u.OrganizationId == organization.Id)
+                .Where(u => u.OrganizationId == organizationId)
                 .ToList();
         }
 
-        public async Task<bool> DeleteUser( Guid id, Guid organizationId)
+        public async Task<bool> DeleteUser(
+            Guid userId,
+            Guid organizationId)
         {
             var user = await _userManager.Users
                 .FirstOrDefaultAsync(u =>
-                    u.Id == id &&
+                    u.Id == userId &&
                     u.OrganizationId == organizationId);
 
             if (user == null)
+            {
                 return false;
+            }
 
             var result = await _userManager.DeleteAsync(user);
 

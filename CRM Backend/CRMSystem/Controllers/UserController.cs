@@ -1,6 +1,4 @@
-﻿using CRMSystem.Models.DTOs;
-using CRMSystem.Models.Responses;
-using CRMSystem.Services.Interface;
+﻿using CRMSystem.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,44 +18,36 @@ namespace CRMSystem.Controllers
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers([FromQuery] Guid organizationId)
+        public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _userServices.GetAllUsers(organizationId);
+            var users = await _userServices.GetAllUsers();
+
             return Success("Users retrieved successfully.", users);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet("{userId:guid}")]
-        public async Task<IActionResult> GetUserById(Guid userId, [FromQuery] Guid organizationId)
+        public async Task<IActionResult> GetUserById(Guid userId)
         {
-            var user = await _userServices.GetUserById(userId, organizationId);
-
-            if (user == null)
-            {
-                return NotFound(new ErrorResponse { Success = false, Message = "User not found.", Data = null });
-            }
+            var user = await _userServices.GetUserById(userId);
 
             return Success("User retrieved successfully.", user);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpGet("role/{role}")]
-        public async Task<IActionResult> GetUserByRole(string role, [FromQuery] Guid organizationId)
+        public async Task<IActionResult> GetUserByRole(string role)
         {
-            var users = await _userServices.GetUserByRole(role, organizationId);
+            var users = await _userServices.GetUserByRole(role);
+
             return Success("Users retrieved successfully.", users);
         }
 
         [Authorize(Roles = "SuperAdmin, Admin")]
         [HttpDelete("{userId:guid}")]
-        public async Task<IActionResult> DeleteUser(Guid userId, [FromQuery] Guid organizationId)
+        public async Task<IActionResult> DeleteUser(Guid userId)
         {
-            var deleted = await _userServices.DeleteUser(userId, organizationId);
-
-            if (!deleted)
-            {
-                return NotFound(new ErrorResponse { Success = false, Message = "User not found.", Data = null });
-            }
+            await _userServices.DeleteUser(userId);
 
             return Success("User deleted successfully.");
         }
