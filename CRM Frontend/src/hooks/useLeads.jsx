@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     getAllLeads,
     getAllLeadStatuses,
@@ -12,50 +12,94 @@ export const useLeads = () => {
 
     const [leadSources, setLeadSources] = useState([]);
 
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 15,
+        totalCount:0,
+        totalPages:0,
+        hasPreviousPage: false,
+        hasNextPage: false,
+    });
+
+    const [filters, setFilters] = useState({
+        search: "",
+        statusId: "",
+        sourceId: "",
+        assignedUserId: "",
+        sortBy: "createdat",
+        sortDirection: "desc"
+    });
+
     const [loading, setLoading] = useState(false);
 
     const [error, setError] = useState("");
 
-    const fetchLeads = async () =>{
-        const data = await getAllLeads();
-
-        setLeads(data);
-    }
-
-    const fetchLeadOptions = async() =>{
-        const status = await getAllLeadStatuses();
-        const source = await getAllLeadSources();
-
-        setLeadStatuses(status);
-        setLeadSources(source);
-    }
-    
-    const fetchData = async () =>{
-        setLoading(true);
-        setError("");
-
+    const fetchLeads = useCallback(async () => {
         try{
-            await Promise.all([
-                fetchLeads(),
-                fetchLeadOptions(),
-            ]);
+            setLoading(true);
+            setError("");
+
+            const response = await getAllLeads({
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                search: filters.search || undefined,
+                statusId: filters.statusId || undefined,
+                sourceId: filters.sourceId || undefined,
+                assignedUserId: filters.assignedUserId || undefined,
+                sortBy: filters.sortBy,
+                sortDirection: filters.sortDirection
+            });
+
+            setLeads(response.items);
+            setPagination(response.pagination)
         }catch(error){
-            setError("Failed to load leads.")
+            setError("Failed to lead leads.")
         }finally{
             setLoading(false);
         }
+    }, [
+        pagination.page,
+        pagination.pageSize,
+        filters
+    ]);
+
+    useEffect(() => {
+        fetchLeads();
+    },[fetchLeads]);
+
+    const refetch = () =>{
+        fetchLeads();
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        const fetchOptions = async () => {
+            try{ 
+                const [statuses, sources] = await Promise.all([
+                    getAllLeadStatuses(),
+                    getAllLeadSources()
+                ]);
 
+                setLeadStatuses(statuses);
+                setLeadSources(sources);
+            }catch(error){
+                setError("Failed to load lead Options");
+            }
+        };
+
+        fetchOptions();
+    }, []);
+    
     return{
         leads,
         leadStatuses,
         leadSources,
+        pagination,
+        filters,
+        setFilters,
+        setPagination,
         loading,
         error,
-        refetch: fetchLeads
-    };
+        refetch
+    }
+    
 };

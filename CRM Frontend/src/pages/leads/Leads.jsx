@@ -14,6 +14,10 @@ export const Leads = () => {
         leads,
         leadStatuses,
         leadSources,
+        pagination,
+        setPagination,
+        filters,
+        setFilters,
         loading,
         error,
         refetch
@@ -26,9 +30,6 @@ export const Leads = () => {
     } = useUsers();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedStatuses, setSelectedStatuses] = useState("");
-    const [selectedSources, setSelectedSources] = useState("");
-    const [selectedUsers, setSelectedUsers] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
     const [submitError, setSubmitError] = useState("");
 
@@ -156,7 +157,19 @@ export const Leads = () => {
         }
     }
 
-    const inputClass = "h-8 p-2 border border-border rounded-md text-text placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
+    const columns = LeadColumns({
+        onView: (lead) => {
+            console.log("View lead notes:", lead);
+        },
+        onEdit: (lead) => {
+            console.log("Edit lead:", lead);
+        },
+        onDelete: (lead) => {
+            console.log("Delete lead:", lead);
+        }
+    });
+
+    const inputClass = "h-10 p-2 w-xs border border-border rounded-md text-text placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
 
     return (
         <div className="min-h-screen bg-background flex p-6">
@@ -177,12 +190,36 @@ export const Leads = () => {
                     <input type="text"
                     placeholder="Search leads..."
                     className="border border-border rounded-3xl p-4 h-10 w-xs placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" 
+                    value={filters.search}
+                    onChange={(e) => {
+                        setFilters(prev => ({
+                            ...prev,
+                            search: e.target.value
+                        }));
+
+                        setPagination(prev => ({
+                            ...prev,
+                            page: 1
+                        }));
+                    }}
                     />
 
                     <div className="flex gap-3">
 
-                        <Dropdown label="Status" value={selectedStatuses} onChange={setSelectedStatuses}
+                        <Dropdown label="Status"    
                             className="w-40" 
+                            value={filters.statusId} 
+                            onChange={(value) => {
+                                setFilters(prev => ({
+                                    ...prev,
+                                    statusId: value
+                                }));
+
+                                setPagination(prev =>({
+                                    ...prev,
+                                    page: 1
+                                }))
+                            }}
                             options={[
                                 {
                                     value: "",
@@ -197,8 +234,17 @@ export const Leads = () => {
 
                         <Dropdown label="Source" 
                         className="w-40" 
-                        value={selectedSources} 
-                        onChange={setSelectedSources}
+                        value={filters.sourceId}
+                        onChange={(value) => {
+                            setFilters(prev =>({
+                                ...prev,
+                                sourceId: value
+                            }));
+                            setPagination(prev =>({
+                                ...prev,
+                                page: 1
+                            }))
+                        }}
                         options={[
                             {
                                 value: "",
@@ -213,8 +259,17 @@ export const Leads = () => {
 
                         <Dropdown label="Assigned" 
                         className="w-40" 
-                        value={selectedUsers} 
-                        onChange={setSelectedUsers}
+                        value={filters.assignedUserId}
+                        onChange= {(value) => {
+                            setFilters(prev => ({
+                                ...prev,
+                                assignedUserId: value
+                            }));
+                            setPagination(prev =>({
+                                ...prev,
+                                page: 1
+                            }))
+                        }}
                         options={[
                             {
                                 value: "",
@@ -230,10 +285,61 @@ export const Leads = () => {
                     </div>
                 </div>
 
-                <DataTable
-                 data={leads}
-                 columns={LeadColumns}
-                 />
+                {error && (
+                    <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
+                        {error}
+                    </div>
+                )}
+
+
+                {loading ? (
+                    <div className="py-10 text-center text-text-secondary">
+                        Loading leads...
+                    </div>
+                ) : (
+                    <DataTable
+                        data={leads}
+                        columns={columns}
+                    />
+                )}
+
+                <div className="flex items-center justify-between mt-4">
+
+                    <div className="text-sm text-text-secondary">
+                        Page {pagination.page} of {pagination.totalPages}
+                    </div>
+
+                    <div className="flex gap-2">
+
+                        <Button
+                            variant="outline"
+                            disabled={!pagination.hasPreviousPage}
+                            onClick={() => {
+                                setPagination(prev => ({
+                                    ...prev,
+                                    page: prev.page - 1
+                                }));
+                            }}
+                        >
+                            Previous
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            disabled={!pagination.hasNextPage}
+                            onClick={() => {
+                                setPagination(prev => ({
+                                    ...prev,
+                                    page: prev.page + 1
+                                }));
+                            }}
+                        >
+                            Next
+                        </Button>
+
+                    </div>
+
+                </div>
 
                 {/* MODAL */}
                  <Modal
@@ -421,11 +527,9 @@ export const Leads = () => {
 
                             </div>
 
-                        </div>
+                             <div className="flex flex-col">
 
-                        <div className="flex flex-col mb-2">
-
-                                <label className="mb-2 text-base font-medium text-text">Assigned Sales Representative</label>
+                                <label className="mb-2 text-base font-medium text-text">Sales Representative</label>
                                 
                                 <Dropdown label="Sales Representative" className="w-full"
                                 value={formData.assignedUserId}
@@ -448,6 +552,10 @@ export const Leads = () => {
                                 )}
 
                             </div>
+
+                        </div>
+
+                       
 
                         <div className="flex flex-col mb-4">
 
