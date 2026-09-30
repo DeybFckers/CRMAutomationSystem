@@ -1,6 +1,7 @@
 ﻿using CRMSystem.Data;
 using CRMSystem.Models.DTOs;
 using CRMSystem.Models.Entities;
+using CRMSystem.Models.Responses;
 using CRMSystem.Repositories.Interface;
 using CRMSystem.Services.Interface;
 using Mapster;
@@ -43,14 +44,60 @@ namespace CRMSystem.Services.Implementation
             _leadStatusRepository = leadStatusRepository;
         }
 
-
-        public async Task<IEnumerable<LeadResponseDto>> GetAllLead()
+        public async Task<PaginatedResponse<LeadResponseDto>> GetAllLead(int page, int pageSize, string? search, Guid? statusId, Guid? sourceId, Guid? assignedUserId, Guid? customerId, string? sortBy, string? sortDirection)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
-            var leads = await _leadRepository.GetAllLeads(organizationId);
+            // Ensure the page number starts at 1.
+            // If an invalid value is provided, default to the first page.
+            if (page < 1)
+                page = 1;
 
-            return leads.Adapt<IEnumerable<LeadResponseDto>>();
+            // Ensure page size is at least 1.
+            // If an invalid value is provided, default to 10 records per page.
+            if (pageSize < 1)
+                pageSize = 10;
+
+            // Limit the maximum number of records that can be requested per page.
+            // This prevents requesting too many records at once.
+            if (pageSize > 100)
+                pageSize = 100;
+
+            // Only allow "asc" or "desc" as the sort direction.
+            // If an invalid or empty value is provided, default to descending order.
+            if (sortDirection?.ToLower() != "asc" && sortDirection?.ToLower() != "desc")
+                sortDirection = "desc";
+
+            var result = await _leadRepository.GetAllLeads(
+                organizationId,
+                page,
+                pageSize,
+                search,
+                statusId,
+                sourceId,
+                assignedUserId,
+                customerId,
+                sortBy,
+                sortDirection);
+
+            var totalPages = result.TotalCount == 0
+                ? 0
+                : (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+            return new PaginatedResponse<LeadResponseDto>
+            {
+                Items = result.Leads.Adapt<IEnumerable<LeadResponseDto>>(),
+                Pagination = new PaginationMetadata
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = result.TotalCount,
+                    TotalPages = totalPages,
+                    HasPreviousPage = page > 1,
+                    HasNextPage = page < totalPages
+                }
+            };
+
         }
 
         public async Task<LeadResponseDto> GetLeadById(Guid id)
@@ -247,5 +294,6 @@ namespace CRMSystem.Services.Implementation
 
             return customer.Adapt<CustomerResponseDto>();
         }
+
     }
 }

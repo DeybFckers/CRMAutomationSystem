@@ -33,14 +33,5 @@ namespace CRMSystem.Controllers
                 Data = data 
             });
         }
-
-        protected IActionResult Created(string message)
-        {
-            return StatusCode(StatusCodes.Status201Created, new ApiResponse<object> { 
-                Success = true, 
-                Message = message, 
-                Data = null 
-            });
-        }
     }
 }

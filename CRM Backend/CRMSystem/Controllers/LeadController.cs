@@ -19,9 +19,28 @@ namespace CRMSystem.Controllers
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
-        public async Task<IActionResult> GetAllLead()
+        public async Task<IActionResult> GetAllLead(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] Guid? statusId = null,
+            [FromQuery] Guid? sourceId = null,
+            [FromQuery] Guid? assignedUserId = null,
+            [FromQuery] Guid? customerId = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] string? sortDirection = null)
         {
-            var leads = await _leadServices.GetAllLead();
+            var leads = await _leadServices.GetAllLead(
+                page,
+                pageSize,
+                search,
+                statusId,
+                sourceId,
+                assignedUserId,
+                customerId,
+                sortBy,
+                sortDirection);
+
             return Success("Leads retrieved successfully.", leads);
         }
 
