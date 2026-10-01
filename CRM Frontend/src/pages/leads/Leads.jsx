@@ -5,33 +5,25 @@ import { LeadColumns } from "./LeadColumns";
 import { DataTable } from "../../components/common/DataTable";
 import { Modal } from "../../components/common/Modal";
 import { useLeads } from "../../hooks/useLeads";
-import { createLead } from "../../services/core/leadsService";
+import { createLead, updateLead, deleteLead } from "../../services/core/leadsService";
 import { useUsers } from "../../hooks/useUsers";
+import { LeadValidator } from "./LeadValidator";
 
 export const Leads = () => {
 
-    const {
-        leads,
-        leadStatuses,
-        leadSources,
-        pagination,
-        setPagination,
-        filters,
-        setFilters,
-        loading,
-        error,
-        refetch
-    } = useLeads();
+    const {leads, leadStatuses, leadSources, pagination, setPagination,filters, setFilters, loading, error, refetch} = useLeads();
 
-    const {
-        users,
-        loading: usersLoading,
-        error: usersError
-    } = useUsers();
+    const {users} = useUsers();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
     const [submitError, setSubmitError] = useState("");
+
+    const [selectedLead, setSelectedLead] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -63,54 +55,6 @@ export const Leads = () => {
         setValidationErrors({});
     };
 
-    const validateForm = () => {
-    const errors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const estimatedValue = Number(formData.estimatedValue);
-
-    if (!formData.firstName.trim()) {
-            errors.firstName = "First name is required.";
-        }
-
-        if (!formData.lastName.trim()) {
-            errors.lastName = "Last name is required.";
-        }
-
-        if (!formData.email.trim()) {
-            errors.email = "Email is required.";
-        } else if (!emailRegex.test(formData.email)) {
-            errors.email = "Please enter a valid email address.";
-        }
-
-        if (!formData.phone.trim()) {
-            errors.phone = "Phone number is required.";
-        }
-
-        if (!formData.companyName.trim()) {
-            errors.companyName = "Company name is required.";
-        }
-
-        if (!formData.estimatedValue) {
-            errors.estimatedValue = "Estimated value is required.";
-        } else if (estimatedValue <= 0) {
-            errors.estimatedValue = "Estimated value must be greater than 0.";
-        }
-
-        if (!formData.statusId) {
-            errors.statusId = "Status is required.";
-        }
-
-        if (!formData.sourceId) {
-            errors.sourceId = "Source is required.";
-        }
-
-        if (!formData.assignedUserId) {
-            errors.assignedUserId = "Sales representative is required.";
-        }
-        setValidationErrors(errors);
-
-        return Object.keys(errors).length === 0;
-    };
 
     const handleChange = (e) => {
         const { name, value} = e.target;
@@ -127,9 +71,11 @@ export const Leads = () => {
 
         setSubmitError("");
 
-        const isValid = validateForm();
+        const errors = LeadValidator(formData);
 
-        if (!isValid) {
+        setValidationErrors(errors);
+
+        if (Object.keys(errors).length > 0) {
             return;
         }
 
@@ -147,25 +93,83 @@ export const Leads = () => {
                 notes: formData.notes
             };
 
-            await createLead(leadData);
+            if (isEditMode) {
+                await updateLead(selectedLead.id, leadData);
+            } else {
+                await createLead(leadData);
+            }
             await refetch();
 
             setIsModalOpen(false);
+            setIsEditMode(false);
+            setSelectedLead(null);
             resetForm();
         }catch (error) {
-            setSubmitError("Failed to create lead.");
+            setSubmitError(
+            isEditMode
+                ? "Failed to update lead."
+                : "Failed to create lead."
+            );
         }
     }
 
+    const handleEdit = (lead) => {
+
+    setSelectedLead(lead);
+    setIsEditMode(true);
+
+    setFormData({
+        firstName: lead.firstName ?? "",
+        lastName: lead.lastName ?? "",
+        email: lead.email ?? "",
+        phone: lead.phone ?? "",
+        companyName: lead.companyName ?? "",
+        estimatedValue: lead.estimatedValue ?? "",
+        statusId: lead.status?.id ?? "",
+        sourceId: lead.source?.id ?? "",
+        assignedUserId: lead.assignedUser?.id ?? "",
+        notes: lead.notes ?? ""
+    });
+
+        setValidationErrors({});
+        setSubmitError("");
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async () => {
+        setDeleteError("");
+
+        try {
+            await deleteLead(selectedLead.id);
+
+            await refetch();
+            setIsDeleteModalOpen(false);
+            setSelectedLead(null);
+        } catch (error) {
+            setDeleteError("Failed to delete lead.");
+        }
+    };
+
+    const closeLeadModal = () => {
+        setIsModalOpen(false);
+        setIsEditMode(false);
+        setSelectedLead(null);
+        setSubmitError("");
+        setValidationErrors({});
+        resetForm();
+    };
+
+
     const columns = LeadColumns({
         onView: (lead) => {
-            console.log("View lead notes:", lead);
+            setSelectedLead(lead);
+            setIsNotesModalOpen(true);
         },
-        onEdit: (lead) => {
-            console.log("Edit lead:", lead);
-        },
+        onEdit: handleEdit,
         onDelete: (lead) => {
-            console.log("Delete lead:", lead);
+            setSelectedLead(lead);
+            setDeleteError("");
+            setIsDeleteModalOpen(true);
         }
     });
 
@@ -180,7 +184,13 @@ export const Leads = () => {
                     Leads
                     </p>
 
-                    <Button onClick={() => {resetForm(); setIsModalOpen(true)}}>
+                    <Button onClick={() => {
+                        resetForm();
+                        setSubmitError("");
+                        setIsEditMode(false);
+                        setSelectedLead(null);
+                        setIsModalOpen(true);
+                    }}>
                         + Add Lead
                     </Button>
                     
@@ -344,9 +354,8 @@ export const Leads = () => {
                 {/* MODAL */}
                  <Modal
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    title="Add Lead"
-                >
+                    onClose={() => {closeLeadModal()}}
+                    title={isEditMode ? "Edit Lead" : "Add Lead"}>
                     <form onSubmit={handleSubmit} className="flex flex-col ">
                         
                         <div className="flex justify-between gap-3 mb-2">
@@ -574,12 +583,15 @@ export const Leads = () => {
 
                         <div className="flex justify-end gap-2">
 
-                            <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
+                            <Button variant="outline"
+                                type="button"
+                                onClick={() => {closeLeadModal()}}
+                            >
                                 Cancel
                             </Button>
 
                             <Button variant="primary" type="submit">
-                                Create
+                                {isEditMode ? "Update Lead" : "Add Lead"}
                             </Button>
                         </div>
                         
@@ -592,6 +604,43 @@ export const Leads = () => {
                     </form>
 
 
+                </Modal>
+
+                <Modal
+                    isOpen={isNotesModalOpen}
+                    onClose={() => setIsNotesModalOpen(false)}
+                    title={`${selectedLead?.firstName} ${selectedLead?.lastName} - Notes`}
+                >
+                    <p className="text-text text-base border border-border p-3 rounded-md bg-surface-secondary">{selectedLead?.notes || "No notes available."}</p>
+                </Modal>
+
+                <Modal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => {
+                        setIsDeleteModalOpen(false);
+                        setDeleteError("");
+                        setSelectedLead(null);
+                    }}
+                    title={`Remove Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                >
+                    {deleteError && (
+                        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
+                            {deleteError}
+                        </div>
+                    )}
+                    <p className="text-text text-base">Are you sure you want to remove this lead?</p>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" type="button" onClick={() => {
+                            setIsDeleteModalOpen(false);
+                            setDeleteError("");
+                            setSelectedLead(null);
+                        }}>
+                            Cancel
+                        </Button>
+                        <Button variant="danger" type="button" onClick={handleDelete}>
+                            Remove
+                        </Button>
+                    </div>
                 </Modal>
                 
             </main>

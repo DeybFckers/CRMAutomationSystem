@@ -1,6 +1,6 @@
+import { TableActions } from "../../components/common/TableActions";
 
-
-export const LeadColumns = [
+export const LeadColumns = ({onView, onEdit, onDelete, onAssign}) => [
   {
         accessorKey: "firstName",
         header: "Name",
@@ -27,7 +27,7 @@ export const LeadColumns = [
     },
     {
         accessorKey: "estimatedValue",
-        header: "Estimated Value",
+        header: "Value",
         cell: ({ getValue }) => {
             const value = getValue();
 
@@ -56,6 +56,51 @@ export const LeadColumns = [
     },
     {
         accessorKey: "notes",
-        header: "Notes"
+        header: "Notes",
+        cell: ({ row }) => {
+        const lead = row.original;
+
+            if (!lead.notes) {
+                return "-";
+            }
+            return (
+                <button
+                    type="button"
+                    onClick={() => onView(lead)}
+                    className="cursor-pointer inline-flex items-center justify-center rounded-full bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-200"
+                    title="View notes"
+                >
+                    View
+                </button>
+            );
+        }
     },
+    {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+            const lead = row.original;
+
+            return (
+            <TableActions
+                options={[
+                    {
+                        label: "Edit",
+                        onClick: () => onEdit(lead)
+                    },
+                    {
+                        label: "Assign",
+                        onClick: () => onAssign(lead)
+                    },
+                    {
+                        label: "Delete",
+                        variant: "danger",
+                        onClick: () => onDelete(lead)
+                    }
+                ]}
+            />
+            );
+        }
+    }
+
 ]

@@ -23,3 +23,14 @@ export const createLead = async (leadData) =>{
 
     return response.data;
 }
+
+export const updateLead = async (leadId, leadData) =>{
+    const response = await api.put(`/api/leads/${leadId}`, leadData);
+
+    return response.data;
+}
+
+export const deleteLead = async (leadId) =>{
+    const response = await api.delete(`/api/leads/${leadId}`);
+    return response.data;
+}

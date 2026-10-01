@@ -39,8 +39,8 @@ export const DataTable = ({ data = [], columns }) => {
     });
 
     return (
-        <div className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
-            <table className="w-full text-left text-sm">
+        <div className="h-165 overflow-x-auto rounded-lg border border-border bg-surface shadow-sm">
+            <table className="w-full text-left">
 
             {/* 
                 THEAD = table header.
@@ -58,7 +58,7 @@ export const DataTable = ({ data = [], columns }) => {
                         {headerGroup.headers.map((header) => (
 
                             // Each <th> represents one column header.
-                            <th key={header.id} className="px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
+                            <th key={header.id} className="px-4 py-3 text-base font-semibold uppercase tracking-wide whitespace-nowrap">
 
                                 {/*
                                     flexRender() renders the header.
@@ -119,7 +119,7 @@ export const DataTable = ({ data = [], columns }) => {
                         {row.getVisibleCells().map((cell) => (
 
                             // Each cell needs a unique key.
-                            <td key={cell.id} className="px-4 py-3 text-text-secondary">
+                            <td key={cell.id} className="px-4 py-3 text-text-secondary text-sm">
 
                                 {/*
                                     Render the actual cell value.
