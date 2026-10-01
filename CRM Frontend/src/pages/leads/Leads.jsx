@@ -180,9 +180,16 @@ export const Leads = () => {
 
             <main className="bg-surface border border-border w-full rounded-xl shadow-md p-8">
                 <div className="flex justify-between mb-5">
+                    <div className="flex items-center gap-3">
                     <p className="text-2xl font-bold text-text">
-                    Leads
+                        Leads
                     </p>
+
+                    <span className="px-3 py-1 text-sm font-medium rounded-full bg-slate-100 text-text-secondary">
+                        {pagination.totalCount}
+                    </span>
+                </div>
+
 
                     <Button onClick={() => {
                         resetForm();
@@ -305,6 +312,20 @@ export const Leads = () => {
                 {loading ? (
                     <div className="py-10 text-center text-text-secondary">
                         Loading leads...
+                    </div>
+                ) : leads.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center min-h-165 text-center">
+                        <p className="text-lg font-semibold text-text">
+                            {filters.search || filters.statusId || filters.sourceId || filters.assignedUserId
+                                ? "No leads found"
+                                : "No leads yet"}
+                        </p>
+
+                        <p className="mt-1 text-sm text-text-secondary">
+                            {filters.search || filters.statusId || filters.sourceId || filters.assignedUserId
+                                ? "Try adjusting your search or filters."
+                                : "Create your first lead to get started."}
+                        </p>
                     </div>
                 ) : (
                     <DataTable
