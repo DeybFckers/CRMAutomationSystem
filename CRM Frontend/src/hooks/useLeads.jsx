@@ -30,9 +30,22 @@ export const useLeads = () => {
         sortDirection: "desc"
     });
 
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
     const [loading, setLoading] = useState(false);
 
     const [error, setError] = useState("");
+
+    
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(filters.search);
+        }, 400);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [filters.search]);
 
     const fetchLeads = useCallback(async () => {
         try{
@@ -42,7 +55,7 @@ export const useLeads = () => {
             const response = await getAllLeads({
                 page: pagination.page,
                 pageSize: pagination.pageSize,
-                search: filters.search || undefined,
+                search: debouncedSearch || undefined,
                 statusId: filters.statusId || undefined,
                 sourceId: filters.sourceId || undefined,
                 assignedUserId: filters.assignedUserId || undefined,
@@ -60,8 +73,14 @@ export const useLeads = () => {
     }, [
         pagination.page,
         pagination.pageSize,
-        filters
+        debouncedSearch,
+        filters.statusId,
+        filters.sourceId,
+        filters.assignedUserId,
+        filters.sortBy,
+        filters.sortDirection
     ]);
+
 
     useEffect(() => {
         fetchLeads();
