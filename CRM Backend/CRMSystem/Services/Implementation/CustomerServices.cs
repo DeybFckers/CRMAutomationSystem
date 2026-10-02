@@ -1,5 +1,6 @@
 ﻿using CRMSystem.Models.DTOs;
 using CRMSystem.Models.Entities;
+using CRMSystem.Models.Responses;
 using CRMSystem.Repositories.Implementation;
 using CRMSystem.Repositories.Interface;
 using CRMSystem.Services.Interface;
@@ -39,10 +40,47 @@ namespace CRMSystem.Services.Implementation
             return newCustomer.Adapt<CustomerResponseDto>();
         }
 
-        public async Task<IEnumerable<CustomerResponseDto>> GetAllCustomer()
+        public async Task<PaginatedResponse<CustomerResponseDto>> GetAllCustomer(int page, int pageSize, string? search, string? sortBy, string? sortDirection, Guid? assignedUserId)
         {
-            var customers = await _customerRepository.GetAllCustomer(_currentUser.OrganizationId);
-            return customers.Adapt<IEnumerable<CustomerResponseDto>>();
+            var organizationId = _currentUser.OrganizationId;
+            if (page < 1)
+                page = 1;
+            if(pageSize < 1)
+                pageSize = 10;
+
+            if(pageSize > 100)
+                pageSize = 100;
+
+            if(sortDirection?.ToLower() != "asc" && sortDirection?.ToLower() != "desc")
+                sortDirection = "desc";
+
+            var result = await _customerRepository.GetAllCustomers(
+                organizationId,
+                page,
+                pageSize,
+                search,
+                sortBy,
+                sortDirection,
+                assignedUserId
+            );
+
+            var totalPages = result.TotalCount == 0
+                ? 0
+                : (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+            return new PaginatedResponse<CustomerResponseDto>
+            {
+                Items = result.Customers.Adapt<IEnumerable<CustomerResponseDto>>(),
+                Pagination = new PaginationMetadata
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = result.TotalCount,
+                    TotalPages = totalPages,
+                    HasPreviousPage = page > 1,
+                    HasNextPage = page < totalPages
+                }
+            };
         }
 
         public async Task<CustomerResponseDto> GetCustomerById(Guid id)

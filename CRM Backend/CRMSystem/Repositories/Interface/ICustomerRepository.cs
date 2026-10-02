@@ -4,7 +4,7 @@ namespace CRMSystem.Repositories.Interface
 {
     public interface ICustomerRepository
     {
-        Task<IEnumerable<Customer>> GetAllCustomer(Guid organizationId);
+        Task<(IEnumerable<Customer> Customers, int TotalCount)> GetAllCustomers(Guid organizationId, int page, int pageSize, string? search, string? sortBy, string? sortDirection, Guid? assignUserId);
         Task<Customer?> GetCustomerById(Guid id, Guid organizationId);
         Task CreateCustomer(Customer customer);
         Task UpdateCustomer(Customer customer);

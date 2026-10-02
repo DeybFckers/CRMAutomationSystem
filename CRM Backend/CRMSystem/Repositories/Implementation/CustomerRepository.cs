@@ -14,22 +14,96 @@ namespace CRMSystem.Repositories.Implementation
             _context = context;
         }
 
-        public async Task CreateCustomer(Customer customer)
+        public async Task<(IEnumerable<Customer> Customers, int TotalCount)> GetAllCustomers(Guid organizationId, int page, int pageSize, string? search, string? sortBy, string? sortDirection, Guid? assignUserId)
         {
-            await _context.Customers.AddAsync(customer);
-            await _context.SaveChangesAsync();
-        }
+            var query = _context.Customers.Where(x => x.OrganizationId == organizationId);
 
-        public async Task<IEnumerable<Customer>> GetAllCustomer(Guid organizationId)
-        {
-            return await _context.Customers
+            if (assignUserId.HasValue)
+                query = query.Where(x => x.AssignedUserId == assignUserId.Value);
+
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+
+                query = query.Where(x => 
+                (x.FirstName != null && x.FirstName.Contains(search)) ||
+                (x.LastName != null && x.LastName.Contains(search)) ||
+                (x.CompanyName != null && x.CompanyName.Contains(search)) ||
+                (x.Email != null && x.Email.Contains(search)) ||
+                (x.Phone != null && x.Phone.Contains(search)) ||
+                (x.CustomerCode != null && x.CustomerCode.Contains(search)));
+            }
+            
+            var totalCount = await query.CountAsync();
+
+            sortBy = sortBy?.ToLower();
+            sortDirection = sortDirection?.ToLower();
+
+            switch (sortBy)
+            {
+                case "firstname":
+                    query = sortDirection == "asc" 
+                        ? query.OrderBy(x => x.FirstName) 
+                        : query.OrderByDescending(x => x.FirstName);
+                    break;
+                case "lastname":
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.LastName)
+                        : query.OrderByDescending(x => x.LastName);
+                    break;
+                case "companyname":
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.CompanyName)
+                        : query.OrderByDescending(x => x.CompanyName);
+                    break;
+                case "customercode":
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.CustomerCode)
+                        : query.OrderByDescending(x => x.CustomerCode);
+                    break;
+                case "email":
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.Email)
+                        : query.OrderByDescending(x => x.Email);
+                    break;
+                case "phone":
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.Phone)
+                        : query.OrderByDescending(x => x.Phone);
+                    break;
+                case "updatedat":
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.UpdatedAt)
+                        : query.OrderByDescending(x => x.UpdatedAt);
+                    break;
+
+                case "createdat":
+                default:
+                    query = sortDirection == "asc"
+                        ? query.OrderBy(x => x.CreatedAt)
+                        : query.OrderByDescending(x => x.CreatedAt);
+                    break;
+            }
+
+            var customer = await query
                 .Include(x => x.AssignedUser)
                 .Include(x => x.Contacts)
                 .Include(x => x.Addresses)
                 .AsSplitQuery()
-                .Where(x => x.OrganizationId == organizationId)
-                .OrderByDescending(x => x.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return(customer, totalCount);
+
+
+        }
+
+        public async Task CreateCustomer(Customer customer)
+        {
+            await _context.Customers.AddAsync(customer);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Customer?> GetCustomerById(Guid id, Guid organizationId)
@@ -71,6 +145,5 @@ namespace CRMSystem.Repositories.Implementation
         {
             _context.Customers.Add(customer);
         }
-
     }
 }

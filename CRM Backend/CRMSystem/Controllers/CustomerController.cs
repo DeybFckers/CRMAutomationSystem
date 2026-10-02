@@ -19,9 +19,22 @@ namespace CRMSystem.Controllers
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
         [HttpGet]
-        public async Task<IActionResult> GetAllCustomer()
+        public async Task<IActionResult> GetAllCustomer(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] string? sortDirection = null,
+            [FromQuery] Guid? assignedUserId = null )
         {
-            var customers = await _customerServices.GetAllCustomer();
+            var customers = await _customerServices.GetAllCustomer(
+                page,
+                pageSize,
+                search,
+                sortBy,
+                sortDirection,
+                assignedUserId);
+
             return Success("Customers retrieved successfully.", customers);
         }
 
