@@ -11,12 +11,12 @@ export const LeadColumns = ({onView, onEdit, onDelete, onAssign}) => [
         }
     },
     {
-        accessorKey: "email",
-        header: "Email"
-    },
-    {
         accessorKey: "companyName",
         header: "Company"
+    },
+    {
+        accessorKey: "email",
+        header: "Email"
     },
     {
         accessorKey: "source",

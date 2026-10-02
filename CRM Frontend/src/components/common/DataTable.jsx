@@ -13,6 +13,11 @@ import {
 // if the API data has not loaded yet.
 export const DataTable = ({ data = [], columns }) => {
 
+    console.log("DataTable data:", data);
+    console.log("DataTable columns:", columns);
+    console.log("data is array:", Array.isArray(data));
+    console.log("columns is array:", Array.isArray(columns));
+
     // useReactTable creates and manages the table instance.
     //
     // We pass "data" and "columns" from the component using DataTable.
@@ -58,7 +63,7 @@ export const DataTable = ({ data = [], columns }) => {
                         {headerGroup.headers.map((header) => (
 
                             // Each <th> represents one column header.
-                            <th key={header.id} className="px-4 py-3 text-base font-semibold uppercase tracking-wide whitespace-nowrap">
+                            <th key={header.id} className="px-4 py-3 text-base font-semibold tracking-wide whitespace-nowrap">
 
                                 {/*
                                     flexRender() renders the header.
