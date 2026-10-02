@@ -4,7 +4,7 @@ namespace CRMSystem.Repositories.Interface
 {
     public interface ILeadRepository
     {
-        Task<(IEnumerable<Lead> Leads, int TotalCount)> GetAllLeads(Guid organizationId, int page, int pageSize, string? search, Guid? statusId, Guid? sourceId, Guid? assignedUserId, Guid? customerId, string? sortBy, string? sortDirection);
+        Task<(IEnumerable<Lead> Leads, int TotalCount)> GetAllLeads(Guid organizationId, int page, int pageSize, string? search, Guid? statusId, Guid? sourceId, Guid? assignedUserId, string? sortBy, string? sortDirection);
 
         Task<Lead?> GetLeadById(Guid id, Guid organizationId);
 

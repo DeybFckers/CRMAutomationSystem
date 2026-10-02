@@ -14,7 +14,7 @@ namespace CRMSystem.Repositories.Implementation
             _context = context;
         }
 
-        public async Task<(IEnumerable<Lead> Leads, int TotalCount)> GetAllLeads(Guid organizationId, int page, int pageSize, string? search, Guid? statusId, Guid? sourceId, Guid? assignedUserId, Guid? customerId, string? sortBy, string? sortDirection)
+        public async Task<(IEnumerable<Lead> Leads, int TotalCount)> GetAllLeads(Guid organizationId, int page, int pageSize, string? search, Guid? statusId, Guid? sourceId, Guid? assignedUserId, string? sortBy, string? sortDirection)
         {
             //query the all Leads but no filter
             var query = _context.Leads.Where(x => x.OrganizationId == organizationId);

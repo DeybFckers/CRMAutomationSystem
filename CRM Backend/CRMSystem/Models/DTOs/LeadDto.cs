@@ -11,8 +11,6 @@
         public LeadSourceMinimalDto Source { get; set; } = null!;
         public LeadStatusMinimalDto Status { get; set; } = null!;
 
-        public Guid? CustomerId { get; set; }
-
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? CompanyName { get; set; }

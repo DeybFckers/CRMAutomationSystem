@@ -22,6 +22,7 @@ namespace CRMSystem.Data
         public DbSet<Lead> Leads => Set<Lead>();
         public DbSet<LeadSource> LeadSources => Set<LeadSource>();
         public DbSet<LeadStatus> LeadStatuses => Set<LeadStatus>();
+        public DbSet<LeadConversion> LeadConversions => Set<LeadConversion>();
 
         public DbSet<Pipeline> Pipelines => Set<Pipeline>();
         public DbSet<PipelineStage> PipelineStages => Set<PipelineStage>();
@@ -327,16 +328,56 @@ namespace CRMSystem.Data
                     .HasForeignKey(x => x.StatusId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(x => x.ConvertedCustomer)
-                    .WithMany()
-                    .HasForeignKey(x => x.ConvertedCustomerId)
-                    .OnDelete(DeleteBehavior.SetNull);
-
                 entity.HasIndex(x => x.OrganizationId);
                 entity.HasIndex(x => x.AssignedUserId);
                 entity.HasIndex(x => x.SourceId);
                 entity.HasIndex(x => x.StatusId);
                 entity.HasIndex(x => x.Email);
+            });
+
+            builder.Entity<LeadConversion>(entity =>
+            {
+                entity.ToTable("lead_conversions");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Id)
+                    .HasDefaultValueSql("gen_random_uuid()");
+
+                entity.Property(x => x.ConvertedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.HasOne(x => x.Organization)
+                    .WithMany()
+                    .HasForeignKey(x => x.OrganizationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Lead)
+                    .WithOne(x => x.LeadConversion)
+                    .HasForeignKey<LeadConversion>(x => x.LeadId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.Customer)
+                    .WithOne()
+                    .HasForeignKey<LeadConversion>(x => x.CustomerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.ConvertedByUser)
+                    .WithMany()
+                    .HasForeignKey(x => x.ConvertedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.OrganizationId);
+
+                entity.HasIndex(x => x.LeadId)
+                    .IsUnique();
+
+                entity.HasIndex(x => x.CustomerId)
+                    .IsUnique();
+
+                entity.HasIndex(x => x.ConvertedByUserId);
+
+                entity.HasIndex(x => x.ConvertedAt);
             });
 
 

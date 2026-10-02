@@ -188,7 +188,7 @@ export const Leads = () => {
                     <span className="px-3 py-1 text-sm font-medium rounded-full bg-slate-100 text-text-secondary">
                         {pagination.totalCount}
                     </span>
-                </div>
+                     </div>
 
 
                     <Button onClick={() => {

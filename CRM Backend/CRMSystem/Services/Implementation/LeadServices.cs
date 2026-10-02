@@ -76,7 +76,6 @@ namespace CRMSystem.Services.Implementation
                 statusId,
                 sourceId,
                 assignedUserId,
-                customerId,
                 sortBy,
                 sortDirection);
 
@@ -251,17 +250,31 @@ namespace CRMSystem.Services.Implementation
 
         public async Task<CustomerResponseDto> ConvertLeadToCustomer(Guid id)
         {
-            var organizationId = _currentUserServices.OrganizationId; 
-            var lead = await _leadRepository.GetLeadById(id, organizationId); 
-            if (lead == null) throw new KeyNotFoundException("Lead not found."); 
-            if (lead.ConvertedCustomerId.HasValue)
-                throw new InvalidOperationException("This lead has already been converted to a customer."); 
+            var organizationId = _currentUserServices.OrganizationId;
+            var currentUserId = _currentUserServices.UserId;
 
-            var convertedStatus = await _leadRepository.GetStatusByName(organizationId, "Converted"); 
-            if (convertedStatus == null) throw new KeyNotFoundException("Converted lead status not found.");
+            var lead = await _leadRepository.GetLeadById(id, organizationId);
 
-            var organization = await _organizationRepository.GetOrganizationById(organizationId); 
-            if (organization == null) throw new KeyNotFoundException("Organization not found."); 
+            if (lead == null)
+                throw new KeyNotFoundException("Lead not found.");
+
+            var existingConversion = await _context.LeadConversions
+                .FirstOrDefaultAsync(x => x.LeadId == id && x.OrganizationId == organizationId);
+
+            if (existingConversion != null)
+                throw new InvalidOperationException("This lead has already been converted to a customer.");
+
+            var convertedStatus = await _leadRepository.GetStatusByName(organizationId, "Converted");
+
+            if (convertedStatus == null)
+                throw new KeyNotFoundException("Converted lead status not found.");
+
+            var organization = await _organizationRepository.GetOrganizationById(organizationId);
+
+            if (organization == null)
+                throw new KeyNotFoundException("Organization not found.");
+
+            var now = DateTime.UtcNow;
 
             var customer = new Customer
             {
@@ -273,21 +286,31 @@ namespace CRMSystem.Services.Implementation
                 CompanyName = lead.CompanyName,
                 Email = lead.Email,
                 Phone = lead.Phone,
-                CustomerCode = await _customerCodeServices.GenerateCustomerCode(organization.Id, organization.Name, DateTime.UtcNow),
+                CustomerCode = await _customerCodeServices.GenerateCustomerCode(organization.Id, organization.Name, now),
                 Status = "ACTIVE",
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = now,
+                UpdatedAt = now
             };
 
-            lead.ConvertedCustomerId = customer.Id; 
-            lead.ConvertedAt = DateTime.UtcNow;
-            lead.StatusId = convertedStatus.Id; 
-            lead.UpdatedAt = DateTime.UtcNow;
+            var leadConversion = new LeadConversion
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = organizationId,
+                LeadId = lead.Id,
+                CustomerId = customer.Id,
+                ConvertedByUserId = currentUserId,
+                ConvertedAt = now
+            };
+
+            lead.StatusId = convertedStatus.Id;
+            lead.UpdatedAt = now;
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             _customerRepository.AddCustomer(customer);
-            _leadRepository.UpdateLeadNoSave(lead);      
+            _leadRepository.UpdateLeadNoSave(lead);
+
+            await _context.LeadConversions.AddAsync(leadConversion);
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();

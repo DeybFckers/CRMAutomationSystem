@@ -30,10 +30,6 @@ namespace CRMSystem.Models.Entities
 
         public string? Notes { get; set; }
 
-        public Guid? ConvertedCustomerId { get; set; }
-
-        public DateTime? ConvertedAt { get; set; }
-
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
@@ -54,5 +50,6 @@ namespace CRMSystem.Models.Entities
         public ICollection<Activity> Activities { get; set; } = new List<Activity>();
 
         public ICollection<Note> NoteEntries { get; set; } = new List<Note>();
+        public LeadConversion? LeadConversion { get; set; }
     }
 }

@@ -6,6 +6,7 @@ import { Dashboard } from "../pages/dashboard/Dashboard";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { Applayout } from "../components/layout/Applayout";
 import { Leads } from "../pages/leads/Leads";
+import { Customers } from "../pages/customer/Customers";
 
 export const AppRoutes = () => {
     return (
@@ -29,6 +30,11 @@ export const AppRoutes = () => {
                     <Route 
                         path="/leads" 
                         element={<Leads/>}
+                    />
+
+                    <Route 
+                        path="/customers"
+                        element={<Customers/>}
                     />
 
                 </Route>

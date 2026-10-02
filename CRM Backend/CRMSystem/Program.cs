@@ -138,6 +138,8 @@ builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<INoteServices, NoteServices>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IAuditLogServices, AuditLogServices>();
+builder.Services.AddScoped<ILeadConversionRepository, LeadConversionRepository>();
+builder.Services.AddScoped<ILeadConversionServices, LeadConversionServices>();
 
 builder.Services.AddControllers();
 
