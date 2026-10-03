@@ -1,11 +1,19 @@
-export const CustomerColumns = ({onView, onEdit, onDelete, onAssign}) => [
+export const CustomerColumns = ({ onViewDetails }) => [
     {
         accessorKey:"firstName",
         header: "Name",
         cell: ({ row }) => {
-            const { firstName, lastName } = row.original;
+            const lead = row.original;
 
-            return `${firstName} ${lastName}`;
+            return (
+                <button
+                    type="button"
+                    onClick={() => onViewDetails(lead)}
+                    className="font-medium text-text hover:text-primary hover:underline cursor-pointer"
+                >
+                    {lead.firstName} {lead.lastName}
+                </button>
+            );
         }
     },
     {

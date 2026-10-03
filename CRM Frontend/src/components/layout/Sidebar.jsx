@@ -16,7 +16,7 @@ export const Sidebar = () => {
             <div>
 
                 <div className="flex items-center justify-center mb-4">
-                    <img src={SidebarLogo} alt="Logo" className="h-50w-auto" />
+                    <img src={SidebarLogo} alt="Logo" className="h-40 w-auto" />
                 </div>
 
                 <nav className="flex flex-col gap-1">

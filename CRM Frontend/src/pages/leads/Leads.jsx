@@ -1,29 +1,43 @@
 import { useState } from "react";
-import Button from "../../components/common/Button"
+import { Button } from "../../components/common/Button"
 import { Dropdown } from "../../components/common/Dropdown";
 import { LeadColumns } from "./LeadColumns";
 import { DataTable } from "../../components/common/DataTable";
 import { Modal } from "../../components/common/Modal";
 import { useLeads } from "../../hooks/useLeads";
-import { createLead, updateLead, deleteLead } from "../../services/core/leadsService";
+import { createLead, updateLead, deleteLead, convertLead } from "../../services/core/leadsService";
 import { useUsers } from "../../hooks/useUsers";
 import { LeadValidator } from "./LeadValidator";
+import { Pagination } from "../../components/common/Pagination";
+
 
 export const Leads = () => {
 
-    const {leads, leadStatuses, leadSources, pagination, setPagination,filters, setFilters, loading, error, refetch} = useLeads();
+    // ====================
+    // Hooks / Data
+    // ====================
 
-    const {users} = useUsers();
+    const {leads, leadStatuses, leadSources, pagination, setPagination, filters, setFilters, loading, error, refetch } = useLeads();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [validationErrors, setValidationErrors] = useState({});
-    const [submitError, setSubmitError] = useState("");
+    const { users } = useUsers();
+
+
+    // ====================
+    // Modal / Selection State
+    // ====================
 
     const [selectedLead, setSelectedLead] = useState(null);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [deleteError, setDeleteError] = useState("");
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+
+    // ====================
+    // Form State or form from the modal
+    // ====================
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -36,7 +50,17 @@ export const Leads = () => {
         sourceId: "",
         assignedUserId: "",
         notes: ""
-    })
+    });
+
+    const [validationErrors, setValidationErrors] = useState({});
+    const [submitError, setSubmitError] = useState("");
+    const [deleteError, setDeleteError] = useState("");
+    const [convertError, setConvertError] = useState("");
+
+
+    // ====================
+    // Form Helpers
+    // ====================
 
     const resetForm = () => {
         setFormData({
@@ -55,18 +79,35 @@ export const Leads = () => {
         setValidationErrors({});
     };
 
+    const closeLeadModal = () => {
+        setIsModalOpen(false);
+        setIsEditMode(false);
+        setSelectedLead(null);
+        setSubmitError("");
+        setValidationErrors({});
+        resetForm();
+    };
+
+
+    // ====================
+    // Form Input
+    // ====================
 
     const handleChange = (e) => {
-        const { name, value} = e.target;
+        const { name, value } = e.target;
 
         setFormData((prev) => ({
             ...prev,
             [name]: value
         }));
-
     };
 
-    const handleSubmit = async (e) =>{
+
+    // ====================
+    // Create / Update Lead
+    // ====================
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         setSubmitError("");
@@ -92,49 +133,60 @@ export const Leads = () => {
                 estimatedValue: Number(formData.estimatedValue),
                 notes: formData.notes
             };
-
+            //if the modal is in edit mode
             if (isEditMode) {
                 await updateLead(selectedLead.id, leadData);
             } else {
                 await createLead(leadData);
             }
+
             await refetch();
 
             setIsModalOpen(false);
             setIsEditMode(false);
             setSelectedLead(null);
             resetForm();
-        }catch (error) {
+
+        } catch (error) {
             setSubmitError(
-            isEditMode
-                ? "Failed to update lead."
-                : "Failed to create lead."
+                isEditMode
+                    ? "Failed to update lead."
+                    : "Failed to create lead."
             );
         }
-    }
+    };
+
+
+    // ====================
+    // Edit Lead
+    // ====================
 
     const handleEdit = (lead) => {
+        setSelectedLead(lead);
+        setIsEditMode(true);
 
-    setSelectedLead(lead);
-    setIsEditMode(true);
-
-    setFormData({
-        firstName: lead.firstName ?? "",
-        lastName: lead.lastName ?? "",
-        email: lead.email ?? "",
-        phone: lead.phone ?? "",
-        companyName: lead.companyName ?? "",
-        estimatedValue: lead.estimatedValue ?? "",
-        statusId: lead.status?.id ?? "",
-        sourceId: lead.source?.id ?? "",
-        assignedUserId: lead.assignedUser?.id ?? "",
-        notes: lead.notes ?? ""
-    });
+        setFormData({
+            firstName: lead.firstName ?? "",
+            lastName: lead.lastName ?? "",
+            email: lead.email ?? "",
+            phone: lead.phone ?? "",
+            companyName: lead.companyName ?? "",
+            estimatedValue: lead.estimatedValue ?? "",
+            statusId: lead.status?.id ?? "",
+            sourceId: lead.source?.id ?? "",
+            assignedUserId: lead.assignedUser?.id ?? "",
+            notes: lead.notes ?? ""
+        });
 
         setValidationErrors({});
         setSubmitError("");
         setIsModalOpen(true);
     };
+
+
+    // ====================
+    // Delete Lead
+    // ====================
 
     const handleDelete = async () => {
         setDeleteError("");
@@ -143,34 +195,41 @@ export const Leads = () => {
             await deleteLead(selectedLead.id);
 
             await refetch();
+
             setIsDeleteModalOpen(false);
             setSelectedLead(null);
+
         } catch (error) {
             setDeleteError("Failed to delete lead.");
         }
     };
 
-    const closeLeadModal = () => {
-        setIsModalOpen(false);
-        setIsEditMode(false);
-        setSelectedLead(null);
-        setSubmitError("");
-        setValidationErrors({});
-        resetForm();
-    };
+    //Convert Lead to customer
+    const handleConvert = async () => {
+        setConvertError("");
 
+        try{
+            await convertLead(selectedLead.id);
+
+            await refetch();
+
+            setIsConvertModalOpen(false);
+            setSelectedLead(null)
+        }catch(error){
+            setConvertError("Failed to Convert Lead")
+        }
+    }
+
+
+    // ====================
+    // Table Columns / Actions
+    // ====================
 
     const columns = LeadColumns({
-        onView: (lead) => {
+        onViewDetails: (lead) => {
             setSelectedLead(lead);
-            setIsNotesModalOpen(true);
+            setIsDetailsModalOpen(true);
         },
-        onEdit: handleEdit,
-        onDelete: (lead) => {
-            setSelectedLead(lead);
-            setDeleteError("");
-            setIsDeleteModalOpen(true);
-        }
     });
 
     const inputClass = "h-10 p-2 w-xs border border-border rounded-md text-text placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
@@ -334,52 +393,26 @@ export const Leads = () => {
                     />
                 )}
 
-                <div className="flex items-center justify-between mt-4">
-
-                    <div className="text-sm text-text-secondary">
-                        Page {pagination.page} of {pagination.totalPages}
-                    </div>
-
-                    <div className="flex gap-2">
-
-                        <Button
-                            variant="outline"
-                            disabled={!pagination.hasPreviousPage}
-                            onClick={() => {
-                                setPagination(prev => ({
-                                    ...prev,
-                                    page: prev.page - 1
-                                }));
-                            }}
-                        >
-                            Previous
-                        </Button>
-
-                        <Button
-                            variant="outline"
-                            disabled={!pagination.hasNextPage}
-                            onClick={() => {
-                                setPagination(prev => ({
-                                    ...prev,
-                                    page: prev.page + 1
-                                }));
-                            }}
-                        >
-                            Next
-                        </Button>
-
-                    </div>
-
-                </div>
+                <Pagination
+                    pagination={pagination}
+                    onPageChange={(page) => {
+                        setPagination(prev => ({
+                            ...prev,
+                            page,
+                        }));
+                    }}
+                />
 
                 {/* MODAL */}
                  <Modal
                     isOpen={isModalOpen}
                     onClose={() => {closeLeadModal()}}
-                    title={isEditMode ? "Edit Lead" : "Add Lead"}>
+                    title={isEditMode ? "Edit Lead" : "Add Lead"}
+                    >
                     <form onSubmit={handleSubmit} className="flex flex-col ">
-                        
-                        <div className="flex justify-between gap-3 mb-2">
+                        {/* Lead Name */}
+                        <div className="flex justify-between gap-3 mb-4">
+
                             <div className="flex flex-col">
                                 
                                 <label className="mb-2 text-base font-medium text-text">First Name</label>
@@ -419,8 +452,8 @@ export const Leads = () => {
                             </div>
                             
                         </div>
-
-                        <div className="flex justify-between mb-2">
+                        {/* Lead Email and Phone */}
+                        <div className="flex justify-between mb-4">
                             
                             <div className="flex flex-col">
                                 
@@ -460,8 +493,8 @@ export const Leads = () => {
                                 
                             </div>
                         </div>
-
-                        <div className="flex justify-between mb-2">
+                        {/* Lead Company and Estimated Value */}
+                        <div className="flex justify-between mb-4">
 
                             <div className="flex flex-col">
 
@@ -503,8 +536,8 @@ export const Leads = () => {
                             </div>
                             
                         </div>
-
-                        <div className="flex justify-between mb-2">
+                        {/* Lead Status, Source, and Sales Representative */}
+                        <div className="flex justify-between mb-4">
 
                             <div className="flex flex-col">
 
@@ -584,9 +617,7 @@ export const Leads = () => {
                             </div>
 
                         </div>
-
-                       
-
+                        {/* NOTES */}
                         <div className="flex flex-col mb-4">
 
                             <label className="mb-2 text-base font-medium text-text">Notes</label>
@@ -626,15 +657,8 @@ export const Leads = () => {
 
 
                 </Modal>
-
-                <Modal
-                    isOpen={isNotesModalOpen}
-                    onClose={() => setIsNotesModalOpen(false)}
-                    title={`${selectedLead?.firstName} ${selectedLead?.lastName} - Notes`}
-                >
-                    <p className="text-text text-base border border-border p-3 rounded-md bg-surface-secondary">{selectedLead?.notes || "No notes available."}</p>
-                </Modal>
-
+                
+                {/* Delete Modal */}
                 <Modal
                     isOpen={isDeleteModalOpen}
                     onClose={() => {
@@ -643,7 +667,7 @@ export const Leads = () => {
                         setSelectedLead(null);
                     }}
                     title={`Remove Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
-                >
+                    >
                     {deleteError && (
                         <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
                             {deleteError}
@@ -662,6 +686,204 @@ export const Leads = () => {
                             Remove
                         </Button>
                     </div>
+                </Modal>
+
+                {/* Convert Modal */}
+                <Modal
+                    isOpen={isConvertModalOpen} // open the modal
+                    onClose={() => { //X BUTTON
+                        setIsConvertModalOpen(false);// close the modal
+                        setConvertError("");
+                        setSelectedLead(null);// remove the selected lead
+                    }}
+                    title={`Convert Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    >
+                    {convertError && (
+                        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
+                            {convertError}
+                        </div>
+                    )}
+                    <p className="text-text text-base">Are you sure you want to Convert this lead?</p>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" type="button" onClick={() => {
+                            setIsConvertModalOpen(false);
+                            setConvertError("");
+                            setSelectedLead(null);
+                        }}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" type="button" onClick={handleConvert}>
+                            Convert
+                        </Button>
+                    </div>
+                </Modal>
+                {/* Details Modal */}
+                <Modal
+                    isOpen={isDetailsModalOpen}
+                    onClose={() => {
+                        setIsDetailsModalOpen(false);
+                        setSelectedLead(null);
+                    }}
+                    title={`${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    >
+                    {selectedLead && (
+                        <div className="space-y-6 w-125">
+
+                            {/* Contact Information */}
+                            <div>
+                                <h3 className="mb-3 font-semibold text-text">
+                                    Contact Information
+                                </h3>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-sm text-text-secondary">Email</p>
+                                        <p className="text-text wrap-break-word">
+                                            {selectedLead.email || "-"}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-text-secondary">Phone</p>
+                                        <p className="text-text">
+                                            {selectedLead.phone || "-"}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-text-secondary">Company</p>
+                                        <p className="text-text">
+                                            {selectedLead.companyName || "-"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Lead Information */}
+                            <div>
+                                <h3 className="mb-3 font-semibold text-text">
+                                    Lead Information
+                                </h3>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-sm text-text-secondary">Status</p>
+                                        <p className="text-text">
+                                            {selectedLead.status?.name || "-"}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-text-secondary">Source</p>
+                                        <p className="text-text">
+                                            {selectedLead.source?.name || "-"}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-text-secondary">
+                                            Estimated Value
+                                        </p>
+                                        <p className="text-text">
+                                            {selectedLead.estimatedValue
+                                                ? `₱${Number(selectedLead.estimatedValue).toLocaleString()}`
+                                                : "-"}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-text-secondary">
+                                            Sales Representative
+                                        </p>
+                                        <p className="text-text">
+                                            {selectedLead.assignedUser
+                                                ? `${selectedLead.assignedUser.firstName} ${selectedLead.assignedUser.lastName}`
+                                                : "-"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Notes */}
+                            <div>
+                                <h3 className="mb-3 font-semibold text-text">
+                                    Notes
+                                </h3>
+
+                                <p className="rounded-md border border-border bg-surface-secondary p-3 text-text">
+                                    {selectedLead.notes || "No notes available."}
+                                </p>
+                            </div>
+
+                            {/* Dates */}
+                            <div>
+                                <h3 className="mb-3 font-semibold text-text">
+                                    Record Information
+                                </h3>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-sm text-text-secondary">
+                                            Created
+                                        </p>
+                                        <p className="text-text">
+                                            {new Date(
+                                                selectedLead.createdAt
+                                            ).toLocaleString()}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-sm text-text-secondary">
+                                            Updated
+                                        </p>
+                                        <p className="text-text">
+                                            {new Date(
+                                                selectedLead.updatedAt
+                                            ).toLocaleString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex justify-end gap-2 border-t border-border pt-4">
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={() => {
+                                        setIsDetailsModalOpen(false);
+                                        handleEdit(selectedLead);
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+
+                                <Button
+                                    variant="primary"
+                                    type="button"
+                                    onClick={() => {
+                                        setIsDetailsModalOpen(false);
+                                        setIsConvertModalOpen(true);
+                                    }}
+                                >
+                                    Convert
+                                </Button>
+
+                                <Button
+                                    variant="danger"
+                                    type="button"
+                                    onClick={() => {
+                                        setIsDetailsModalOpen(false);
+                                        setIsDeleteModalOpen(true);
+                                    }}
+                                >
+                                    Delete
+                                </Button>
+                            </div>
+
+                        </div>
+                    )}
                 </Modal>
                 
             </main>

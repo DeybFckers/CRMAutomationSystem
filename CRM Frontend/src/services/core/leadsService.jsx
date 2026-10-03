@@ -34,3 +34,9 @@ export const deleteLead = async (leadId) =>{
     const response = await api.delete(`/api/leads/${leadId}`);
     return response.data;
 }
+
+export const convertLead = async(leadId) => {
+    const response = await api.post(`/api/leads/${leadId}/convert`)
+    
+    return response.data
+}

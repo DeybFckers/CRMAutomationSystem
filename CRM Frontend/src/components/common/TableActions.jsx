@@ -24,7 +24,7 @@ export const TableActions = ({ options = [] }) => {
                                 option.onClick();
                                 setOpen(false);
                             }}
-                            className={`block w-full px-4 py-2 text-left text-sm ${
+                            className={`block w-full px-4 py-2 text-left text-sm font-medium cursor-pointer ${
                                 option.variant === "danger"
                                     ? "text-red-600 hover:bg-red-50"
                                     : "text-text hover:bg-slate-100"

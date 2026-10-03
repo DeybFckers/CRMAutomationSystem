@@ -113,9 +113,9 @@ export const useLeads = () => {
         leadStatuses,
         leadSources,
         pagination,
+        setPagination,
         filters,
         setFilters,
-        setPagination,
         loading,
         error,
         refetch

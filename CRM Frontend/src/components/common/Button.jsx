@@ -1,4 +1,4 @@
-const Button = ({
+export const Button = ({
     children,
     variant = "primary",
     size = "md",
@@ -45,5 +45,3 @@ const Button = ({
         </button>
     );
 };
-
-export default Button;

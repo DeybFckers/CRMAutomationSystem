@@ -13,10 +13,10 @@ import {
 // if the API data has not loaded yet.
 export const DataTable = ({ data = [], columns }) => {
 
-    console.log("DataTable data:", data);
-    console.log("DataTable columns:", columns);
-    console.log("data is array:", Array.isArray(data));
-    console.log("columns is array:", Array.isArray(columns));
+    // console.log("DataTable data:", data);
+    // console.log("DataTable columns:", columns);
+    // console.log("data is array:", Array.isArray(data));
+    // console.log("columns is array:", Array.isArray(columns));
 
     // useReactTable creates and manages the table instance.
     //
@@ -124,7 +124,7 @@ export const DataTable = ({ data = [], columns }) => {
                         {row.getVisibleCells().map((cell) => (
 
                             // Each cell needs a unique key.
-                            <td key={cell.id} className="px-4 py-3 text-text-secondary text-sm">
+                            <td key={cell.id} className="px-4 py-3 text-sm font-medium text-text">
 
                                 {/*
                                     Render the actual cell value.
