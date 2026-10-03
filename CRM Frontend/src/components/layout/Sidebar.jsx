@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import  SidebarLogo  from "../../assets/SidebarLogo.jpg"
 
 export const Sidebar = () => {
 
@@ -14,10 +15,8 @@ export const Sidebar = () => {
 
             <div>
 
-                <div className="px-4 py-4.5">
-                    <h1 className="text-xl font-bold text-text">
-                        CRM System
-                    </h1>
+                <div className="flex items-center justify-center mb-4">
+                    <img src={SidebarLogo} alt="Logo" className="h-50w-auto" />
                 </div>
 
                 <nav className="flex flex-col gap-1">
