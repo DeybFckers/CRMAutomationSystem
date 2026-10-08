@@ -8,7 +8,7 @@ import { useState } from "react"
 import { Modal } from "../../components/common/Modal"
 import { updateCustomer, createCustomer } from "../../services/core/customerService"
 import { useUsers } from "../../hooks/useUsers"
-import { Pencil } from "lucide-react";
+import { CustomerTabs } from "./tabs/CustomerTabs"
 
 export const Customers = () => {
     
@@ -22,6 +22,7 @@ export const Customers = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [selectedTab, setSelectedTab] = useState("overview");
 
     //form field
     const [formData, setFormData] = useState({
@@ -106,12 +107,12 @@ export const Customers = () => {
         }
     };
 
-    const columns = CustomerColumns({
-        onViewDetails: (customer) => {
-            setSelectedCustomer(customer);
-            setIsDetailsModalOpen(true);
-        }
-    })
+    const columns = CustomerColumns()
+    const handleRowClick = (customer) => {
+        setSelectedCustomer(customer);
+        setSelectedTab("overview");
+        setIsDetailsModalOpen(true);
+    };
 
     const inputClass = "h-10 p-2 w-xs border border-border rounded-md text-text placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
 
@@ -153,6 +154,7 @@ c
                 <DataTable
                     data={customers}
                     columns={columns}
+                    onRowClick={handleRowClick}
                 />
                 )}
 
@@ -170,6 +172,7 @@ c
                     isOpen={isModalOpen} //open the modal it means all the use state is true
                     onClose={() => {closeCustomerModal()}} // close the modal it means all the use state is false
                     title={isEditMode ? "Edit Customer" : "Add Customer"}
+                    className="max-w-fit"
                     >
                         <form onSubmit={handleSubmit} className="flex flex-col">
                             {/* Customer Name */}
@@ -282,194 +285,21 @@ c
                     onClose={() => {
                         setIsDetailsModalOpen(false);
                         setSelectedCustomer(null);
+                        setSelectedTab("overview");
                     }}
-                    title={`Customer Details`}
+                    title={
+                        selectedCustomer
+                            ? `Customer - ${selectedCustomer.firstName} ${selectedCustomer.lastName}`
+                            : "Customer Details"
+                    }
+                    className="max-w-2xl"
                 >
                     {selectedCustomer && (
-                        <div className="flex justify-start gap-8 w-auto ">
-
-                            {/* Customer Information */}
-                            <div className="flex flex-col">
-
-                                <div className="flex justify-between">
-                                    <h3 className="text-text font-semibold text-lg">
-                                    Customer Information
-                                    </h3>
-                                    <button
-                                        type="button"
-                                        className="text-text-secondary hover:text-text transition-colors"
-                                    >
-                                        <Pencil size={18} />
-                                    </button>
-                                    
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-            
-                                    <div>
-                                        <p className="text-sm text-text-secondary">
-                                            Name
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {selectedCustomer.firstName} {selectedCustomer.lastName}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                        <p className="text-sm text-text-secondary">
-                                            Customer Code
-                                        </p>
-
-                                        <p className="text-text">
-                                            {selectedCustomer.customerCode || "-"}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                        <p className="text-sm text-text-secondary">
-                                            Company Name
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {selectedCustomer.companyName || "-"}
-                                        </p>
-
-                                    </div>
-
-                                    <div>
-                                        <p className="text-sm text-text-secondary">
-                                            Sales Representative
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {`${selectedCustomer.assignedUser.firstName} ${selectedCustomer.assignedUser.lastName}`  || "-"}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-sm text-text-secondary">
-                                            Email
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {selectedCustomer.email}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                        <p className="text-sm text-text-secondary">
-                                            Phone
-                                        </p>
-
-                                        <p className="text-text">
-                                            {selectedCustomer.phone || "-"}
-                                        </p>
-                                    </div>
-
-                                </div>
-                                
-                            </div>
-                            {/* Contact Information */}
-                            <div className="">
-                                <h3 className="text-text font-semibold text-lg">
-                                    Contacts 
-                                </h3>
-                            </div>
-                            {/* Address */}
-                            <div className="">
-                                <h3 className="text-text font-semibold text-lg">
-                                    Address
-                                </h3>
-                            </div>
-
-
-
-                            
-                            {/* <div>
-                                <div className="flex justify-between mb-2 items-center">
-
-                                    <h3 className="text-text font-semibold text-lg">
-                                        Customer Information
-                                    </h3>
-
-                                  
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-            
-                                    <div>
-                                        <p className="text-sm text-text-secondary">
-                                            Name
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {selectedCustomer.firstName} {selectedCustomer.lastName}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                        <p className="text-sm text-text-secondary">
-                                            Customer Code
-                                        </p>
-
-                                        <p className="text-text">
-                                            {selectedCustomer.customerCode || "-"}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                        <p className="text-sm text-text-secondary">
-                                            Company Name
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {selectedCustomer.companyName || "-"}
-                                        </p>
-
-                                    </div>
-
-                                    <div>
-                                        <p className="text-sm text-text-secondary">
-                                            Sales Representative
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {`${selectedCustomer.assignedUser.firstName} ${selectedCustomer.assignedUser.lastName}`  || "-"}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-sm text-text-secondary">
-                                            Email
-                                        </p>
-
-                                        <p className="text-text wrap-break-words">
-                                            {selectedCustomer.email}
-                                        </p>
-                                    </div>
-
-                                    <div>
-
-                                        <p className="text-sm text-text-secondary">
-                                            Phone
-                                        </p>
-
-                                        <p className="text-text">
-                                            {selectedCustomer.phone || "-"}
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </div> */}
-                            
-                            
-                        </div>
+                        <CustomerTabs
+                            customer={selectedCustomer}
+                            selectedTab={selectedTab}
+                            setSelectedTab={setSelectedTab}
+                        />
                     )}
                 </Modal>
             </main>
@@ -477,6 +307,3 @@ c
     )
 }
 
-{/* <span className="h-fit rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
-    {selectedCustomer.status}
-</span> */}
