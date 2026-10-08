@@ -21,8 +21,18 @@ export const Sidebar = () => {
 
                 <nav className="flex flex-col gap-1">
 
+                    <div className="mt-2 mb-1 px-4">
+                        <span className="text-xs font-semibold tracking-wide text-text-muted">
+                            OVERVIEW
+                        </span>
+                    </div>
+
                     <NavLink to="/dashboard"className={navLinkClass}>
                         Dashboard
+                    </NavLink>
+
+                    <NavLink to="/report"className={navLinkClass}>
+                        Reports
                     </NavLink>
 
                     <div className="mt-2 mb-1 px-4">
