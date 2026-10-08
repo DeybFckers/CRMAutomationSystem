@@ -11,7 +11,7 @@ import {
 //
 // We give data a default value of [] so the table does not crash
 // if the API data has not loaded yet.
-export const DataTable = ({ data = [], columns }) => {
+export const DataTable = ({ data = [], columns, onRowClick }) => {
 
     // console.log("DataTable data:", data);
     // console.log("DataTable columns:", columns);
@@ -111,7 +111,7 @@ export const DataTable = ({ data = [], columns }) => {
                 {table.getRowModel().rows.map((row) => (
 
                     // Each row needs a unique key.
-                    <tr key={row.id} className="odd:bg-surface even:bg-table-row-alt hover:bg-table-row-hover/50 transition-colors ">
+                    <tr key={row.id} onClick={() => onRowClick?.(row.original)} className="odd:bg-surface even:bg-table-row-alt hover:bg-table-row-hover/50 transition-colors cursor-pointer">
 
                         {/*
                             getVisibleCells() gives us the cells that
