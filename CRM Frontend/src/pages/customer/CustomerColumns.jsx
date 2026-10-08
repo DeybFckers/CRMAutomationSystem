@@ -1,18 +1,27 @@
-export const CustomerColumns = ({ onViewDetails }) => [
+export const CustomerColumns = () => [
+    {
+        accessorKey:"customerCode",
+        header: "Code",
+        cell: ({ row }) => {
+            const customer = row.original;
+
+            return (
+                <span className="font-medium text-text">
+                    {customer.customerCode}
+                </span>
+            );
+        }
+    },
     {
         accessorKey:"firstName",
         header: "Name",
         cell: ({ row }) => {
-            const lead = row.original;
+            const customer = row.original;
 
             return (
-                <button
-                    type="button"
-                    onClick={() => onViewDetails(lead)}
-                    className="font-medium text-text hover:text-primary hover:underline cursor-pointer"
-                >
-                    {lead.firstName} {lead.lastName}
-                </button>
+                <span className="font-medium text-text">
+                    {customer.firstName} {customer.lastName}
+                </span>
             );
         }
     },
@@ -43,8 +52,4 @@ export const CustomerColumns = ({ onViewDetails }) => [
         accessorKey: "status",
         header: "Status"
     },
-    {
-        id:"actions",
-        header:"Actions"
-    }
 ]

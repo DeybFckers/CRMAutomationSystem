@@ -119,7 +119,7 @@ import { Globe, Handshake } from "lucide-react";
         return `${years} year${years > 1 ? "s" : ""}`;
     };
 
-export const LeadColumns = ({ onViewDetails }) => [
+export const LeadColumns = () => [
     {
         accessorKey: "firstName",
         header: "Lead",
@@ -127,13 +127,9 @@ export const LeadColumns = ({ onViewDetails }) => [
             const lead = row.original;
 
             return (
-                <button
-                    type="button"
-                    onClick={() => onViewDetails(lead)}
-                    className="font-medium text-text hover:text-primary hover:underline cursor-pointer"
-                >
+                <span className="font-medium text-text">
                     {lead.firstName} {lead.lastName}
-                </button>
+                </span>
             );
         }
     },

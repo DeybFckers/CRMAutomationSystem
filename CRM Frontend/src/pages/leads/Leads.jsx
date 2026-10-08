@@ -225,12 +225,12 @@ export const Leads = () => {
     // Table Columns / Actions
     // ====================
 
-    const columns = LeadColumns({
-        onViewDetails: (lead) => {
-            setSelectedLead(lead);
-            setIsDetailsModalOpen(true);
-        },
-    });
+    const columns = LeadColumns();
+
+    const handleRowClick = (lead) => {
+        setSelectedLead(lead);
+        setIsDetailsModalOpen(true);
+    };
 
     const inputClass = "h-10 p-2 w-xs border border-border rounded-md text-text placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
 
@@ -390,6 +390,7 @@ export const Leads = () => {
                     <DataTable
                         data={leads}
                         columns={columns}
+                        onRowClick={handleRowClick}
                     />
                 )}
 
@@ -408,6 +409,7 @@ export const Leads = () => {
                     isOpen={isModalOpen}
                     onClose={() => {closeLeadModal()}}
                     title={isEditMode ? "Edit Lead" : "Add Lead"}
+                    className="max-w-fit"
                     >
                     <form onSubmit={handleSubmit} className="flex flex-col ">
                         {/* Lead Name */}
@@ -667,6 +669,7 @@ export const Leads = () => {
                         setSelectedLead(null);
                     }}
                     title={`Remove Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    className="max-w-fit"
                     >
                     {deleteError && (
                         <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
@@ -697,6 +700,7 @@ export const Leads = () => {
                         setSelectedLead(null);// remove the selected lead
                     }}
                     title={`Convert Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    className="max-w-fit"
                     >
                     {convertError && (
                         <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
@@ -725,6 +729,7 @@ export const Leads = () => {
                         setSelectedLead(null);
                     }}
                     title={`${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    className="max-w-fit"
                     >
                     {selectedLead && (
                         <div className="space-y-6 w-125">
@@ -847,28 +852,7 @@ export const Leads = () => {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex justify-end gap-2 border-t border-border pt-4">
-                                <Button
-                                    variant="outline"
-                                    type="button"
-                                    onClick={() => {
-                                        setIsDetailsModalOpen(false);
-                                        handleEdit(selectedLead);
-                                    }}
-                                >
-                                    Edit
-                                </Button>
-
-                                <Button
-                                    variant="primary"
-                                    type="button"
-                                    onClick={() => {
-                                        setIsDetailsModalOpen(false);
-                                        setIsConvertModalOpen(true);
-                                    }}
-                                >
-                                    Convert
-                                </Button>
+                            <div className="flex justify-between border-t border-border pt-4">
 
                                 <Button
                                     variant="danger"
@@ -880,6 +864,32 @@ export const Leads = () => {
                                 >
                                     Delete
                                 </Button>
+
+                                <div className="flex gap-2">
+
+                                    <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={() => {
+                                        setIsDetailsModalOpen(false);
+                                        handleEdit(selectedLead);
+                                    }}
+                                    >
+                                        Edit
+                                    </Button>
+
+                                    <Button
+                                        variant="primary"
+                                        type="button"
+                                        onClick={() => {
+                                            setIsDetailsModalOpen(false);
+                                            setIsConvertModalOpen(true);
+                                        }}
+                                    >
+                                        Convert
+                                    </Button>
+                                    
+                                </div>
                             </div>
 
                         </div>
