@@ -31,10 +31,6 @@ namespace CRMSystem.Validators.Customer
                 .Must(value => string.IsNullOrWhiteSpace(value) == false)
                 .When(x => x.Phone != null)
                 .WithMessage("Phone cannot be empty or whitespace.");
-
-            RuleFor(x => x.Status)
-                .NotEmpty()
-                .WithMessage("Status is required.");
         }
     }
 }
