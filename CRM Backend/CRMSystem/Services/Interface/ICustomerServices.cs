@@ -10,5 +10,6 @@ namespace CRMSystem.Services.Interface
         Task<CustomerResponseDto> CreateCustomer(CreateCustomerDto customer);
         Task<CustomerResponseDto> UpdateCustomer(Guid id, UpdateCustomerDto customer);
         Task DeleteCustomer(Guid id);
+        Task<CustomerResponseDto> UpdateCustomerStatus(Guid id, UpdateCustomerStatusDto customer);
     }
 }

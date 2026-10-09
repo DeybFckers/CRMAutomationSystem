@@ -113,5 +113,22 @@ namespace CRMSystem.Services.Implementation
             await _customerRepository.DeleteCustomer(id, _currentUser.OrganizationId);
         }
 
+        public async Task<CustomerResponseDto> UpdateCustomerStatus(Guid id, UpdateCustomerStatusDto customer)
+        {
+            var existingCustomer = await _customerRepository.GetCustomerById(id, _currentUser.OrganizationId);
+
+            if (existingCustomer == null)
+                throw new KeyNotFoundException("Customer not found.");
+
+            // Automatically convert status to uppercase
+            customer.Status = customer.Status?.Trim().ToUpperInvariant();
+
+            customer.Adapt(existingCustomer);
+            existingCustomer.UpdatedAt = DateTime.UtcNow;
+
+            await _customerRepository.UpdateCustomer(existingCustomer);
+
+            return existingCustomer.Adapt<CustomerResponseDto>();
+        }
     }
 }

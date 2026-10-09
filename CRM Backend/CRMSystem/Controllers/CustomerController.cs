@@ -62,6 +62,14 @@ namespace CRMSystem.Controllers
             return Success("Customer updated successfully.", updatedCustomer);
         }
 
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support")]
+        [HttpPatch("{customerId:guid}")]
+        public async Task<IActionResult> UpdateCustomerStatus(Guid customerId, UpdateCustomerStatusDto customer)
+        {
+            var updatedCustomer = await _customerServices.UpdateCustomerStatus(customerId, customer);
+            return Success("Customer status updated successfully.", updatedCustomer);
+        }
+
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager")]
         [HttpDelete("{customerId:guid}")]
         public async Task<IActionResult> DeleteCustomer(Guid customerId)

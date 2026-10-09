@@ -47,8 +47,11 @@
 
         public string? Email { get; set; }
         public string? Phone { get; set; }
+    }
 
-        public string Status { get; set; } = "ACTIVE";
+    public class UpdateCustomerStatusDto
+    {
+        public string Status { get; set; }
     }
 
     public class CustomerMinimalDto
