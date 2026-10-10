@@ -1,3 +1,15 @@
+    const statusLabels = {
+        ACTIVE: "Active",
+        INACTIVE: "Inactive",
+        ON_HOLD: "On Hold",
+    };
+
+    const statusStyles = {
+        ACTIVE: "bg-green-100 text-green-700",
+        INACTIVE: "bg-red-100 text-red-700",
+        ON_HOLD: "bg-amber-100 text-amber-700",
+    };
+
 export const CustomerColumns = () => [
     {
         accessorKey:"customerCode",
@@ -50,6 +62,24 @@ export const CustomerColumns = () => [
     },
     {
         accessorKey: "status",
-        header: "Status"
+        header: "Status",
+        cell: ({ row }) => {
+            const status = row.original.status
+                ?.trim()
+                .toUpperCase()
+                .replace(/\s+/g, "_");
+
+            const label = statusLabels[status] ?? row.original.status ?? "-";
+
+            const style = statusStyles[status] ?? "bg-gray-100 text-gray-700";
+
+            return (
+                <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${style}`}
+                >
+                    {label}
+                </span>
+            );
+        },
     },
 ]

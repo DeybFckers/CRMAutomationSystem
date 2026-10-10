@@ -104,7 +104,7 @@ export const Leads = () => {
 
 
     // ====================
-    // Create / Update Lead
+    // Create Lead
     // ====================
 
     const handleSubmit = async (e) => {
@@ -637,13 +637,6 @@ export const Leads = () => {
 
                         <div className="flex justify-end gap-2">
 
-                            <Button variant="outline"
-                                type="button"
-                                onClick={() => {closeLeadModal()}}
-                            >
-                                Cancel
-                            </Button>
-
                             <Button variant="primary" type="submit">
                                 {isEditMode ? "Update Lead" : "Add Lead"}
                             </Button>
@@ -659,68 +652,7 @@ export const Leads = () => {
 
 
                 </Modal>
-                
-                {/* Delete Modal */}
-                <Modal
-                    isOpen={isDeleteModalOpen}
-                    onClose={() => {
-                        setIsDeleteModalOpen(false);
-                        setDeleteError("");
-                        setSelectedLead(null);
-                    }}
-                    title={`Remove Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
-                    className="max-w-fit"
-                    >
-                    {deleteError && (
-                        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
-                            {deleteError}
-                        </div>
-                    )}
-                    <p className="text-text text-base">Are you sure you want to remove this lead?</p>
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" type="button" onClick={() => {
-                            setIsDeleteModalOpen(false);
-                            setDeleteError("");
-                            setSelectedLead(null);
-                        }}>
-                            Cancel
-                        </Button>
-                        <Button variant="danger" type="button" onClick={handleDelete}>
-                            Remove
-                        </Button>
-                    </div>
-                </Modal>
 
-                {/* Convert Modal */}
-                <Modal
-                    isOpen={isConvertModalOpen} // open the modal
-                    onClose={() => { //X BUTTON
-                        setIsConvertModalOpen(false);// close the modal
-                        setConvertError("");
-                        setSelectedLead(null);// remove the selected lead
-                    }}
-                    title={`Convert Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
-                    className="max-w-fit"
-                    >
-                    {convertError && (
-                        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
-                            {convertError}
-                        </div>
-                    )}
-                    <p className="text-text text-base">Are you sure you want to Convert this lead?</p>
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" type="button" onClick={() => {
-                            setIsConvertModalOpen(false);
-                            setConvertError("");
-                            setSelectedLead(null);
-                        }}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" type="button" onClick={handleConvert}>
-                            Convert
-                        </Button>
-                    </div>
-                </Modal>
                 {/* Details Modal */}
                 <Modal
                     isOpen={isDetailsModalOpen}
@@ -894,6 +826,68 @@ export const Leads = () => {
 
                         </div>
                     )}
+                </Modal>
+
+                {/* Delete Modal */}
+                <Modal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => {
+                        setIsDeleteModalOpen(false);
+                        setDeleteError("");
+                        setSelectedLead(null);
+                    }}
+                    title={`Remove Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    className="max-w-fit"
+                    >
+                    {deleteError && (
+                        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
+                            {deleteError}
+                        </div>
+                    )}
+                    <p className="text-text text-base">Are you sure you want to remove this lead?</p>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" type="button" onClick={() => {
+                            setIsDeleteModalOpen(false);
+                            setDeleteError("");
+                            setSelectedLead(null);
+                        }}>
+                            Cancel
+                        </Button>
+                        <Button variant="danger" type="button" onClick={handleDelete}>
+                            Remove
+                        </Button>
+                    </div>
+                </Modal>
+
+                {/* Convert Modal */}
+                <Modal
+                    isOpen={isConvertModalOpen} // open the modal
+                    onClose={() => { //X BUTTON
+                        setIsConvertModalOpen(false);// close the modal
+                        setConvertError("");
+                        setSelectedLead(null);// remove the selected lead
+                    }}
+                    title={`Convert Lead - ${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                    className="max-w-fit"
+                    >
+                    {convertError && (
+                        <div className="mt-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-600">
+                            {convertError}
+                        </div>
+                    )}
+                    <p className="text-text text-base">Are you sure you want to Convert this lead?</p>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" type="button" onClick={() => {
+                            setIsConvertModalOpen(false);
+                            setConvertError("");
+                            setSelectedLead(null);
+                        }}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" type="button" onClick={handleConvert}>
+                            Convert
+                        </Button>
+                    </div>
                 </Modal>
                 
             </main>

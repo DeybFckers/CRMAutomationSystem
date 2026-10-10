@@ -9,7 +9,15 @@ import { CustomerOpportunities } from "./CustomerOpportunities";
 export const CustomerTabs = ({
     customer,
     selectedTab,
-    setSelectedTab
+    setSelectedTab,
+    //customer overview
+    onEdit,
+    onHold,
+    onDeactivate,
+    onActivate,
+
+    //customer contact
+    onContactsChanged
 }) => {
 
     const tabs = [
@@ -85,6 +93,13 @@ export const CustomerTabs = ({
                     <Component
                         key={tab.key}
                         customer={customer}
+
+                        // Customer actions
+                        onEdit={onEdit}
+                        onHold={onHold}
+                        onDeactivate={onDeactivate}
+                        onActivate={onActivate}
+                        onContactsChanged={onContactsChanged}
                     />
                 );
             })}

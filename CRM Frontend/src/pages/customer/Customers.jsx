@@ -6,14 +6,14 @@ import { DataTable } from "../../components/common/DataTable"
 import { Pagination } from "../../components/common/Pagination"
 import { useState } from "react"
 import { Modal } from "../../components/common/Modal"
-import { updateCustomer, createCustomer } from "../../services/core/customerService"
+import { updateCustomer, createCustomer, updateCustomerStatus } from "../../services/core/customerService"
 import { useUsers } from "../../hooks/useUsers"
 import { CustomerTabs } from "./tabs/CustomerTabs"
 
 export const Customers = () => {
     
     //hooks
-    const { customers, filters, setFilters,pagination, setPagination,refetch, loading, error  } = useCustomers();
+    const { customers, filters, setFilters, pagination, setPagination,refetch, loading, error  } = useCustomers();
 
     const {users} = useUsers();
 
@@ -35,6 +35,7 @@ export const Customers = () => {
     })
 
     const [submitError, setSubmitError] = useState("");
+    const [statusError, setStatusError] = useState("");
 
     //form helpers
     const resetForm = () => {
@@ -107,6 +108,78 @@ export const Customers = () => {
         }
     };
 
+    //edit customer
+    const handleEditCustomer = () => {
+
+        if (!selectedCustomer) {
+            return;
+        }
+
+        setFormData({
+            firstName: selectedCustomer.firstName ?? "",
+            lastName: selectedCustomer.lastName ?? "",
+            companyName: selectedCustomer.companyName ?? "",
+            email: selectedCustomer.email ?? "",
+            phone: selectedCustomer.phone ?? "",
+            assignedUserId: selectedCustomer.assignedUser?.id ?? "",
+        });
+
+        setSubmitError("");
+
+        setIsEditMode(true);
+
+        setIsDetailsModalOpen(false);
+
+        setIsModalOpen(true);
+
+    };
+
+    const handleCustomerStatusChange = async (status) => {
+        if (!selectedCustomer) return;
+
+        setStatusError("");
+
+        try {
+            await updateCustomerStatus(selectedCustomer.id, { status });
+
+            setSelectedCustomer((prev) =>
+                prev ? { ...prev, status } : prev
+            );
+
+            await refetch();
+        } catch (error) {
+            setStatusError(
+                error.response?.data?.message ||
+                "Failed to update customer status."
+            );
+        }
+    };
+    //customer overview
+    const handleHoldCustomer = () => {
+        return handleCustomerStatusChange("ON_HOLD");
+    };
+
+    const handleDeactivateCustomer = () => {
+        return handleCustomerStatusChange("INACTIVE");
+    };
+
+    const handleActivateCustomer = () => {
+        return handleCustomerStatusChange("ACTIVE");
+    };
+    //customer contact
+    const handleContactsChanged = async () => {
+        const updatedCustomers = await refetch();
+
+        const updatedCustomer = updatedCustomers?.find(
+            (item) => item.id === selectedCustomer?.id
+        );
+
+        if (updatedCustomer) {
+            setSelectedCustomer(updatedCustomer);
+        }
+    };
+
+
     const columns = CustomerColumns()
     const handleRowClick = (customer) => {
         setSelectedCustomer(customer);
@@ -124,7 +197,6 @@ export const Customers = () => {
                     <p className="text-2xl font-bold text-text">
                         Customer
                     </p>
-c
                     <Button onClick={() => {setIsModalOpen(true)}}>
                         + Add Customer
                     </Button>
@@ -134,28 +206,120 @@ c
                 <div className="flex justify-end items-center gap-3 mb-5">
                     <input type="text"
                     placeholder="Search Customers..."
-                    className="border border-border rounded-3xl p-4 h-10 w-xs placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" />
+                    className="border border-border rounded-3xl p-4 h-10 w-xs placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    value={filters.search}
+                    onChange={(e) => {
+                        setFilters(prev => ({
+                            ...prev,
+                            search: e.target.value
+                        }));
 
-                    <Dropdown label="Status" className="w-40">
+                        setPagination(prev => ({
+                            ...prev,
+                            page: 1
+                        }));
+                    }}
+                    />
 
-                    </Dropdown>
+                    <Dropdown
+                        label="All Statuses"
+                        className="w-40"
+                        value={filters.status ?? ""}
+                        onChange={(value) => {
+                            setFilters((prev) => ({
+                                ...prev,
+                                status: value,
+                            }));
 
-                    <Dropdown label="Assigned" className="w-40">
+                            setPagination((prev) => ({
+                                ...prev,
+                                page: 1,
+                            }));
+                        }}
+                        options={[
+                            { value: "", label: "All Statuses" },
+                            { value: "ACTIVE", label: "Active" },
+                            { value: "INACTIVE", label: "Inactive" },
+                            { value: "ON_HOLD", label: "On Hold" },
+                        ]}
+                    />
 
-                    </Dropdown>
 
+                    <Dropdown label="Assigned" 
+                        className="w-40" 
+                        value={filters.assignedUserId}
+                        onChange= {(value) => {
+                            setFilters(prev => ({
+                                ...prev,
+                                assignedUserId: value
+                            }));
+                            setPagination(prev =>({
+                                ...prev,
+                                page: 1
+                            }))
+                        }}
+                        options={[
+                            {
+                                value: "",
+                                label: "All Assigned"
+                            },
+                            ...users.map((user) => ({
+                                value: user.id,
+                                label: `${user.firstName} ${user.lastName}`
+                            }))
+                        ]}
+                    />
+
+                    {/* Sorting by field */}
+                    <Dropdown
+                        label="Sort Order"
+                        className="w-40"
+                        value={filters.sortDirection}
+                        onChange={(value) => {
+                            setFilters((prev) => ({
+                                ...prev,
+                                sortBy: "createdat",
+                                sortDirection: value,
+                            }));
+
+                            setPagination((prev) => ({
+                                ...prev,
+                                page: 1,
+                            }));
+                        }}
+                        options={[
+                            { value: "", label: "Default" },
+                            { value: "desc", label: "Newest to Oldest" },
+                            { value: "asc", label: "Oldest to Newest" },
+                        ]}
+                    />
 
                 </div>
+
                 {loading ? (
                     <div className="py-10 text-center text-text-secondary">
                         Loading Customer...
                     </div>
+                ) : customers.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center min-h-165 text-center">
+                        <p className="text-lg font-semibold text-text">
+                            {filters.search || filters.status || filters.assignedUserId
+                                ? "No Customers found"
+                                : "No Customers yet" }
+                        </p>
+
+                        <p className="mt-1 text-sm text-text-secondary">
+                            {filters.search || filters.status || filters.assignedUserId
+                                ? "Try adjusting your search or filters."
+                                : "Create your first customers to get started."}
+                        </p>
+                    </div>
                 ) :(
-                <DataTable
-                    data={customers}
-                    columns={columns}
-                    onRowClick={handleRowClick}
-                />
+                    <DataTable
+                        data={customers}
+                        columns={columns}
+                        onRowClick={handleRowClick}
+                    />
                 )}
 
                 <Pagination 
@@ -265,13 +429,6 @@ c
 
                             <div className="flex justify-end gap-2">
 
-                            <Button variant="outline"
-                                type="button"
-                                onClick={() => {closeCustomerModal()}}
-                            >
-                                Cancel
-                            </Button>
-
                             <Button variant="primary" type="submit">
                                 {isEditMode ? "Update Customer" : "Add Customer"}
                             </Button>
@@ -295,12 +452,27 @@ c
                     className="max-w-2xl"
                 >
                     {selectedCustomer && (
+                    <>
+                        {statusError && (
+                            <p className="text-sm text-red-600" role="alert">
+                                {statusError}
+                            </p>
+                        )}
+
                         <CustomerTabs
                             customer={selectedCustomer}
                             selectedTab={selectedTab}
                             setSelectedTab={setSelectedTab}
+                            //customer overview
+                            onEdit={handleEditCustomer}
+                            onHold={handleHoldCustomer}
+                            onDeactivate={handleDeactivateCustomer}
+                            onActivate={handleActivateCustomer}
+                            //customer contact
+                            onContactsChanged={handleContactsChanged}
                         />
-                    )}
+                    </>
+                )}
                 </Modal>
             </main>
         </div>

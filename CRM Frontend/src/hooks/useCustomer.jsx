@@ -14,6 +14,7 @@ export const useCustomers = () => {
 
     const [filters, setFilters] = useState({
       search: "",
+      status: "",
       assignedUserId: "",
       sortBy: "createdat",
       sortDirection: "desc"
@@ -43,6 +44,7 @@ export const useCustomers = () => {
             page: pagination.page,
             pageSize: pagination.pageSize,
             search: debouncedSearch || undefined,
+            status: filters.status || undefined,
             assignedUserId: filters.assignedUserId || undefined,
             sortBy: filters.sortBy,
             sortDirection: filters.sortDirection
@@ -50,6 +52,8 @@ export const useCustomers = () => {
 
           setCustomers(response.items);
           setPagination(response.pagination)
+
+          return response.items;
         }catch(error){
           setError("Failed to fetch customers.")
         }finally{
@@ -59,6 +63,7 @@ export const useCustomers = () => {
       pagination.page,
       pagination.pageSize,
       debouncedSearch,
+      filters.status,
       filters.assignedUserId,
       filters.sortBy,
       filters.sortDirection
@@ -68,9 +73,7 @@ export const useCustomers = () => {
       fetchCustomers();
     },[fetchCustomers]);
 
-    const refetch = () =>{
-      fetchCustomers();
-    }
+    const refetch = () => fetchCustomers();
 
   return{
     customers,
