@@ -23,6 +23,7 @@ namespace CRMSystem.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string? search = null,
+            [FromQuery] string? status = null,
             [FromQuery] string? sortBy = null,
             [FromQuery] string? sortDirection = null,
             [FromQuery] Guid? assignedUserId = null )
@@ -31,6 +32,7 @@ namespace CRMSystem.Controllers
                 page,
                 pageSize,
                 search,
+                status,
                 sortBy,
                 sortDirection,
                 assignedUserId);

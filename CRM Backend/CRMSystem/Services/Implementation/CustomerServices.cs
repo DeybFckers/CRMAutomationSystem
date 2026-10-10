@@ -40,7 +40,7 @@ namespace CRMSystem.Services.Implementation
             return newCustomer.Adapt<CustomerResponseDto>();
         }
 
-        public async Task<PaginatedResponse<CustomerResponseDto>> GetAllCustomer(int page, int pageSize, string? search, string? sortBy, string? sortDirection, Guid? assignedUserId)
+        public async Task<PaginatedResponse<CustomerResponseDto>> GetAllCustomer(int page, int pageSize, string? search, string? status, string? sortBy, string? sortDirection, Guid? assignedUserId)
         {
             var organizationId = _currentUser.OrganizationId;
             if (page < 1)
@@ -59,6 +59,7 @@ namespace CRMSystem.Services.Implementation
                 page,
                 pageSize,
                 search,
+                status,
                 sortBy,
                 sortDirection,
                 assignedUserId

@@ -17,7 +17,7 @@ namespace CRMSystem.Services.Implementation
             _currentUserServices = currentUserServices;
         }
 
-        public async Task<CustomerContactResponseDto> GetCustomerContactByCustomerId(Guid customerId)
+        public async Task<IEnumerable<CustomerContactResponseDto>> GetCustomerContactByCustomerId(Guid customerId)
         {
             var organizationId = _currentUserServices.OrganizationId;
 
@@ -26,7 +26,7 @@ namespace CRMSystem.Services.Implementation
             if (contact == null)
                 throw new KeyNotFoundException("Customer contact not found.");
 
-            return contact.Adapt<CustomerContactResponseDto>();
+            return contact.Select(contact => contact.Adapt<CustomerContactResponseDto>()).ToList();
         }
 
         public async Task<CustomerContactResponseDto> CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto)
@@ -40,8 +40,10 @@ namespace CRMSystem.Services.Implementation
 
             var existingContact = await _customerContactRepository.GetCustomerContactByCustomerId(customerId, organizationId);
 
-            if (existingContact != null)
-                throw new InvalidOperationException("Customer already has a contact.");
+            if(existingContact.Count >= 2)
+            {
+                throw new KeyNotFoundException("Customer cannot have more than 2 contacts");
+            }
 
             var customerContact = dto.Adapt<CustomerContact>();
 

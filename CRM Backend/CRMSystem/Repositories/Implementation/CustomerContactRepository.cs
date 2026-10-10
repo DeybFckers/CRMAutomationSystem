@@ -20,11 +20,11 @@ namespace CRMSystem.Repositories.Implementation
                 .FirstOrDefaultAsync(c => c.Id == customerId && c.OrganizationId == organizationId);
         }
 
-        public async Task<CustomerContact?> GetCustomerContactByCustomerId(Guid customerId, Guid organizationId)
+        public async Task<List<CustomerContact>> GetCustomerContactByCustomerId(Guid customerId, Guid organizationId)
         {
             return await _context.CustomerContacts
                 .Include(c => c.Customer)
-                .FirstOrDefaultAsync(c => c.CustomerId == customerId && c.Customer.OrganizationId == organizationId);
+                .Where(c => c.CustomerId == customerId && c.Customer.OrganizationId == organizationId).ToListAsync();
         }
 
         public async Task CreateContact(CustomerContact customerContact)

@@ -4,7 +4,7 @@ namespace CRMSystem.Services.Interface
 {
     public interface ICustomerContactServices
     {
-        Task<CustomerContactResponseDto> GetCustomerContactByCustomerId(Guid customerId);
+        Task<IEnumerable<CustomerContactResponseDto>> GetCustomerContactByCustomerId(Guid customerId);
         Task<CustomerContactResponseDto> CreateCustomerContact(Guid customerId, CreateCustomerContactDto dto);
         Task<CustomerContactResponseDto> UpdateCustomerContact(Guid customerId, Guid contactId, UpdateCustomerContactDto dto);
         Task DeleteCustomerContact(Guid customerId, Guid contactId);

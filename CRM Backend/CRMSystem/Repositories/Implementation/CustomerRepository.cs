@@ -2,6 +2,7 @@
 using CRMSystem.Models.Entities;
 using CRMSystem.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 
 namespace CRMSystem.Repositories.Implementation
 {
@@ -14,12 +15,20 @@ namespace CRMSystem.Repositories.Implementation
             _context = context;
         }
 
-        public async Task<(IEnumerable<Customer> Customers, int TotalCount)> GetAllCustomers(Guid organizationId, int page, int pageSize, string? search, string? sortBy, string? sortDirection, Guid? assignUserId)
+        public async Task<(IEnumerable<Customer> Customers, int TotalCount)> GetAllCustomers(Guid organizationId, int page, int pageSize, string? search, string? status, string? sortBy, string? sortDirection, Guid? assignUserId)
         {
             var query = _context.Customers.Where(x => x.OrganizationId == organizationId);
 
             if (assignUserId.HasValue)
                 query = query.Where(x => x.AssignedUserId == assignUserId.Value);
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                status = status.Trim().ToUpperInvariant();
+
+                query = query.Where(x => x.Status == status);
+            }
+
 
 
             if (!string.IsNullOrEmpty(search))
