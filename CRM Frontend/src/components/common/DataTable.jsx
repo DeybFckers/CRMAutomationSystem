@@ -12,24 +12,6 @@ import {
 // We give data a default value of [] so the table does not crash
 // if the API data has not loaded yet.
 export const DataTable = ({ data = [], columns, onRowClick }) => {
-
-    // console.log("DataTable data:", data);
-    // console.log("DataTable columns:", columns);
-    // console.log("data is array:", Array.isArray(data));
-    // console.log("columns is array:", Array.isArray(columns));
-
-    // useReactTable creates and manages the table instance.
-    //
-    // We pass "data" and "columns" from the component using DataTable.
-    // This is what makes this table reusable.
-    //
-    // For example:
-    //
-    // <DataTable data={leads} columns={leadColumns} />
-    //
-    // or:
-    //
-    // <DataTable data={customers} columns={customerColumns} />
     const table = useReactTable({
         data,
         columns,

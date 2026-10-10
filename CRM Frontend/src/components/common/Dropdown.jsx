@@ -40,7 +40,7 @@ export const Dropdown = ({ label, options = [],
 
             {/* Dropdown options */}
             {open && (
-                <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-surface p-1 shadow-lg">
+                <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-surface p-1 shadow-lg max-h-48 overflow-y-auto">
 
                     {options.map((option) => (
                         <button
