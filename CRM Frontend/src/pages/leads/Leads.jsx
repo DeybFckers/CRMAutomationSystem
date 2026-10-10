@@ -9,6 +9,7 @@ import { createLead, updateLead, deleteLead, convertLead } from "../../services/
 import { useUsers } from "../../hooks/useUsers";
 import { LeadValidator } from "./LeadValidator";
 import { Pagination } from "../../components/common/Pagination";
+import { LoadingSpinner } from "../../components/common/LoadingSpinner";
 
 
 export const Leads = () => {
@@ -17,7 +18,7 @@ export const Leads = () => {
     // Hooks / Data
     // ====================
 
-    const {leads, leadStatuses, leadSources, pagination, setPagination, filters, setFilters, loading, error, refetch } = useLeads();
+    const {leads, leadStatuses, leadSources, pagination, setPagination, filters, setFilters, isSearching, loading, error, refetch } = useLeads();
 
     const { users } = useUsers();
 
@@ -368,31 +369,33 @@ export const Leads = () => {
                 )}
 
 
-                {loading ? (
-                    <div className="py-10 text-center text-text-secondary">
-                        Loading leads...
-                    </div>
-                ) : leads.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center min-h-165 text-center">
-                        <p className="text-lg font-semibold text-text">
-                            {filters.search || filters.statusId || filters.sourceId || filters.assignedUserId
-                                ? "No leads found"
-                                : "No leads yet"}
-                        </p>
+                <div className="relative min-h-75">
+                    {leads.length === 0 && !isSearching ? (
+                        <div className="flex min-h-75 flex-col items-center justify-center text-center">
+                            <p className="text-lg font-semibold text-text">
+                                {filters.search || filters.statusId ||  filters.sourceId || filters.assignedUserId
+                                    ? "No leads found"
+                                    : "No leads yet"}
+                            </p>
 
-                        <p className="mt-1 text-sm text-text-secondary">
-                            {filters.search || filters.statusId || filters.sourceId || filters.assignedUserId
-                                ? "Try adjusting your search or filters."
-                                : "Create your first lead to get started."}
-                        </p>
-                    </div>
-                ) : (
-                    <DataTable
-                        data={leads}
-                        columns={columns}
-                        onRowClick={handleRowClick}
-                    />
-                )}
+                            <p className="mt-1 text-sm text-text-secondary">
+                                {filters.search || filters.statusId || filters.sourceId || filters.assignedUserId
+                                    ? "Try adjusting your search or filters."
+                                    : "Create your first lead to get started."}
+                            </p>
+                        </div>
+                    ) : (
+                        <DataTable
+                            data={leads}
+                            columns={columns}
+                            onRowClick={handleRowClick}
+                        />
+                    )}
+
+                    {isSearching && (
+                        <LoadingSpinner message="Searching leads..." />
+                    )}
+                </div>
 
                 <Pagination
                     pagination={pagination}

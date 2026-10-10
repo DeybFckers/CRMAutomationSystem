@@ -21,13 +21,17 @@ export const useCustomers = () => {
     });
 
     const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [isDebouncing, setIsDebouncing] = useState(false);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     
     useEffect(() => {
+        setIsDebouncing(true);
+
         const handler = setTimeout(() => {
             setDebouncedSearch(filters.search);
+            setIsDebouncing(false);
         }, 400);
 
         return () => {
@@ -75,6 +79,8 @@ export const useCustomers = () => {
 
     const refetch = () => fetchCustomers();
 
+    const isSearching = isDebouncing || loading;
+
   return{
     customers,
     filters,
@@ -82,6 +88,7 @@ export const useCustomers = () => {
     pagination,
     setPagination,
     refetch,
+    isSearching,
     loading,
     error
   }

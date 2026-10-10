@@ -31,16 +31,21 @@ export const useLeads = () => {
     });
 
     const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [isDebouncing, setIsDebouncing] = useState(false);
 
     const [loading, setLoading] = useState(false);
 
     const [error, setError] = useState("");
 
-    
     useEffect(() => {
+        // Start the spinner immediately when the search changes.
+        setIsDebouncing(true);
+
         const handler = setTimeout(() => {
             setDebouncedSearch(filters.search);
+            setIsDebouncing(false);
         }, 400);
+        
 
         return () => {
             clearTimeout(handler);
@@ -107,6 +112,8 @@ export const useLeads = () => {
 
         fetchOptions();
     }, []);
+
+    const isSearching = isDebouncing || loading;
     
     return{
         leads,
@@ -116,6 +123,7 @@ export const useLeads = () => {
         setPagination,
         filters,
         setFilters,
+        isSearching,
         loading,
         error,
         refetch

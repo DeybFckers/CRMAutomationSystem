@@ -9,11 +9,12 @@ import { Modal } from "../../components/common/Modal"
 import { updateCustomer, createCustomer, updateCustomerStatus } from "../../services/core/customerService"
 import { useUsers } from "../../hooks/useUsers"
 import { CustomerTabs } from "./tabs/CustomerTabs"
+import { LoadingSpinner } from "../../components/common/LoadingSpinner"
 
 export const Customers = () => {
     
     //hooks
-    const { customers, filters, setFilters, pagination, setPagination,refetch, loading, error  } = useCustomers();
+    const { customers, filters, setFilters, pagination, setPagination,refetch, loading,  isSearching, error  } = useCustomers();
 
     const {users} = useUsers();
 
@@ -296,31 +297,37 @@ export const Customers = () => {
 
                 </div>
 
-                {loading ? (
-                    <div className="py-10 text-center text-text-secondary">
-                        Loading Customer...
-                    </div>
-                ) : customers.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center min-h-165 text-center">
-                        <p className="text-lg font-semibold text-text">
-                            {filters.search || filters.status || filters.assignedUserId
-                                ? "No Customers found"
-                                : "No Customers yet" }
-                        </p>
+                <div className="relative min-h-75">
 
-                        <p className="mt-1 text-sm text-text-secondary">
-                            {filters.search || filters.status || filters.assignedUserId
-                                ? "Try adjusting your search or filters."
-                                : "Create your first customers to get started."}
-                        </p>
-                    </div>
-                ) :(
-                    <DataTable
-                        data={customers}
-                        columns={columns}
-                        onRowClick={handleRowClick}
-                    />
-                )}
+                    {customers.length === 0 && !isSearching ? (
+                        <div className="flex flex-col items-center justify-center min-h-165 text-center">
+
+                            <p className="text-lg font-semibold text-text">
+                                {filters.search || filters.status || filters.assignedUserId
+                                    ? "No Customers found"
+                                    : "No Customers yet"}
+                            </p>
+
+                            <p className="mt-1 text-sm text-text-secondary">
+                                {filters.search || filters.status || filters.assignedUserId
+                                    ? "Try adjusting your search or filters."
+                                    : "Create your first customer to get started."}
+                            </p>
+
+                        </div>
+                    ) : (
+                        <DataTable
+                            data={customers}
+                            columns={columns}
+                            onRowClick={handleRowClick}
+                        />
+                    )}
+
+                    {isSearching && (
+                        <LoadingSpinner message="Searching customers..." />
+                    )}
+
+                </div>
 
                 <Pagination 
                     pagination={pagination}
