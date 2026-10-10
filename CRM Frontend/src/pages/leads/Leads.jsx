@@ -599,7 +599,7 @@ export const Leads = () => {
 
                                 <label className="mb-2 text-base font-medium text-text">Sales Representative</label>
                                 
-                                <Dropdown label="Sales Representative" className="w-full"
+                                <Dropdown label="Sales Representative" className="w-50"
                                 value={formData.assignedUserId}
                                     onChange={(value) =>
                                         setFormData((prev) => ({
