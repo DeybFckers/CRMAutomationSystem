@@ -25,6 +25,22 @@ Viewer
 viewer
 Viewer@123
 
+"email": "mark.zuckerberg@example.com",
+"password": "TestSalesRep@2026!",
+
+"email": "sundar.pichai@example.com",
+"password": "TestSalesRep@2026!",
+
+"email": "ryan.roslansky@example.com",
+"password": "TestSalesRep@2026!",
+
+"email": "alex.morgan@example.com",
+"password": "TestSalesRep@2026!",
+
+"email": "tim.bernerslee@example.com",
+"password": "TestSalesRep@2026!",
+
+
 User Admin ID: 01a08a8f-5570-7cfe-9553-88d4ccf459b1
 Org ID: d8ff2e64-91ee-46da-b854-a973a6bca633
 SalesRep ID: 01a08a97-2ea5-79a0-9702-f3942aa493df
