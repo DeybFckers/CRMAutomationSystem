@@ -180,6 +180,17 @@ export const Customers = () => {
         }
     };
 
+    const handleAddressChanged = async () => {
+        const updatedCustomers = await refetch();
+
+        const updatedCustomer = updatedCustomers?.find(
+            (item) => item.id === selectedCustomer?.id
+        );
+
+        if(updatedCustomer)
+            setSelectedCustomer(updatedCustomer);
+    }
+
 
     const columns = CustomerColumns()
     const handleRowClick = (customer) => {
@@ -456,7 +467,9 @@ export const Customers = () => {
                             ? `Customer - ${selectedCustomer.firstName} ${selectedCustomer.lastName}`
                             : "Customer Details"
                     }
-                    className="max-w-2xl"
+                    className="max-w-3xl"
+                    height="500px"
+                    maxHeight="85vh"
                 >
                     {selectedCustomer && (
                     <>
@@ -477,6 +490,8 @@ export const Customers = () => {
                             onActivate={handleActivateCustomer}
                             //customer contact
                             onContactsChanged={handleContactsChanged}
+                            //customer address
+                            onAddressesChanged={handleAddressChanged}
                         />
                     </>
                 )}

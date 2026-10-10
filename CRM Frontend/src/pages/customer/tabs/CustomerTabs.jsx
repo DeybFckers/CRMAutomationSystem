@@ -17,7 +17,10 @@ export const CustomerTabs = ({
     onActivate,
 
     //customer contact
-    onContactsChanged
+    onContactsChanged,
+
+    //customer address
+    onAddressesChanged
 }) => {
 
     const tabs = [
@@ -99,7 +102,10 @@ export const CustomerTabs = ({
                         onHold={onHold}
                         onDeactivate={onDeactivate}
                         onActivate={onActivate}
+                        //Customer Contacts
                         onContactsChanged={onContactsChanged}
+                        //Customer Address
+                        onAddressesChanged={onAddressesChanged}
                     />
                 );
             })}

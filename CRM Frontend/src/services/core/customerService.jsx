@@ -1,5 +1,6 @@
 import api from "../api"
 
+//customer
 export const getAllCustomer = async (params) => {
     const response = await api.get("/api/customer", {params});
 
@@ -26,6 +27,7 @@ export const deleteCustomer = async (customerId) => {
     return response.data;
 }
 
+//Customer Contact
 export const addCustomerContact = async (customerId, contactData) => {
     const response = await api.post(`/api/customers/${customerId}/contact`, contactData);
     return response.data;
@@ -38,5 +40,21 @@ export const updateCustomerContact = async (customerId, contactId, contactData) 
 
 export const deleteCustomerContact = async (customerId, contactId) => {
     const response = await api.delete(`/api/customers/${customerId}/contact/${contactId}`);
+    return response.data;
+}
+
+//Customer Address
+export const addCustomerAddress = async (customerId, addressData) => {
+    const response = await api.post(`api/customers/${customerId}/addresses`, addressData);
+    return response.data;
+}
+
+export const updateCustomerAddress = async (customerId, addressId, addressData) => {
+    const response = await api.put(`api/customers/${customerId}/addresses/${addressId}`, addressData);
+    return response.data;
+}
+
+export const deleteCustomerAddress = async ( customerId, addressId) =>{
+    const response = await api.delete(`api/customers/${customerId}/addresses/${addressId}`);
     return response.data;
 }
