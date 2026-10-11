@@ -62,7 +62,7 @@ export const CustomerTabs = ({
     ];
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
 
             {/* Tabs */}
             <div className="flex gap-6 border-b border-border">
