@@ -9,5 +9,6 @@ namespace CRMSystem.Repositories.Interface
         Task CreateOpportunity(Opportunity opportunity);    
         Task UpdateOpportunity(Opportunity opportunity);    
         Task DeleteOpportunity(Guid id);
+        Task<List<Opportunity>> GetOpportunitiesByCustomerId(Guid id, Guid organizationId);
     }
 }

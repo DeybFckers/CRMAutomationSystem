@@ -10,7 +10,6 @@ namespace CRMSystem.Repositories.Interface
         Task UpdateCustomer(Customer customer);
         Task DeleteCustomer(Guid id, Guid organizationId);
         Task<int> GetCustomerCountByMonth(Guid organizationId, int year, int month);
-
         void AddCustomer(Customer customer);
     }
 }

@@ -12,5 +12,6 @@ namespace CRMSystem.Services.Interface
         Task UpdateOpportunityStage(Guid id, Guid stageId);
         Task AssignOpportunity(Guid id, Guid? assignedUserId);
         Task UpdateOpportunityStatus(Guid id, string status);
+        Task<IEnumerable<OpportunityResponseDto>> GetOpportunitiesByCustomerId(Guid id);
     }
 }

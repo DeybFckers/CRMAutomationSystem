@@ -58,5 +58,16 @@ namespace CRMSystem.Repositories.Implementation
             _context.Opportunities.Update(opportunity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Opportunity>> GetOpportunitiesByCustomerId(Guid id, Guid organizationId)
+        {
+            return await _context.Opportunities
+                .Include(o => o.Customer)
+                .Include(o => o.Pipeline)
+                .Include(o => o.Stage)
+                .Include(o => o.AssignedUser)
+                .Where(o => o.CustomerId == id && o.Customer.OrganizationId == organizationId).ToListAsync();
+        }
+
     }
 }

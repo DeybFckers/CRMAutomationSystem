@@ -128,6 +128,19 @@ namespace CRMSystem.Services.Implementation
             return opportunity.Adapt<IEnumerable<OpportunityResponseDto>>();
         }
 
+        public async Task<IEnumerable<OpportunityResponseDto>> GetOpportunitiesByCustomerId(Guid id)
+        {
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var opportunity = await _opportunityRepository.GetOpportunitiesByCustomerId(id, organizationId);
+            if (opportunity == null)
+            {
+                throw new Exception("No opportunity found");
+            }
+
+            return opportunity.Adapt<IEnumerable<OpportunityResponseDto>>();
+        }
+
         public async Task<OpportunityResponseDto> GetOpportunityById(Guid id)
         {
             var opportunity = await _opportunityRepository.GetOpportunityById(id, _currentUserServices.OrganizationId);
