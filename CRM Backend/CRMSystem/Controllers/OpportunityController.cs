@@ -34,11 +34,11 @@ namespace CRMSystem.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
-        [HttpGet("{customerId:guid}")]
+        [HttpGet("customer/{customerId:guid}")]
         public async Task<IActionResult> GetOpportunitiesByCustomerId(Guid customerId)
         {
-            var opportunity = await _opportunityServices.GetOpportunitiesByCustomerId(customerId);
-            return Success("Opportunity retrieved successfully.", opportunity);
+            var customerOpportunity = await _opportunityServices.GetOpportunitiesByCustomerId(customerId);
+            return Success("Opportunity retrieved successfully.", customerOpportunity);
         }
 
 
