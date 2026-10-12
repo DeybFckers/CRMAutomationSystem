@@ -7,6 +7,11 @@ export const getAllCustomer = async (params) => {
     return response.data.data;
 }
 
+export const getCustomerById = async (customerId) => {
+    const response = await api.get(`/api/customer/${customerId}`)
+    return response.data.data;
+}
+
 export const createCustomer = async (customerData) => {
     const response = await api.post("/api/customer", customerData);
     return response.data;
@@ -45,16 +50,16 @@ export const deleteCustomerContact = async (customerId, contactId) => {
 
 //Customer Address
 export const addCustomerAddress = async (customerId, addressData) => {
-    const response = await api.post(`api/customers/${customerId}/addresses`, addressData);
+    const response = await api.post(`/api/customers/${customerId}/addresses`, addressData);
     return response.data;
 }
 
 export const updateCustomerAddress = async (customerId, addressId, addressData) => {
-    const response = await api.put(`api/customers/${customerId}/addresses/${addressId}`, addressData);
+    const response = await api.put(`/api/customers/${customerId}/addresses/${addressId}`, addressData);
     return response.data;
 }
 
 export const deleteCustomerAddress = async ( customerId, addressId) =>{
-    const response = await api.delete(`api/customers/${customerId}/addresses/${addressId}`);
+    const response = await api.delete(`/api/customers/${customerId}/addresses/${addressId}`);
     return response.data;
 }

@@ -4,9 +4,9 @@ import { CustomerColumns } from "./CustomerColumns"
 import { useCustomers } from "../../hooks/useCustomer"
 import { DataTable } from "../../components/common/DataTable"
 import { Pagination } from "../../components/common/Pagination"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Modal } from "../../components/common/Modal"
-import { updateCustomer, createCustomer, updateCustomerStatus } from "../../services/core/customerService"
+import { updateCustomer, createCustomer, updateCustomerStatus, getCustomerById } from "../../services/core/customerService"
 import { useUsers } from "../../hooks/useUsers"
 import { CustomerTabs } from "./tabs/CustomerTabs"
 import { LoadingSpinner } from "../../components/common/LoadingSpinner"
@@ -19,11 +19,21 @@ export const Customers = () => {
     const {users} = useUsers();
 
     //modal / selection state
-    const [selectedCustomer, setSelectedCustomer] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState("overview");
+
+    // Detail loading and errors
+    const [isLoadingCustomerDetails, setIsLoadingCustomerDetails] = useState(false);
+    
+    const [detailsError, setDetailsError] = useState("");
+    const [submitError, setSubmitError] = useState("");
+    const [statusError, setStatusError] = useState("");
+
+    // Prevent an older request from replacing a newer selection
+    const customerRequestId = useRef(0);
 
     //form field
     const [formData, setFormData] = useState({
@@ -34,9 +44,6 @@ export const Customers = () => {
         email: "",
         phone: "",
     })
-
-    const [submitError, setSubmitError] = useState("");
-    const [statusError, setStatusError] = useState("");
 
     //form helpers
     const resetForm = () => {
@@ -59,6 +66,19 @@ export const Customers = () => {
         resetForm();// reset the form
     }
 
+    // Close details modal
+    const closeDetailsModal = () => {
+        // Ignore any outstanding detail request
+        customerRequestId.current += 1;
+
+        setIsDetailsModalOpen(false);
+        setSelectedCustomer(null);
+        setSelectedTab("overview");
+        setIsLoadingCustomerDetails(false);
+        setDetailsError("");
+        setStatusError("");
+    };
+    
     //form input or controller
     const handleChange = (e) => {
             //field name
@@ -71,6 +91,22 @@ export const Customers = () => {
         }))
 
     }
+
+    // Fetch the latest version of the selected customer
+    const refreshSelectedCustomer = async (customerId) => {
+        const requestId = ++customerRequestId.current;
+
+        const customerDetails = await getCustomerById(customerId);
+
+        // Do not update the modal if another customer was selected
+        if (requestId !== customerRequestId.current) {
+            return null;
+        }
+
+        setSelectedCustomer(customerDetails);
+
+        return customerDetails;
+    };
 
     //create/update user
     const handleSubmit = async (e) => {
@@ -89,17 +125,40 @@ export const Customers = () => {
             }
 
             if(isEditMode){
-                await updateCustomer(selectedCustomer.id, customerData);
-            }else{
+                if (!selectedCustomer?.id) {
+                        setSubmitError("No customer selected for updating.");
+                        return;
+                    }
+    
+                    const customerId = selectedCustomer.id;
+    
+                    await updateCustomer(customerId, customerData);
+    
+                    // Fetch the updated customer, not the entire list
+                    const updatedCustomer =
+                        await getCustomerById(customerId);
+    
+                    setSelectedCustomer(updatedCustomer);
+    
+                    // Refresh the table so its row reflects the changes
+                    await refetch();
+    
+                    // Return to the details modal
+                    setIsModalOpen(false);
+                    setIsEditMode(false);
+                    setIsDetailsModalOpen(true);
+    
+                    resetForm();
+            } else {
                 await createCustomer(customerData);
+
+                // A new customer may affect pagination and sorting
+                await refetch();
+
+                setIsModalOpen(false);
+                setIsEditMode(false);
+                resetForm();
             }
-
-            await refetch();
-
-            setIsModalOpen(false);
-            setIsEditMode(false);
-            setSelectedCustomer(null);
-            resetForm();
         }catch(error){
             setSubmitError(
                 isEditMode
@@ -126,11 +185,8 @@ export const Customers = () => {
         });
 
         setSubmitError("");
-
         setIsEditMode(true);
-
         setIsDetailsModalOpen(false);
-
         setIsModalOpen(true);
 
     };
@@ -167,37 +223,79 @@ export const Customers = () => {
     const handleActivateCustomer = () => {
         return handleCustomerStatusChange("ACTIVE");
     };
-    //customer contact
+    // Refresh customer after contacts change
     const handleContactsChanged = async () => {
-        const updatedCustomers = await refetch();
+        if (!selectedCustomer?.id) {
+            return;
+        }
 
-        const updatedCustomer = updatedCustomers?.find(
-            (item) => item.id === selectedCustomer?.id
-        );
+        try {
+            setDetailsError("");
 
-        if (updatedCustomer) {
-            setSelectedCustomer(updatedCustomer);
+            await refreshSelectedCustomer(selectedCustomer.id);
+        } catch (error) {
+            setDetailsError(
+                error.response?.data?.message ||
+                    "Failed to refresh customer contacts."
+            );
         }
     };
 
     const handleAddressChanged = async () => {
-        const updatedCustomers = await refetch();
+        if (!selectedCustomer?.id) {
+            return;
+        }
 
-        const updatedCustomer = updatedCustomers?.find(
-            (item) => item.id === selectedCustomer?.id
-        );
+        try {
+            setDetailsError("");
 
-        if(updatedCustomer)
-            setSelectedCustomer(updatedCustomer);
+            await refreshSelectedCustomer(selectedCustomer.id);
+        } catch (error) {
+            setDetailsError(
+                error.response?.data?.message ||
+                    "Failed to refresh customer addresses."
+            );
+        }
     }
+
+    // Open details and fetch the individual customer
+    const handleRowClick = async (customer) => {
+        const requestId = ++customerRequestId.current;
+
+        setSelectedCustomer(null);
+        setSelectedTab("overview");
+        setDetailsError("");
+        setStatusError("");
+        setIsLoadingCustomerDetails(true);
+        setIsDetailsModalOpen(true);
+
+        try {
+            const customerDetails = await getCustomerById(customer.id);
+
+            // Ignore outdated responses
+            if (requestId !== customerRequestId.current) {
+                return;
+            }
+
+            setSelectedCustomer(customerDetails);
+        } catch (error) {
+            if (requestId !== customerRequestId.current) {
+                return;
+            }
+
+            setDetailsError(
+                error.response?.data?.message ||
+                    "Failed to load customer details."
+            );
+        } finally {
+            if (requestId === customerRequestId.current) {
+                setIsLoadingCustomerDetails(false);
+            }
+        }
+    };
 
 
     const columns = CustomerColumns()
-    const handleRowClick = (customer) => {
-        setSelectedCustomer(customer);
-        setSelectedTab("overview");
-        setIsDetailsModalOpen(true);
-    };
 
     const inputClass = "h-10 p-2 w-xs border border-border rounded-md text-text placeholder:text-text-muted bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary";
 
@@ -457,11 +555,7 @@ export const Customers = () => {
                 {/* Details Modal */}
                 <Modal
                     isOpen={isDetailsModalOpen}
-                    onClose={() => {
-                        setIsDetailsModalOpen(false);
-                        setSelectedCustomer(null);
-                        setSelectedTab("overview");
-                    }}
+                    onClose={closeDetailsModal}
                     title={
                         selectedCustomer
                             ? `Customer - ${selectedCustomer.firstName} ${selectedCustomer.lastName}`
@@ -471,30 +565,50 @@ export const Customers = () => {
                     height="500px"
                     maxHeight="85vh"
                 >
-                    {selectedCustomer && (
-                    <>
-                        {statusError && (
+                    {isLoadingCustomerDetails ? (
+                        <LoadingSpinner message="Loading customer details..." />
+                    ) : detailsError ? (
+                        <div className="py-6">
                             <p className="text-sm text-red-600" role="alert">
-                                {statusError}
+                                {detailsError}
                             </p>
-                        )}
 
-                        <CustomerTabs
-                            customer={selectedCustomer}
-                            selectedTab={selectedTab}
-                            setSelectedTab={setSelectedTab}
-                            //customer overview
-                            onEdit={handleEditCustomer}
-                            onHold={handleHoldCustomer}
-                            onDeactivate={handleDeactivateCustomer}
-                            onActivate={handleActivateCustomer}
-                            //customer contact
-                            onContactsChanged={handleContactsChanged}
-                            //customer address
-                            onAddressesChanged={handleAddressChanged}
-                        />
-                    </>
-                )}
+                            <Button
+                                onClick={() => {
+                                    const customer = customers.find(
+                                        (item) =>
+                                            item.id === selectedCustomer?.id
+                                    );
+
+                                    if (customer) {
+                                        handleRowClick(customer);
+                                    }
+                                }}
+                            >
+                                Retry
+                            </Button>
+                        </div>
+                    ) : selectedCustomer ? (
+                        <>
+                            {statusError && (
+                                <p className="text-sm text-red-600 mb-3" role="alert">
+                                    {statusError}
+                                </p>
+                            )}
+
+                            <CustomerTabs
+                                customer={selectedCustomer}
+                                selectedTab={selectedTab}
+                                setSelectedTab={setSelectedTab}
+                                onEdit={handleEditCustomer}
+                                onHold={handleHoldCustomer}
+                                onDeactivate={handleDeactivateCustomer}
+                                onActivate={handleActivateCustomer}
+                                onContactsChanged={handleContactsChanged}
+                                onAddressesChanged={handleAddressChanged}
+                            />
+                        </>
+                    ) : null}
                 </Modal>
             </main>
         </div>
