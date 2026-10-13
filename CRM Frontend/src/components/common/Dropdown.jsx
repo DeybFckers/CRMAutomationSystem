@@ -1,30 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-export const Dropdown = ({ label, options = [],
+export const Dropdown = ({
+    label,
+    options = [],
     value,
     onChange,
-    className }) => {
-
+    className = "",
+    disabled = false,
+}) => {
     // Controls whether the dropdown is open or closed.
-    //
-    // false = closed
-    // true = open
     const [open, setOpen] = useState(false);
+
+    // Close the dropdown if it becomes disabled.
+    useEffect(() => {
+        if (disabled) {
+            setOpen(false);
+        }
+    }, [disabled]);
 
     const selectedOption = options.find(
         (option) => option.value === value
     );
 
+    const handleToggle = () => {
+        if (disabled) return;
+        setOpen((prev) => !prev);
+    };
 
     return (
         <div className={`relative ${className}`}>
-
             {/* Dropdown button */}
             <button
                 type="button"
-                onClick={() => setOpen(!open)}
-                className="flex items-center justify-between w-full h-10 px-3 rounded-xl border border-border bg-surface text-sm font-medium text-text cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+                disabled={disabled}
+                onClick={handleToggle}
+                aria-haspopup="listbox"
+                aria-expanded={!disabled && open}
+                className={`flex items-center justify-between w-full h-10 px-3 rounded-xl border border-border bg-surface text-sm font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary ${
+                    disabled
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                }`}
             >
                 <span>
                     {selectedOption?.label || label}
@@ -39,13 +56,17 @@ export const Dropdown = ({ label, options = [],
             </button>
 
             {/* Dropdown options */}
-            {open && (
-                <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-surface p-1 shadow-lg max-h-48 overflow-y-auto">
-
+            {open && !disabled && (
+                <div
+                    role="listbox"
+                    className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-surface p-1 shadow-lg max-h-48 overflow-y-auto"
+                >
                     {options.map((option) => (
                         <button
                             key={option.value}
                             type="button"
+                            role="option"
+                            aria-selected={option.value === value}
                             onClick={() => {
                                 onChange?.(option.value);
                                 setOpen(false);
@@ -55,10 +76,8 @@ export const Dropdown = ({ label, options = [],
                             {option.label}
                         </button>
                     ))}
-
                 </div>
             )}
-
         </div>
     );
 };

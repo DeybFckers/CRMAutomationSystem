@@ -3,6 +3,7 @@ import { Button } from "../../../components/common/Button";
 import { Modal } from "../../../components/common/Modal";
 import { TableActions } from "../../../components/common/TableActions";
 import { addCustomerContact,updateCustomerContact, deleteCustomerContact} from "../../../services/core/customerService";
+import { CustomerContactValidator } from "./validator/CustomerContactValidator";
 
 export const CustomerContacts = ({ customer, onContactsChanged }) => {
     const [selectedContact, setSelectedContact] = useState(null);
@@ -12,6 +13,7 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
     const [submitError, setSubmitError] = useState("");
+    const [validationErrors, setValidationErrors] = useState({});
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -31,6 +33,8 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
             phone: "",
             isPrimary: false,
         });
+
+        setValidationErrors({});
     };
 
     const closeContactModal = () => {
@@ -39,6 +43,7 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
         setSelectedContact(null);
         setSubmitError("");
         resetForm();
+        setValidationErrors({});
     };
 
     const handleChange = (e) => {
@@ -48,36 +53,44 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
             ...prev,
             [name]: value,
         }));
-    };
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         setSubmitError("");
+
+        const errors = CustomerContactValidator(formData);
+
+        setValidationErrors(errors);
+
+        if (Object.keys(errors).length > 0) {
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
             const contactData = {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                position: formData.position,
-                email: formData.email,
-                phone: formData.phone,
+                firstName: formData.firstName.trim(),
+                lastName: formData.lastName.trim(),
+                position: formData.position.trim(),
+                email: formData.email.trim(),
+                phone: formData.phone.trim(),
                 isPrimary: formData.isPrimary,
             };
 
             if (isEditMode && selectedContact) {
-                await updateCustomerContact( customer.id, selectedContact.id, contactData );
+                await updateCustomerContact( customer.id,selectedContact.id,contactData);
             } else {
                 await addCustomerContact(customer.id, contactData);
             }
 
             await onContactsChanged?.();
+
             closeContactModal();
         } catch (error) {
             setSubmitError(
-                error.response?.data?.message ||
-                error.response?.data?.title ||
                 (isEditMode
                     ? "Failed to update contact."
                     : "Failed to create contact.")
@@ -87,7 +100,9 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
         }
     };
 
+
     const handleEdit = (contact) => {
+        setValidationErrors({});
         setSelectedContact(contact);
         setIsEditMode(true);
 
@@ -100,6 +115,7 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
             isPrimary: contact.isPrimary ?? false,
         });
 
+        setValidationErrors({});
         setSubmitError("");
         setIsContactModalOpen(true);
     };
@@ -133,8 +149,6 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
             setSelectedContact(null);
         } catch (error) {
             setDeleteError(
-                error.response?.data?.message ||
-                error.response?.data?.title ||
                 "Failed to delete customer contact."
             );
         } finally {
@@ -257,7 +271,7 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                 }
                 className="max-w-fit"
             >
-                <form onSubmit={handleSubmit} className="flex flex-col">
+                <form onSubmit={handleSubmit} className="flex flex-col" noValidate>
                     {/* First and Last Name */}
                     <div className="flex justify-between gap-3 mb-4">
                         <div className="flex flex-col">
@@ -272,8 +286,13 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                                 value={formData.firstName}
                                 onChange={handleChange}
                                 className={inputClass}
-                                required
                             />
+
+                            {validationErrors.firstName && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.firstName}
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex flex-col">
@@ -288,8 +307,14 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                                 value={formData.lastName}
                                 onChange={handleChange}
                                 className={inputClass}
-                                required
                             />
+                            
+                            {validationErrors.lastName && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.lastName}
+                                </p>
+                            )}
+                            
                         </div>
                     </div>
 
@@ -308,6 +333,13 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                                 onChange={handleChange}
                                 className={inputClass}
                             />
+
+                            {validationErrors.email && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.email}
+                                </p>
+                            )}
+
                         </div>
 
                         <div className="flex flex-col">
@@ -323,6 +355,12 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                                 onChange={handleChange}
                                 className={inputClass}
                             />
+
+                            {validationErrors.phone && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.phone}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -341,6 +379,12 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                                 onChange={handleChange}
                                 className={inputClass}
                             />
+
+                            {validationErrors.position && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.position}
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex flex-col">

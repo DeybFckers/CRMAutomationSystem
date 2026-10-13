@@ -9,7 +9,7 @@ import { useStages } from "../../../hooks/useStages";
 import { useUsers } from "../../../hooks/useUsers";
 import { useOpportunities } from "../../../hooks/useOpportunities";
 import {createOpportunity, updateOpportunity, updateStageOpportunity, reassigneduserOpportunity,updateStatusOpportunity,deleteOpportunity} from "../../../services/core/opportunityService";
-import { validateOpportunity } from "./validator/CustomerOpportunityValidator";
+import { CustomerOpportunityValidator } from "./validator/CustomerOpportunityValidator";
 
 export const CustomerOpportunities = ({ customer }) => {
     // Selected opportunity.
@@ -250,7 +250,7 @@ export const CustomerOpportunities = ({ customer }) => {
         e.preventDefault();
 
         // Validate the form using the separate validator.
-        const errors = validateOpportunity(formData, customer?.id);
+        const errors = CustomerOpportunityValidator(formData, customer?.id);
 
         setValidationErrors(errors);
         setSubmitError("");
@@ -629,11 +629,13 @@ export const CustomerOpportunities = ({ customer }) => {
                     </Button>
                 </div>
             ) : opportunities.length === 0 ? (
-                <div className="border border-border rounded-lg p-4">
+
+                <div className="border border-border rounded-lg">
                     <p className="py-6 text-center text-text-secondary">
                     No opportunities available for this customer.
                     </p>
                 </div>
+
             ) : (
                 <div className="flex min-w-0 flex-col gap-3">
                     {sortedOpportunities.map((opportunity) => {
@@ -742,7 +744,6 @@ export const CustomerOpportunities = ({ customer }) => {
                                 onChange={handleChange}
                                 placeholder="e.g. Website Redesign"
                                 maxLength={200}
-                                required
                                 className={inputClass}
                             />
 
@@ -820,8 +821,12 @@ export const CustomerOpportunities = ({ customer }) => {
                                 }
                                 value={formData.stageId}
                                 onChange={handleStageChange}
-                                options={
-                                    formData.pipelineId ? stageOptions : []
+                                options={formData.pipelineId ? stageOptions : []}
+                                disabled={
+                                    !formData.pipelineId ||
+                                    isLoadingStages ||
+                                    !!stagesError ||
+                                    stageOptions.length === 0
                                 }
                                 className="w-full"
                             />
@@ -855,7 +860,6 @@ export const CustomerOpportunities = ({ customer }) => {
                                 value={formData.value}
                                 onChange={handleChange}
                                 placeholder="0.00"
-                                required
                                 className={inputClass}
                             />
 
@@ -929,13 +933,7 @@ export const CustomerOpportunities = ({ customer }) => {
                             disabled={
                                 isSubmitting ||
                                 isLoadingPipelines ||
-                                isLoadingStages ||
-                                !formData.name.trim() ||
-                                !formData.pipelineId ||
-                                !formData.stageId ||
-                                formData.value === "" ||
-                                !Number.isFinite(Number(formData.value)) ||
-                                Number(formData.value) < 0
+                                (Boolean(formData.pipelineId) && isLoadingStages)
                             }
                         >
                             {isSubmitting

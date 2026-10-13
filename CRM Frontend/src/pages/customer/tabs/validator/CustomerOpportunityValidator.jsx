@@ -1,5 +1,5 @@
 
-export const validateOpportunity = (formData, customerId) => {
+export const CustomerOpportunityValidator = (formData, customerId) => {
     const errors = {};
 
     // Validate customer.

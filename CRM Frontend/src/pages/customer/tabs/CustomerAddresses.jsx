@@ -4,6 +4,7 @@ import { Modal } from "../../../components/common/Modal";
 import { Dropdown } from "../../../components/common/Dropdown";
 import { TableActions } from "../../../components/common/TableActions";
 import {addCustomerAddress, updateCustomerAddress,deleteCustomerAddress } from "../../../services/core/customerService";
+import { CustomerAddressValidator } from "./validator/CustomerAddressValidator";
 
 export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
     const [selectedAddress, setSelectedAddress] = useState(null);
@@ -11,6 +12,7 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [validationErrors, setValidationErrors] = useState({});
 
     const [submitError, setSubmitError] = useState("");
     const [deleteError, setDeleteError] = useState("");
@@ -45,6 +47,7 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
         setSelectedAddress(null);
         setSubmitError("");
         resetForm();
+        setValidationErrors({});
     };
 
     const handleChange = (e) => {
@@ -54,10 +57,23 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
             ...prev,
             [name]: value,
         }));
-    };
+
+        setValidationErrors((prev) => ({
+            ...prev,
+            [name]: "",
+        }));
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const errors = CustomerAddressValidator(formData);
+        
+        setValidationErrors(errors);
+
+        if (Object.keys(errors).length > 0) {
+            return;
+        }
 
         setSubmitError("");
         setIsSubmitting(true);
@@ -294,6 +310,7 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                 <form
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-4"
+                    noValidate
                 >
                     {/* Address Type */}
                     <div className="flex flex-col">
@@ -331,6 +348,12 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                                 aria-hidden="true"
                             />
                         )}
+
+                        {validationErrors.type && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {validationErrors.type}
+                            </p>
+                        )}
                     </div>
 
                     {/* Address Line */}
@@ -352,6 +375,12 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                             className={inputClass}
                             required
                         />
+
+                        {validationErrors.addressLine && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {validationErrors.addressLine}
+                            </p>
+                        )}
                     </div>
 
                     {/* Country and City */}
@@ -374,6 +403,12 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
+
+                            {validationErrors.country && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.country}
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex flex-col">
@@ -394,6 +429,12 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
+
+                            {validationErrors.city && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.city}
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -417,6 +458,12 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
+
+                            {validationErrors.province && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.province}
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex flex-col">
@@ -437,6 +484,12 @@ export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
+
+                            {validationErrors.postalCode && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.postalCode}
+                                </p>
+                            )}
                         </div>
                     </div>
 
