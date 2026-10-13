@@ -21,7 +21,7 @@ namespace CRMSystem.Models.Entities
 
         public decimal Value { get; set; }
 
-        public DateTime? ExpectedCloseDate { get; set; }
+        public DateOnly? ExpectedCloseDate { get; set; }
 
         public string Status { get; set; } = "OPEN";
 

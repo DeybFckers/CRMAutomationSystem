@@ -14,7 +14,7 @@
 
         public decimal Value { get; set; }
 
-        public DateTime? ExpectedCloseDate { get; set; }
+        public DateOnly? ExpectedCloseDate { get; set; }
 
         public string Status { get; set; } = null!;
 
@@ -46,7 +46,7 @@
 
         public decimal Value { get; set; }
 
-        public DateTime? ExpectedCloseDate { get; set; }
+        public DateOnly? ExpectedCloseDate { get; set; }
 
         public string? Description { get; set; }
     }
@@ -62,7 +62,7 @@
 
         public decimal Value { get; set; }
 
-        public DateTime? ExpectedCloseDate { get; set; }
+        public DateOnly? ExpectedCloseDate { get; set; }
 
         public string Status { get; set; } = "OPEN";
 

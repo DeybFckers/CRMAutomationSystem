@@ -632,8 +632,8 @@ namespace CRMSystem.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("ExpectedCloseDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly?>("ExpectedCloseDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Name")
                         .IsRequired()

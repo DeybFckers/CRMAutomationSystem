@@ -84,7 +84,7 @@ namespace CRMSystem.Services.Implementation
             if (pipeline == null)
                 throw new KeyNotFoundException("Pipeline not found.");
 
-            var stage = await _pipilineStageRepository.GetPipelineStageById(opportunity.StageId, organizationId);
+            var stage = await _pipilineStageRepository.GetPipelineStageById(opportunity.StageId, opportunity.PipelineId);
 
             if (stage == null)
                 throw new KeyNotFoundException(
