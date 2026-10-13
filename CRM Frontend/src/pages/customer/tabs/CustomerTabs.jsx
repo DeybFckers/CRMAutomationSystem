@@ -20,7 +20,10 @@ export const CustomerTabs = ({
     onContactsChanged,
 
     //customer address
-    onAddressesChanged
+    onAddressesChanged,
+
+    //customer opportunities
+    onOpportunitiesChanged
 }) => {
 
     const tabs = [
@@ -106,6 +109,8 @@ export const CustomerTabs = ({
                         onContactsChanged={onContactsChanged}
                         //Customer Address
                         onAddressesChanged={onAddressesChanged}
+                        //Customer Opporunity
+                        onOpportunitiesChanged={onOpportunitiesChanged}
                     />
                 );
             })}

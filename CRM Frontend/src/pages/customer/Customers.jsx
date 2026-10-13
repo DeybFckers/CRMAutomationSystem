@@ -258,6 +258,25 @@ export const Customers = () => {
         }
     }
 
+    
+    const handleOpportunitiesChanged = async () => {
+        if (!selectedCustomer?.id) {
+            return;
+        }
+
+        try {
+            setDetailsError("");
+
+            await refreshSelectedCustomer(selectedCustomer.id);
+        } catch (error) {
+            setDetailsError(
+                error.response?.data?.message ||
+                    "Failed to refresh customer opportunities."
+            );
+        }
+    };
+
+
     // Open details and fetch the individual customer
     const handleRowClick = async (customer) => {
         const requestId = ++customerRequestId.current;
@@ -600,12 +619,17 @@ export const Customers = () => {
                                 customer={selectedCustomer}
                                 selectedTab={selectedTab}
                                 setSelectedTab={setSelectedTab}
+                                //customer Overview
                                 onEdit={handleEditCustomer}
                                 onHold={handleHoldCustomer}
                                 onDeactivate={handleDeactivateCustomer}
                                 onActivate={handleActivateCustomer}
+                                //customer contacts
                                 onContactsChanged={handleContactsChanged}
+                                //customer address
                                 onAddressesChanged={handleAddressChanged}
+                                //customer opportunities
+                                onOpportunitiesChanged={handleOpportunitiesChanged}
                             />
                         </>
                     ) : null}

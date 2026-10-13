@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Button } from "../../../components/common/Button";
 import { Modal } from "../../../components/common/Modal";
-import { addCustomerAddress, updateCustomerAddress, deleteCustomerAddress } from "../../../services/core/customerService";
 import { Dropdown } from "../../../components/common/Dropdown";
+import { TableActions } from "../../../components/common/TableActions";
+import {addCustomerAddress, updateCustomerAddress,deleteCustomerAddress } from "../../../services/core/customerService";
 
-export const CustomerAddresses = ({customer, onAddressesChanged }) => {
+export const CustomerAddresses = ({ customer, onAddressesChanged }) => {
     const [selectedAddress, setSelectedAddress] = useState(null);
-
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -25,7 +25,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
         isPrimary: false,
     });
 
-    // Reset the form fields.
     const resetForm = () => {
         setFormData({
             type: "",
@@ -38,8 +37,9 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
         });
     };
 
-    // Close the add/edit modal and reset its state.
     const closeAddressModal = () => {
+        if (isSubmitting) return;
+
         setIsAddressModalOpen(false);
         setIsEditMode(false);
         setSelectedAddress(null);
@@ -47,7 +47,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
         resetForm();
     };
 
-    // Handle text input changes.
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -57,7 +56,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
         }));
     };
 
-    // Add or update an address.
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -89,7 +87,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
             }
 
             await onAddressesChanged?.();
-
             closeAddressModal();
         } catch (error) {
             setSubmitError(
@@ -104,7 +101,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
         }
     };
 
-    // Populate the form when editing an address.
     const handleEdit = (address) => {
         setSelectedAddress(address);
         setIsEditMode(true);
@@ -123,7 +119,20 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
         setIsAddressModalOpen(true);
     };
 
-    // Delete the selected address.
+    const openDeleteModal = (address) => {
+        setSelectedAddress(address);
+        setDeleteError("");
+        setIsDeleteModalOpen(true);
+    };
+
+    const closeDeleteModal = () => {
+        if (isSubmitting) return;
+
+        setIsDeleteModalOpen(false);
+        setDeleteError("");
+        setSelectedAddress(null);
+    };
+
     const handleDelete = async () => {
         if (!selectedAddress) return;
 
@@ -158,10 +167,8 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
 
     return (
         <div className="flex flex-col gap-4">
-
             {/* Header */}
             <div className="flex justify-between items-center">
-
                 <h3 className="text-lg font-semibold text-text">
                     Addresses
                 </h3>
@@ -177,27 +184,21 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                         setIsAddressModalOpen(true);
                     }}
                 >
-                    + Add Address
+                    +
                 </Button>
-
             </div>
 
             {/* Address List */}
             {addresses.length > 0 ? (
-
                 <div className="flex flex-col gap-3">
-
                     {addresses.map((address) => (
-
                         <div
                             key={address.id}
                             className="border border-border rounded-lg p-4"
                         >
-
-                            {/* Address Header */}
-                            <div className="flex justify-between items-start">
-
-                                <div>
+                            {/* Address Header and Actions */}
+                            <div className="flex justify-between items-start gap-4">
+                                <div className="min-w-0">
                                     <p className="font-medium text-text">
                                         {address.type || "Address"}
                                     </p>
@@ -207,17 +208,31 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                     </p>
                                 </div>
 
-                                {address.isPrimary && (
-                                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                                        Primary
-                                    </span>
-                                )}
+                                <div className="flex items-center gap-2 shrink-0">
+                                    {address.isPrimary && (
+                                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                                            Primary
+                                        </span>
+                                    )}
 
+                                    <TableActions
+                                        options={[
+                                            {
+                                                label: "Edit",
+                                                onClick: () => handleEdit(address),
+                                            },
+                                            {
+                                                label: "Remove",
+                                                variant: "danger",
+                                                onClick: () => openDeleteModal(address),
+                                            },
+                                        ]}
+                                    />
+                                </div>
                             </div>
 
                             {/* Address Details */}
                             <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3">
-
                                 <div>
                                     <p className="text-xs font-medium text-text-secondary">
                                         City
@@ -253,50 +268,16 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                         {address.country || "-"}
                                     </p>
                                 </div>
-
                             </div>
-
-                            {/* Actions */}
-                            <div className="flex justify-end gap-2 mt-4">
-
-                                <Button
-                                    variant="outline"
-                                    type="button"
-                                    onClick={() => handleEdit(address)}
-                                >
-                                    Edit
-                                </Button>
-
-                                <Button
-                                    variant="danger"
-                                    type="button"
-                                    onClick={() => {
-                                        setSelectedAddress(address);
-                                        setDeleteError("");
-                                        setIsDeleteModalOpen(true);
-                                    }}
-                                >
-                                    Remove
-                                </Button>
-
-                            </div>
-
                         </div>
-
                     ))}
-
                 </div>
-
             ) : (
-
                 <div className="border border-border rounded-lg p-6 text-center">
-
                     <p className="text-text-secondary">
                         No addresses available.
                     </p>
-
                 </div>
-
             )}
 
             {/* Add or Edit Address Modal */}
@@ -310,15 +291,12 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                 }
                 className="max-w-fit"
             >
-
                 <form
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-4"
                 >
-
                     {/* Address Type */}
                     <div className="flex flex-col">
-
                         <label className="mb-2 text-base font-medium text-text">
                             Address Type
                         </label>
@@ -342,7 +320,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                             className="w-full"
                         />
 
-                        {/* Required field validation */}
                         {!formData.type && (
                             <input
                                 type="text"
@@ -354,12 +331,10 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                 aria-hidden="true"
                             />
                         )}
-
                     </div>
 
-                    {/* Street / Address Line */}
+                    {/* Address Line */}
                     <div className="flex flex-col">
-
                         <label
                             htmlFor="addressLine"
                             className="mb-2 text-base font-medium text-text"
@@ -377,14 +352,11 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                             className={inputClass}
                             required
                         />
-
                     </div>
 
-                    {/* City and Province */}
+                    {/* Country and City */}
                     <div className="grid grid-cols-2 gap-3">
-
                         <div className="flex flex-col">
-
                             <label
                                 htmlFor="country"
                                 className="mb-2 text-base font-medium text-text"
@@ -402,11 +374,9 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
-
                         </div>
 
                         <div className="flex flex-col">
-
                             <label
                                 htmlFor="city"
                                 className="mb-2 text-base font-medium text-text"
@@ -424,17 +394,12 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
-
                         </div>
-
-
                     </div>
 
-                    {/* Postal Code and Country */}
+                    {/* Province and Postal Code */}
                     <div className="grid grid-cols-2 gap-3">
-
                         <div className="flex flex-col">
-
                             <label
                                 htmlFor="province"
                                 className="mb-2 text-base font-medium text-text"
@@ -452,11 +417,9 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
-
                         </div>
 
                         <div className="flex flex-col">
-
                             <label
                                 htmlFor="postalCode"
                                 className="mb-2 text-base font-medium text-text"
@@ -474,20 +437,16 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                 className={inputClass}
                                 required
                             />
-
                         </div>
-
                     </div>
 
                     {/* Primary Address */}
                     <div className="flex flex-col">
-
                         <label className="mb-2 text-base font-medium text-text">
                             Primary Address
                         </label>
 
                         <label className="flex items-center gap-3 min-h-10 px-3 rounded-md border border-border cursor-pointer transition-colors hover:border-primary focus-within:ring-2 focus-within:ring-primary">
-
                             <input
                                 type="checkbox"
                                 name="isPrimary"
@@ -504,9 +463,7 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                             <span className="text-sm text-text">
                                 Set as primary address
                             </span>
-
                         </label>
-
                     </div>
 
                     {/* Submit Error */}
@@ -518,7 +475,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
 
                     {/* Form Actions */}
                     <div className="flex justify-end gap-2">
-
                         <Button
                             variant="outline"
                             type="button"
@@ -539,34 +495,23 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                                     ? "Update Address"
                                     : "Add Address"}
                         </Button>
-
                     </div>
-
                 </form>
-
             </Modal>
 
             {/* Delete Address Confirmation Modal */}
             <Modal
                 isOpen={isDeleteModalOpen}
-                onClose={() => {
-                    if (isSubmitting) return;
-
-                    setIsDeleteModalOpen(false);
-                    setDeleteError("");
-                    setSelectedAddress(null);
-                }}
+                onClose={closeDeleteModal}
                 title={`Remove Address - ${customer?.firstName ?? ""} ${customer?.lastName ?? ""}`}
                 className="max-w-fit"
             >
-
                 <p className="text-text text-base">
                     Are you sure you want to remove this customer address?
                 </p>
 
                 {selectedAddress && (
                     <div className="mt-3 rounded-lg border border-border p-3">
-
                         <p className="font-medium text-text">
                             {selectedAddress.addressLine || "-"}
                         </p>
@@ -584,7 +529,6 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                         <p className="text-sm text-text-secondary">
                             {selectedAddress.country || "-"}
                         </p>
-
                     </div>
                 )}
 
@@ -595,16 +539,11 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                 )}
 
                 <div className="flex justify-end gap-2 mt-4">
-
                     <Button
                         variant="outline"
                         type="button"
+                        onClick={closeDeleteModal}
                         disabled={isSubmitting}
-                        onClick={() => {
-                            setIsDeleteModalOpen(false);
-                            setDeleteError("");
-                            setSelectedAddress(null);
-                        }}
                     >
                         Cancel
                     </Button>
@@ -617,11 +556,8 @@ export const CustomerAddresses = ({customer, onAddressesChanged }) => {
                     >
                         {isSubmitting ? "Removing..." : "Remove"}
                     </Button>
-
                 </div>
-
             </Modal>
-
         </div>
     );
 };
