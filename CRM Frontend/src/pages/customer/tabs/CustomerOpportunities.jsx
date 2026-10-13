@@ -10,6 +10,7 @@ import { useUsers } from "../../../hooks/useUsers";
 import { useOpportunities } from "../../../hooks/useOpportunities";
 import {createOpportunity, updateOpportunity, updateStageOpportunity, reassigneduserOpportunity,updateStatusOpportunity,deleteOpportunity} from "../../../services/core/opportunityService";
 import { CustomerOpportunityValidator } from "./validator/CustomerOpportunityValidator";
+import { BriefcaseBusiness, Wallet } from "lucide-react";
 
 export const CustomerOpportunities = ({ customer }) => {
     // Selected opportunity.
@@ -586,27 +587,91 @@ export const CustomerOpportunities = ({ customer }) => {
     const inputClass =
         "h-10 w-full min-w-0 rounded-md border border-border bg-slate-100 p-2 text-text placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary";
 
+    // Calculate total number of opportunities.
+    const totalOpportunities = opportunities.length;
+
+    // Calculate the total potential value of all opportunities.
+    const totalPotentialValue = opportunities.reduce(
+        (total, opportunity) => {
+            const value = Number(opportunity.value);
+
+            return total + (Number.isFinite(value) ? value : 0);
+        },
+        0
+    );
 
     return (
         <div className="flex min-w-0 flex-col gap-4">
             {/* Header */}
-            <div className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 flex-col">
-                    <h3 className="text-lg font-semibold text-text">
-                        Opportunities
-                    </h3>
+            <div className="flex flex-col gap-4">
+                {/* First layer: Title and Add Button */}
+                <div className="mb-2 flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-col gap-1">
+                        <h3 className="text-lg font-semibold text-text">
+                            Opportunities
+                        </h3>
 
-                    <span className="text-sm text-text-secondary">
-                        Manage potential sales for this customer.
-                    </span>
+                        <span className="text-sm text-text-secondary">
+                            Manage potential sales for this customer.
+                        </span>
+                    </div>
+
+                    <Button
+                        type="button"
+                        onClick={openCreateModal}
+                    >
+                        +
+                    </Button>
                 </div>
 
-                <Button
-                    type="button"
-                    onClick={openCreateModal}
-                >
-                    +
-                </Button>
+                {/* Second layer: Opportunity Summary */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+                    {/* Total Opportunities */}
+                    <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
+                        <div className="flex items-center gap-2">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                                <BriefcaseBusiness size={20} />
+                            </span>
+
+                            <span className="text-sm text-text-secondary">
+                                Total Opportunities
+                            </span>
+                        </div>
+
+                        <h3 className="text-2xl font-semibold text-text">
+                            {isLoadingOpportunities ? "..." : totalOpportunities}
+                        </h3>
+
+                        <p className="text-xs text-text-secondary">
+                            Opportunities linked to this customer
+                        </p>
+                    </div>
+
+                    {/* Total Potential Value */}
+                    <div className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4">
+                        <div className="flex items-center gap-2">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                                <Wallet size={20} />
+                            </span>
+
+                            <span className="text-sm text-text-secondary">
+                                Total Potential Value
+                            </span>
+                        </div>
+
+                        <h3 className="text-2xl font-semibold text-text">
+                            {isLoadingOpportunities
+                                ? "..."
+                                : formatCurrency(totalPotentialValue)}
+                        </h3>
+
+                        <p className="text-xs text-text-secondary">
+                            Combined value of all opportunities
+                        </p>
+                    </div>
+
+                </div>
             </div>
 
             {/* Opportunity list */}
