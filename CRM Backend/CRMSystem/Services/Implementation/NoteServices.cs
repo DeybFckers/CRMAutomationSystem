@@ -116,5 +116,23 @@ namespace CRMSystem.Services.Implementation
 
             return note.Adapt<NoteResponseDto>();
         }
+
+        public async Task<IEnumerable<NoteResponseDto>> GetNotesByCustomerId(Guid customerId)
+        {
+            var organizationId = _currentUserServices.OrganizationId;
+
+            var customer = await _customerRepository.GetCustomerById(
+                customerId,
+                organizationId);
+
+            if (customer == null)
+                throw new KeyNotFoundException("Customer not found.");
+
+            var notes = await _noteRepository.GetNotesByCustomerId(
+                customerId,
+                organizationId);
+
+            return notes.Adapt<IEnumerable<NoteResponseDto>>();
+        }
     }
 }

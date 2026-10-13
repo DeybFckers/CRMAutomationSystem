@@ -9,6 +9,7 @@ namespace CRMSystem.Repositories.Interface
         Task<Note?> GetNoteById(Guid organizationId, Guid noteId);
         Task<IEnumerable<Note>> GetAllNotes(Guid organizationId);
         Task UpdateNote(Note note);
+        Task<List<Note>> GetNotesByCustomerId(Guid id, Guid organizationId);
     }
 
 }

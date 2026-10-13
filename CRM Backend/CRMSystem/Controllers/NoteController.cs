@@ -61,5 +61,14 @@ namespace CRMSystem.Controllers
 
             return Success("Note deleted successfully.");
         }
+
+        [Authorize(Roles = "SuperAdmin, Admin, SalesManager, SalesRep, Support, Viewer")]
+        [HttpGet("customer/{customerId:guid}")]
+        public async Task<IActionResult> GetNotesByCustomerId(Guid customerId)
+        {
+            var notes = await _noteServices.GetNotesByCustomerId(customerId);
+
+            return Success( "Customer notes retrieved successfully.", notes);
+        }
     }
 }

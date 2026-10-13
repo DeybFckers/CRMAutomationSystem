@@ -9,5 +9,7 @@ namespace CRMSystem.Services.Interface
         Task<NoteResponseDto?> GetNoteById(Guid noteId);
         Task<IEnumerable<NoteResponseDto>> GetAllNotes();
         Task<NoteResponseDto> UpdateNote(Guid noteId, UpdateNoteDto dto);
+        Task<IEnumerable<NoteResponseDto>> GetNotesByCustomerId(Guid customerId);
+
     }
 }

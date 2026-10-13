@@ -56,5 +56,15 @@ namespace CRMSystem.Repositories.Implementation
             _context.Notes.Update(note);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Note>> GetNotesByCustomerId(Guid id, Guid organizationId)
+        {
+            return await _context.Notes
+                .Include(n => n.User)
+                .Include(n => n.Customer)
+                .Include(n => n.Lead)
+                .Include(n => n.Opportunity)
+                .Where(n => n.CustomerId == id && n.OrganizationId == organizationId).ToListAsync();
+        }
     }
 }
