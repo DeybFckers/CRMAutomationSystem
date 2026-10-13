@@ -49,12 +49,12 @@ export const Sidebar = () => {
                         Customers
                     </NavLink>
 
-                    <NavLink to="/opportunities"className={navLinkClass}>
-                        Opportunities
-                    </NavLink>
-
                     <NavLink to="/pipeline" className={navLinkClass}>
                         Pipeline
+                    </NavLink>
+
+                    <NavLink to="/opportunities"className={navLinkClass}>
+                        Opportunities
                     </NavLink>
 
                     <div className="mt-2 mb-1 px-4">
