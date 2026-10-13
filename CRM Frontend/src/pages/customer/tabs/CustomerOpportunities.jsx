@@ -670,14 +670,14 @@ export const CustomerOpportunities = ({ customer }) => {
                             >
                                 <div className="flex min-w-0 flex-col gap-2">
                                     <div className="flex min-w-0 items-start justify-between gap-3">
-                                        <h4 className="min-w-0 wrap-break-words font-semibold text-text">
+                                        <h4 className="min-w-0 wrap-break-word font-semibold text-text">
                                             {opportunity.name}
                                         </h4>
 
                                         <TableActions options={actions} />
                                     </div>
 
-                                    <p className="wrap-break-words text-sm text-text-secondary">
+                                    <p className="wrap-break-word text-sm text-text-secondary">
                                         {opportunity.pipeline?.name ?? "No pipeline"}
                                     </p>
 
@@ -709,7 +709,7 @@ export const CustomerOpportunities = ({ customer }) => {
                                 </div>
 
                                 {opportunity.description && (
-                                    <p className="wrap-break-words border-t border-border pt-3 text-sm text-text-secondary">
+                                    <p className="wrap-break-word border-t border-border pt-3 text-sm text-text-secondary">
                                         {opportunity.description}
                                     </p>
                                 )}
@@ -962,7 +962,7 @@ export const CustomerOpportunities = ({ customer }) => {
                             Opportunity
                         </label>
 
-                        <p className="wrap-break-words text-text-secondary">
+                        <p className="wrap-break-word text-text-secondary">
                             {selectedOpportunity?.name}
                         </p>
                     </div>
@@ -972,7 +972,7 @@ export const CustomerOpportunities = ({ customer }) => {
                             Pipeline
                         </label>
 
-                        <p className="wrap-break-words text-text-secondary">
+                        <p className="wrap-break-word text-text-secondary">
                             {selectedOpportunity?.pipeline?.name ?? "No pipeline"}
                         </p>
                     </div>
@@ -1057,7 +1057,7 @@ export const CustomerOpportunities = ({ customer }) => {
                             Opportunity
                         </label>
 
-                        <p className="wrap-break-words text-text-secondary">
+                        <p className="wrap-break-word text-text-secondary">
                             {selectedOpportunity?.name}
                         </p>
                     </div>
@@ -1125,7 +1125,7 @@ export const CustomerOpportunities = ({ customer }) => {
                             Opportunity
                         </label>
 
-                        <p className="wrap-break-words text-text-secondary">
+                        <p className="wrap-break-word text-text-secondary">
                             {selectedOpportunity?.name}
                         </p>
                     </div>
@@ -1187,7 +1187,7 @@ export const CustomerOpportunities = ({ customer }) => {
                 <div className="flex flex-col gap-4">
                     <p className="text-sm text-text-secondary">
                         Are you sure you want to delete{" "}
-                        <span className="wrap-break-words font-semibold text-text">
+                        <span className="wrap-break-word font-semibold text-text">
                             {selectedOpportunity?.name}
                         </span>
                         ? This action cannot be undone.

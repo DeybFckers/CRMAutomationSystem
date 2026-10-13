@@ -128,7 +128,7 @@ export const CustomerOverview = ({ customer, onEdit, onHold, onDeactivate, onAct
                             Email
                         </p>
 
-                        <p className="text-text wrap-break-words font-medium">
+                        <p className="text-text wrap-break-word font-medium">
                             {customer.email || "-"}
                         </p>
                     </div>

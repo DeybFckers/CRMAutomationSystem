@@ -234,7 +234,7 @@ export const CustomerContacts = ({ customer, onContactsChanged }) => {
                                         Email
                                     </p>
 
-                                    <p className="text-text wrap-break-words font-medium">
+                                    <p className="text-text wrap-break-word font-medium">
                                         {contact.email || "-"}
                                     </p>
                                 </div>
