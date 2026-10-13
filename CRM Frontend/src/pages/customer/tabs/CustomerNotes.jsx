@@ -334,7 +334,7 @@ export const CustomerNotes = ({ customer }) => {
                                 className="flex min-w-0 flex-col gap-3 rounded-lg border border-border p-4 transition-colors hover:bg-surface"
                             >
                                 <div className="flex min-w-0 items-start justify-between gap-3">
-                                    <p className="min-w-0 whitespace-pre-wrap break-words text-sm text-text">
+                                    <p className="min-w-0 whitespace-pre-wrap wrap-break-word text-sm text-text">
                                         {note.content}
                                     </p>
 
@@ -510,7 +510,7 @@ export const CustomerNotes = ({ customer }) => {
                     </p>
 
                     {selectedNote?.content && (
-                        <div className="max-h-40 overflow-y-auto whitespace-pre-wrap break-words rounded-md border border-border p-3 text-sm text-text">
+                        <div className="max-h-40 overflow-y-auto whitespace-pre-wrap wrap-break-word rounded-md border border-border p-3 text-sm text-text">
                             {selectedNote.content}
                         </div>
                     )}
