@@ -1,9 +1,7 @@
 import { CustomerOverview } from "./CustomerOverview";
 import { CustomerContacts } from "./CustomerContacts";
 import { CustomerAddresses } from "./CustomerAddresses";
-import { CustomerTasks } from "./CustomerTasks";
 import { CustomerNotes } from "./CustomerNotes";
-import { CustomerActivities } from "./CustomerActivities";
 import { CustomerOpportunities } from "./CustomerOpportunities";
 
 export const CustomerTabs = ({
@@ -48,20 +46,10 @@ export const CustomerTabs = ({
             component: CustomerOpportunities
         },
         {
-            key: "tasks",
-            label: "Tasks",
-            component: CustomerTasks
-        },
-        {
             key: "notes",
             label: "Notes",
             component: CustomerNotes
         },
-        {
-            key: "activities",
-            label: "Activity",
-            component: CustomerActivities
-        }
     ];
 
     return (
